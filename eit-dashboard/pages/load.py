@@ -1,7 +1,7 @@
 from dash import register_page, html
 import dash_bootstrap_components as dbc
-import element_ids as ids
-from option_lists import InputFiletypes
+import definitions.element_ids as ids
+from definitions.option_lists import InputFiletypes
 # from app import app
 
 register_page(__name__, path='/load')

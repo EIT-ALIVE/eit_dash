@@ -1,5 +1,5 @@
 from dash import callback, Output, Input
-import element_ids as ids
+import definitions.element_ids as ids
 
 @callback(
     Output(ids.CHOOSE_DATA_POPUP, 'is_open'),
