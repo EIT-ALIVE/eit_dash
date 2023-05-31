@@ -23,8 +23,6 @@ def open_modal(add_data_click, select_files_click):
     prevent_initial_call=True,
 )
 def load_file(flag):
-    # TODO: check number of loaded files, if 0 then hide DATA_SELECTOR_OPTIONS
-
     if flag:
         return False
     return True
