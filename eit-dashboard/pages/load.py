@@ -1,6 +1,7 @@
 from dash import register_page, html
 import dash_bootstrap_components as dbc
 import element_ids as ids
+from option_lists import InputFiletypes
 # from app import app
 
 register_page(__name__, path='/load')
@@ -17,12 +18,19 @@ actions = dbc.Col([
 results = dbc.Col('results')
 
 
+input_type_selector = dbc.Select(
+    id =ids.INPUT_TYPE_SELECTOR,
+    options = [{'label': filetype.name, "value": filetype.value} for filetype in InputFiletypes],
+    value = str(InputFiletypes.Draeger.value),
+)
+
+
 modal_dialog = html.Div(
     [
         dbc.Modal(
             [
                 dbc.ModalHeader(dbc.ModalTitle("Close"), close_button=True),
-                dbc.ModalBody(),
+                dbc.ModalBody(input_type_selector),
                 dbc.ModalFooter(
                     dbc.Button(
                         "Confirm",
