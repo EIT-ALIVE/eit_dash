@@ -1,4 +1,4 @@
-from dash import callback, Output, Input
+from dash import callback, Output, Input, ctx
 import definitions.element_ids as ids
 
 
@@ -8,13 +8,13 @@ import definitions.element_ids as ids
     prevent_initial_call=True
 )
 def open_modal(add_data_click, select_files_click):
-    n_files = 0
-    if select_files_click == None:
-        select_files_click = 0
+    flag = False
 
-    n_files = n_files + select_files_click
+    trigger = ctx.triggered_id
+    if trigger == ids.SELECT_FILES_BUTTON:
+        flag = True
 
-    return True, select_files_click
+    return True, flag
 
 
 @callback(
@@ -22,9 +22,10 @@ def open_modal(add_data_click, select_files_click):
     Input(ids.NFILES_PLACEHOLDER, 'children'),
     prevent_initial_call=True,
 )
-def load_file(n_files):
+def load_file(flag):
     # TODO: check number of loaded files, if 0 then hide DATA_SELECTOR_OPTIONS
-    print(n_files)
-    if n_files > 0:
+
+    if flag:
         return False
+    return True
 
