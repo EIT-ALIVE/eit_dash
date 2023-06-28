@@ -1,9 +1,7 @@
-from dash import Dash, html, dcc, callback, Output, Input, page_container
-import plotly.express as px
-import pandas as pd
+from dash import html, page_container
 import dash_bootstrap_components as dbc
 from app import app
-import callbacks.load_callbacks
+
 
 app.layout = html.Div([
     html.H1(children='EIT-ALIVE dashboard', style={'textAlign':'center'}),
