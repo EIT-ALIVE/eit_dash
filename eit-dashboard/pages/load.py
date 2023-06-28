@@ -7,7 +7,9 @@ import definitions.layout_styles as styles
 
 register_page(__name__, path='/load')
 
-summary = dbc.Col('summary')
+summary = dbc.Col([
+    html.H2('Summary', style=styles.COLUMN_TITLE)
+    ])
 
 
 actions = dbc.Col([
@@ -17,7 +19,8 @@ actions = dbc.Col([
 
 
 results = dbc.Col([
-    html.H2('Results', style=styles.COLUMN_TITLE)
+    html.H2('Results', style=styles.COLUMN_TITLE),
+    html.Div(id=ids.DATASET_CONTAINER, style=styles.LOAD_RESULTS)
 ])
 
 
@@ -65,7 +68,7 @@ modal_dialog = html.Div(
                 dbc.ModalFooter(
                     dbc.Button(
                         "Confirm",
-                        id='CONFIRM_CENTERED',
+                        id=ids.LOAD_CONFIRM_BUTTON,
                         className="ms-auto",
                         n_clicks=0,
                     )
