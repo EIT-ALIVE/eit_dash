@@ -1,0 +1,10 @@
+README.md
+setup.py
+eit-dashboard/app.py
+eit-dashboard/main.py
+eit_dashboard.egg-info/PKG-INFO
+eit_dashboard.egg-info/SOURCES.txt
+eit_dashboard.egg-info/dependency_links.txt
+eit_dashboard.egg-info/not-zip-safe
+eit_dashboard.egg-info/requires.txt
+eit_dashboard.egg-info/top_level.txt

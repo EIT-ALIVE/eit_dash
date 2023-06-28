@@ -1,0 +1,10 @@
+pyxdf
+pandas
+scipy
+matplotlib
+
+[dev]
+pytest
+codestyle
+isort
+wheel

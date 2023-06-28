@@ -14,7 +14,7 @@ from setuptools.command.install import install as InstallCommand
 
 project_dir = os.path.dirname(os.path.realpath(__file__))
 project_url = 'https://github.com/EIT-ALIVE/eit-dashboard'
-project_description = 'A package for GUI based analysis of electrical imepedance tomography'
+project_description = 'GUI analysis for electrical imepedance tomography'
 project_license = 'Apache v2'
 name = 'eit-dashboard'
 try:
@@ -515,7 +515,7 @@ if __name__ == '__main__':
     setup(
         name=name,
         version=version,
-        author='A team including the NLeSC and the Rotterdam Erasmus Medical Center',
+        author='A team fromthe NLeSC and Rotterdam Erasmus Medical Center',
         author_email='d.bodor@esciencecenter.nl',
         package_dir={'.': '', },
         packages=[

@@ -5,7 +5,7 @@ import callbacks.load_callbacks
 
 
 app.layout = html.Div([
-    html.H1(children='EIT-ALIVE dashboard', style={'textAlign': 'center'}),
+    html.H1(children='EIT-ALIVE dashboard', style={'textAlign':'center'}),
     dbc.Row([
         dbc.Col(dbc.NavLink('Load', href='/load')),
         dbc.Col(dbc.NavLink('Sync', href='/dummy')),
@@ -14,7 +14,7 @@ app.layout = html.Div([
         dbc.Col(dbc.NavLink('Analyze', href='/dummy')),
         dbc.Col(dbc.NavLink('Summarize', href='/dummy')),
     ],
-        style={'textAlign': 'center'}),
+        style={'textAlign':'center'}),
     page_container
 ])
 

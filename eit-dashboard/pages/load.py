@@ -100,4 +100,3 @@ layout = dbc.Row([
     placeholder_nfiles
 ])
 
-
