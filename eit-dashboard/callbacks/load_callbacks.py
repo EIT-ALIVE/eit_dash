@@ -50,7 +50,7 @@ def show_info(confirm_click, container_state, filetype):
     
     card_list = [
             html.H4(f'Dataset {confirm_click}', className="card-title"),
-            html.H6(InputFiletypes(int(filetype)).name, className="card-subtitle"),
+            html.H6(InputFiletypes(filetype).name, className="card-subtitle"),
         ]
     card_list += [dbc.Row(f'{data}: {dummy_data[data]}', style={'margin-left': 10}) for data in dummy_data]
     

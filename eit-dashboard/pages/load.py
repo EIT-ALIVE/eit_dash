@@ -28,7 +28,7 @@ input_type_selector = html.Div([
     dbc.Select(
         id =ids.INPUT_TYPE_SELECTOR,
         options = [{'label': filetype.name, "value": filetype.value} for filetype in InputFiletypes],
-        value = str(InputFiletypes.Draeger.value),
+        value = InputFiletypes.Sentec.value,
     ),
     html.P(),
     dbc.Row(dbc.Button('Select files', id=ids.SELECT_FILES_BUTTON)),
@@ -92,7 +92,7 @@ placeholder_nfiles = html.Div(
 
 
 layout = dbc.Row([
-    html.H1('this is the loading page'),
+    html.H1('LOAD DATA', style=styles.COLUMN_TITLE),
     summary,
     actions,
     results,
