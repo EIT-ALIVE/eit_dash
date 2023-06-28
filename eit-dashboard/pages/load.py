@@ -2,6 +2,7 @@ from dash import register_page, html, dcc
 import dash_bootstrap_components as dbc
 import definitions.element_ids as ids
 from definitions.option_lists import InputFiletypes, SignalSelections
+import definitions.layout_styles as styles
 # from app import app
 
 register_page(__name__, path='/load')
@@ -10,12 +11,14 @@ summary = dbc.Col('summary')
 
 
 actions = dbc.Col([
+    html.H2('Load datasets', style=styles.COLUMN_TITLE),
     dbc.Row(dbc.Button('Add dataset', id=ids.ADD_DATA_BUTTON)),
-    dbc.Row(dbc.Label('label', id='test-label'))
 ])
 
 
-results = dbc.Col('results')
+results = dbc.Col([
+    html.H2('Results', style=styles.COLUMN_TITLE)
+])
 
 
 input_type_selector = html.Div([
@@ -38,7 +41,7 @@ add_data_selector = html.Div(
         html.H5('Signal selections'),
         dbc.Row(dbc.Checklist(id=ids.CHECKBOX, 
             options = [{'label': signal.name, "value": signal.value} for signal in SignalSelections],
-            value = [signal.value for signal in SignalSelections],
+            # value = [signal.value for signal in SignalSelections],
             )),
         html.P(),
         html.H5('Pre selection'),

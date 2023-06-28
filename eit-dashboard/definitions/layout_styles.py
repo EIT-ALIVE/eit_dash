@@ -1,0 +1,1 @@
+COLUMN_TITLE = {'textAlign':'center'}
