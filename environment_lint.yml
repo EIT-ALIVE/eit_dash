@@ -12,6 +12,8 @@ dependencies:
   - dash=2.5.1
   - pip=20.2
 
-  - pip:
-    - git+https://github.com/EIT-ALIVE/eitprocessing.git@main
+
+# later we will need to install eitprocessing , but there is a problem with it's dependancies to be fixed later
+  # - pip:
+  #   - git+https://github.com/EIT-ALIVE/eitprocessing.git@main
 
