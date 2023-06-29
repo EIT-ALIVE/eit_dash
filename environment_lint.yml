@@ -12,6 +12,6 @@ dependencies:
   - dash=2.5.1
   - pip=20.2
 
-    - pip:
-    - git+https://github.com/EIT-ALIVE/eitprocessing.git@main
+  - pip:
+  - git+https://github.com/EIT-ALIVE/eitprocessing.git@main
 
