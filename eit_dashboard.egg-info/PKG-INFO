@@ -1,9 +1,9 @@
 Metadata-Version: 2.1
 Name: eit-dashboard
 Version: 0.0.0
-Summary: A package for GUI based analysis of electrical imepedance tomography
+Summary: GUI analysis for electrical imepedance tomography
 Home-page: https://github.com/EIT-ALIVE/eit-dashboard
-Author: A team including the NLeSC and the Rotterdam Erasmus Medical Center
+Author: A team fromthe NLeSC and Rotterdam Erasmus Medical Center
 Author-email: d.bodor@esciencecenter.nl
 License: Apache v2
 Description-Content-Type: text/markdown
