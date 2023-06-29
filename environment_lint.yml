@@ -13,6 +13,10 @@ dependencies:
   - pip=20.2
   - flask=2.1.3
 
-#  - pip:
-#    - git+https://github.com/EIT-ALIVE/eitprocessing.git@main
+
+
+# later we will need to install eitprocessing , but there is a problem with it's dependancies to be fixed later
+  # - pip:
+  #   - git+https://github.com/EIT-ALIVE/eitprocessing.git@main
+
 
