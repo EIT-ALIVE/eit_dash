@@ -74,4 +74,4 @@ jobs:
       - name: Check style against standards using prospector
         run: prospector
       - name: Check import order
-        run: isort --check-only dash --diff
+        run: isort --check-only eit_dash tests --diff
