@@ -11,10 +11,6 @@
 | (5/5) checklist                    | [![workflow cii badge](https://bestpractices.coreinfrastructure.org/projects/<replace-with-created-project-identifier>/badge)](https://bestpractices.coreinfrastructure.org/projects/<replace-with-created-project-identifier>) |
 | howfairis                          | [![fair-software badge](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu) |
 | Documentation                      | [![Documentation Status](https://readthedocs.org/projects/eit_dash/badge/?version=latest)](https://eit_dash.readthedocs.io/en/latest/?badge=latest) |
-| **GitHub Actions**                 | &nbsp; |
-| Build                              | [![build](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/build.yml/badge.svg)](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/build.yml) |
-| Citation data consistency               | [![cffconvert](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/cffconvert.yml/badge.svg)](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/cffconvert.yml) |
-| MarkDown link checker              | [![markdown-link-check](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/markdown-link-check.yml/badge.svg)](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/markdown-link-check.yml) |
 
 
 ## Mockup
