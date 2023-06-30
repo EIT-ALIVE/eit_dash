@@ -1,7 +1,7 @@
 from dash import html, page_container
 import dash_bootstrap_components as dbc
 from app import app
-import eit_dash.callbacks.load_callbacks # noqa
+import callbacks.load_callbacks # noqa
 
 
 app.layout = html.Div([
