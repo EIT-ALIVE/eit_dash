@@ -1,8 +1,8 @@
-from dash import html, page_container
 import dash_bootstrap_components as dbc
-from eit_dash.app import app
-import eit_dash.callbacks.load_callbacks # noqa
+from dash import html, page_container
 
+import eit_dash.callbacks.load_callbacks  # noqa
+from eit_dash.app import app
 
 app.layout = html.Div([
     html.H1(children='EIT-ALIVE dashboard', style={'textAlign':'center'}),

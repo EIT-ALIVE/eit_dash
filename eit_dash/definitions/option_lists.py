@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class InputFiletypes(Enum):
     Timpel = 0
     Draeger = 1

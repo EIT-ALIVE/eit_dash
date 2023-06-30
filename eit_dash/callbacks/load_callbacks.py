@@ -1,5 +1,6 @@
-from dash import callback, Output, Input, ctx, State, html
 import dash_bootstrap_components as dbc
+from dash import Input, Output, State, callback, ctx, html
+
 import eit_dash.definitions.element_ids as ids
 from eit_dash.definitions.option_lists import InputFiletypes
 
