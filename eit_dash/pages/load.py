@@ -1,8 +1,8 @@
 from dash import register_page, html, dcc
 import dash_bootstrap_components as dbc
-import definitions.element_ids as ids
-from definitions.option_lists import InputFiletypes, SignalSelections
-import definitions.layout_styles as styles
+import eit_dash.definitions.element_ids as ids
+from eit_dash.definitions.option_lists import InputFiletypes, SignalSelections
+import eit_dash.definitions.layout_styles as styles
 # from app import app
 
 register_page(__name__, path='/load')
@@ -99,5 +99,3 @@ layout = dbc.Row([
     modal_dialog,
     placeholder_nfiles
 ])
-
-

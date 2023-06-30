@@ -1,7 +1,7 @@
 from dash import callback, Output, Input, ctx, State, html
 import dash_bootstrap_components as dbc
-import definitions.element_ids as ids
-from definitions.option_lists import InputFiletypes
+import eit_dash.definitions.element_ids as ids
+from eit_dash.definitions.option_lists import InputFiletypes
 
 
 @callback(
@@ -9,7 +9,7 @@ from definitions.option_lists import InputFiletypes
     [Input(ids.ADD_DATA_BUTTON, 'n_clicks'), Input(ids.SELECT_FILES_BUTTON, 'n_clicks')],
     prevent_initial_call=True
 )
-def open_modal(add_data_click, select_files_click):
+def open_modal(add_data_click, select_files_click): # pylint: disable=unused-argument
     flag = False
 
     trigger = ctx.triggered_id
@@ -52,7 +52,7 @@ def show_info(confirm_click, container_state, filetype):
             html.H4(f'Dataset {confirm_click}', className="card-title"),
             html.H6(InputFiletypes(filetype).name, className="card-subtitle"),
         ]
-    card_list += [dbc.Row(f'{data}: {dummy_data[data]}', style={'margin-left': 10}) for data in dummy_data]
+    card_list += [dbc.Row(f'{data}: {value}', style={'margin-left': 10}) for data, value in dummy_data.items()]
     
     card = dbc.Card(
         dbc.CardBody(card_list),
