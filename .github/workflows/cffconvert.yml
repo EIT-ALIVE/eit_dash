@@ -2,15 +2,21 @@ name: cffconvert
 
 on:
   push:
+    paths:
+      - "**.cff"
     branches:
-    - main
+      - main
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "**.cff"
     branches:
-    - main
+      - main
 
 jobs:
 
   verify:
+    if: github.event.pull_request.draft == false
     name: "cffconvert"
     runs-on: ubuntu-latest
     steps:
