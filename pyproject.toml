@@ -7,7 +7,7 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 branch = true
-source = ["dash"]
+source = ["eit_dash"]
 command_line = "-m pytest"
 
 [tool.tox]

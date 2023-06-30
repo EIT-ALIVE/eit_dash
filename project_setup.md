@@ -66,7 +66,7 @@ help you decide which tool to use for packaging.
 ## Package version number
 
 - We recommend using [semantic versioning](https://guide.esciencecenter.nl/#/best_practices/releases?id=semantic-versioning).
-- For convenience, the package version is stored in a single place: `dash/.bumpversion.cfg`.
+- For convenience, the package version is stored in a single place: `eit_dash/.bumpversion.cfg`.
 - Don't forget to update the version number before [making a release](https://guide.esciencecenter.nl/#/best_practices/releases)!
 
 ## Logging

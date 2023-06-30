@@ -4,24 +4,24 @@
 
 | fair-software.eu recommendations | |
 | :-- | :--  |
-| (1/5) code repository              | [![github repo badge](https://img.shields.io/badge/github-repo-000.svg?logo=github&labelColor=gray&color=blue)](git@github.com:EIT-ALIVE/dash) |
-| (2/5) license                      | [![github license badge](https://img.shields.io/github/license/EIT-ALIVE/dash)](git@github.com:EIT-ALIVE/dash) |
-| (3/5) community registry           | [![RSD](https://img.shields.io/badge/rsd-dash-00a3e3.svg)](https://www.research-software.nl/software/dash) [![workflow pypi badge](https://img.shields.io/pypi/v/dash.svg?colorB=blue)](https://pypi.python.org/project/dash/) |
+| (1/5) code repository              | [![github repo badge](https://img.shields.io/badge/github-repo-000.svg?logo=github&labelColor=gray&color=blue)](git@github.com:EIT-ALIVE/eit_dash) |
+| (2/5) license                      | [![github license badge](https://img.shields.io/github/license/EIT-ALIVE/eit_dash)](git@github.com:EIT-ALIVE/eit_dash) |
+| (3/5) community registry           | [![RSD](https://img.shields.io/badge/rsd-eit_dash-00a3e3.svg)](https://www.research-software.nl/software/eit_dash) [![workflow pypi badge](https://img.shields.io/pypi/v/eit_dash.svg?colorB=blue)](https://pypi.python.org/project/eit_dash/) |
 | (4/5) citation                     | [![DOI](https://zenodo.org/badge/DOI/<replace-with-created-DOI>.svg)](https://doi.org/<replace-with-created-DOI>) |
 | (5/5) checklist                    | [![workflow cii badge](https://bestpractices.coreinfrastructure.org/projects/<replace-with-created-project-identifier>/badge)](https://bestpractices.coreinfrastructure.org/projects/<replace-with-created-project-identifier>) |
 | howfairis                          | [![fair-software badge](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu) |
-| Documentation                      | [![Documentation Status](https://readthedocs.org/projects/dash/badge/?version=latest)](https://dash.readthedocs.io/en/latest/?badge=latest) |
+| Documentation                      | [![Documentation Status](https://readthedocs.org/projects/eit_dash/badge/?version=latest)](https://eit_dash.readthedocs.io/en/latest/?badge=latest) |
 | **GitHub Actions**                 | &nbsp; |
-| Build                              | [![build](git@github.com:EIT-ALIVE/dash/actions/workflows/build.yml/badge.svg)](git@github.com:EIT-ALIVE/dash/actions/workflows/build.yml) |
-| Citation data consistency               | [![cffconvert](git@github.com:EIT-ALIVE/dash/actions/workflows/cffconvert.yml/badge.svg)](git@github.com:EIT-ALIVE/dash/actions/workflows/cffconvert.yml) |
-| MarkDown link checker              | [![markdown-link-check](git@github.com:EIT-ALIVE/dash/actions/workflows/markdown-link-check.yml/badge.svg)](git@github.com:EIT-ALIVE/dash/actions/workflows/markdown-link-check.yml) |
+| Build                              | [![build](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/build.yml/badge.svg)](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/build.yml) |
+| Citation data consistency               | [![cffconvert](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/cffconvert.yml/badge.svg)](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/cffconvert.yml) |
+| MarkDown link checker              | [![markdown-link-check](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/markdown-link-check.yml/badge.svg)](git@github.com:EIT-ALIVE/eit_dash/actions/workflows/markdown-link-check.yml) |
 
 
 ## Mockup
 
 [mockup](https://github.com/EIT-ALIVE/eitprocessing/files/11480259/Proposal.GUI.mockup.pptx)
 
-## How to use dash
+## How to use eit_dash
 
 GUI to load and analyze image data from electrical impedance tomography (EIT)
 
@@ -29,11 +29,11 @@ The project setup is documented in [project_setup.md](project_setup.md). Feel fr
 
 ## Installation
 
-To install dash from GitHub repository, do:
+To install eit_dash from GitHub repository, do:
 
 ```console
-git clone git@github.com:EIT-ALIVE/dash.git
-cd dash
+git clone git@github.com:EIT-ALIVE/eit_dash.git
+cd eit_dash
 python3 -m pip install .
 ```
 
@@ -43,7 +43,7 @@ Include a link to your project's full documentation here.
 
 ## Contributing
 
-If you want to contribute to the development of dash,
+If you want to contribute to the development of eit_dash,
 have a look at the [contribution guidelines](CONTRIBUTING.md).
 
 ## Credits

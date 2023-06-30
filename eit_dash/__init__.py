@@ -1,4 +1,4 @@
-"""Documentation about dash"""
+"""Documentation about eit_dash"""
 import logging
 
 
