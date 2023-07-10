@@ -1,5 +1,5 @@
-from dash import Dash
 import dash_bootstrap_components as dbc
+from dash import Dash
 
 FONT_AWESOME = "https://use.fontawesome.com/releases/v5.13.0/css/all.css"
 external_stylesheets = [dbc.themes.BOOTSTRAP, FONT_AWESOME]

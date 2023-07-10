@@ -1,0 +1,27 @@
+name: cffconvert
+
+on:
+  push:
+    paths:
+      - "**.cff"
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - "**.cff"
+    branches:
+      - main
+
+jobs:
+
+  verify:
+    if: github.event.pull_request.draft == false
+    name: "cffconvert"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Check out a copy of the repository
+
+      - uses: citation-file-format/cffconvert-github-action@main
+        name: Check whether the citation metadata from CITATION.cff is equivalent to that in .zenodo.json

@@ -1,9 +1,9 @@
-from dash import register_page, html, dcc
 import dash_bootstrap_components as dbc
+from dash import dcc, html, register_page
+
 import definitions.element_ids as ids
-from definitions.option_lists import InputFiletypes, SignalSelections
 import definitions.layout_styles as styles
-# from app import app
+from definitions.option_lists import InputFiletypes, SignalSelections
 
 register_page(__name__, path='/load')
 
@@ -28,11 +28,11 @@ input_type_selector = html.Div([
     dbc.Select(
         id =ids.INPUT_TYPE_SELECTOR,
         options = [{'label': filetype.name, "value": filetype.value} for filetype in InputFiletypes],
-        value = InputFiletypes.Sentec.value,
+        value = str(InputFiletypes.Sentec.value),
     ),
     html.P(),
     dbc.Row(dbc.Button('Select files', id=ids.SELECT_FILES_BUTTON)),
-    dbc.Row(dbc.Label(id=ids.METADATA)),    
+    dbc.Row(dbc.Label(id=ids.METADATA)),
 ])
 
 max_slider_length = 100
@@ -42,7 +42,7 @@ add_data_selector = html.Div(
     children = [
         html.P(),
         html.H5('Signal selections'),
-        dbc.Row(dbc.Checklist(id=ids.CHECKBOX, 
+        dbc.Row(dbc.Checklist(id=ids.CHECKBOX,
             options = [{'label': signal.name, "value": signal.value} for signal in SignalSelections],
             # value = [signal.value for signal in SignalSelections],
             )),
@@ -99,5 +99,3 @@ layout = dbc.Row([
     modal_dialog,
     placeholder_nfiles
 ])
-
-
