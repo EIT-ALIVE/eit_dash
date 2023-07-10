@@ -43,10 +43,10 @@ jobs:
           python3 --version
       - name: Upgrade pip and install dependencies
         run: |
-          python3 -m pip install --upgrade pip setuptools
-          python3 -m pip install .[dev,publishing]
+          python3 -m pip install --upgrade pip poetry
+          poetry install
       - name: Run unit tests
-        run: pytest -v
+        run: poetry run pytest -v
       - name: Verify that we can build the package
         run: python3 setup.py sdist bdist_wheel
 
@@ -69,8 +69,8 @@ jobs:
           python3 --version
       - name: Upgrade pip and install dependencies
         run: |
-          python3 -m pip install --upgrade pip setuptools
-          python3 -m pip install .[dev,publishing]
+          python3 -m pip install --upgrade pip poetry
+          poetry install
       - name: Check style against standards using prospector
         run: prospector
       # - name: Check import order
