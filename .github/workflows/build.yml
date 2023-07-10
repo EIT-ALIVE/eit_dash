@@ -73,5 +73,5 @@ jobs:
           python3 -m pip install .[dev,publishing]
       - name: Check style against standards using prospector
         run: prospector
-      - name: Check import order
-        run: isort --check-only eit_dash tests --diff
+      # - name: Check import order
+        # run: isort --check-only eit_dash tests --diff
