@@ -48,7 +48,7 @@ jobs:
       - name: Run unit tests
         run: poetry run pytest -v
       - name: Verify that we can build the package
-        run: poetry run setup.py sdist bdist_wheel
+        run: poetry build
 
   lint:
     if: github.event.pull_request.draft == false
