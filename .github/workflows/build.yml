@@ -48,7 +48,7 @@ jobs:
       - name: Run unit tests
         run: poetry run pytest -v
       - name: Verify that we can build the package
-        run: python3 setup.py sdist bdist_wheel
+        run: poetry run setup.py sdist bdist_wheel
 
   lint:
     if: github.event.pull_request.draft == false
@@ -72,6 +72,6 @@ jobs:
           python3 -m pip install --upgrade pip poetry
           poetry install
       - name: Check style against standards using prospector
-        run: prospector
+        run: poetry run prospector
       # - name: Check import order
         # run: isort --check-only eit_dash tests --diff
