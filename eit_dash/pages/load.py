@@ -1,9 +1,9 @@
 import dash_bootstrap_components as dbc
 from dash import dcc, html, register_page
 
-import eit_dash.definitions.element_ids as ids
-import eit_dash.definitions.layout_styles as styles
-from eit_dash.definitions.option_lists import InputFiletypes, SignalSelections
+import definitions.element_ids as ids
+import definitions.layout_styles as styles
+from definitions.option_lists import InputFiletypes, SignalSelections
 
 register_page(__name__, path='/load')
 
@@ -32,7 +32,7 @@ input_type_selector = html.Div([
     ),
     html.P(),
     dbc.Row(dbc.Button('Select files', id=ids.SELECT_FILES_BUTTON)),
-    dbc.Row(dbc.Label(id=ids.METADATA)),    
+    dbc.Row(dbc.Label(id=ids.METADATA)),
 ])
 
 max_slider_length = 100
@@ -42,7 +42,7 @@ add_data_selector = html.Div(
     children = [
         html.P(),
         html.H5('Signal selections'),
-        dbc.Row(dbc.Checklist(id=ids.CHECKBOX, 
+        dbc.Row(dbc.Checklist(id=ids.CHECKBOX,
             options = [{'label': signal.name, "value": signal.value} for signal in SignalSelections],
             # value = [signal.value for signal in SignalSelections],
             )),

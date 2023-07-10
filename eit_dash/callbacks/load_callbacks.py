@@ -1,8 +1,8 @@
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, ctx, html
 
-import eit_dash.definitions.element_ids as ids
-from eit_dash.definitions.option_lists import InputFiletypes
+import definitions.element_ids as ids
+from definitions.option_lists import InputFiletypes
 
 
 @callback(
@@ -48,21 +48,19 @@ def show_info(confirm_click, container_state, filetype):
         'filename': 'file.bin',
         'etc': 'etc',
     }
-    
+
     card_list = [
             html.H4(f'Dataset {confirm_click}', className="card-title"),
             html.H6(InputFiletypes(int(filetype)).name, className="card-subtitle"),
         ]
     card_list += [dbc.Row(f'{data}: {value}', style={'margin-left': 10}) for data, value in dummy_data.items()]
-    
+
     card = dbc.Card(
         dbc.CardBody(card_list),
     )
     if container_state:
-        container_state += [card] 
+        container_state += [card]
     else:
         container_state = [card]
 
     return container_state
-    
-    
