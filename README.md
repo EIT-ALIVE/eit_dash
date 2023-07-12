@@ -23,6 +23,34 @@ GUI to load and analyze image data from electrical impedance tomography (EIT)
 
 The project setup is documented in [project_setup.md](project_setup.md). Feel free to remove this document (and/or the link to this document) if you don't need it.
 
+## Getting started
+
+### Installing Poetry
+
+EIT Dashboard makes use of [poetry](https://python-poetry.org/) to easily manage the needed packages. 
+`Poetry` can be installed both at system level following the [installation instructions](https://python-poetry.org/docs/#installation) (suggested) or by running:
+
+```console
+pip install poetry
+```
+in an environment with Python 3.10.
+
+### Creating the virtual environment 
+
+The first time that the dashboard is used, the needed dependencies have to be installed by running:
+
+```console
+poetry install
+```
+
+### Running the dashboard
+
+Once the environment has been created, the dashboard can be run through:
+
+```console
+poetry run python eit_dash/main.py
+```
+
 ## Installation
 
 To install eit_dash from GitHub repository, do:
