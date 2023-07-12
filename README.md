@@ -28,18 +28,26 @@ The project setup is documented in [project_setup.md](project_setup.md). Feel fr
 ### Installing Poetry
 
 EIT Dashboard makes use of [poetry](https://python-poetry.org/) to easily manage the needed packages. 
-`Poetry` can be installed both at system level following the [installation instructions](https://python-poetry.org/docs/#installation) (suggested) or by running:
+`Poetry` can be installed both at system level following the [installation instructions](https://python-poetry.org/docs/#installation):
 
+In Linux, macOS, Windows (WSL)
 ```console
-pip install poetry
+curl -sSL https://install.python-poetry.org | python3 -
 ```
-in an environment with Python 3.10.
+
+In Windows (PowerShell)
+```console
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
+```
+
+Alternatively, Poetry can also be installed [using pip](https://pypi.org/project/poetry/). 
 
 ### Creating the virtual environment 
 
-The first time that the dashboard is used, the needed dependencies have to be installed by running:
+The first time that the dashboard is used, the repository needs to be cloned and the needed dependencies have to be installed by running:
 
 ```console
+git clone git@github.com:EIT-ALIVE/eit_dash.git
 poetry install
 ```
 
@@ -51,15 +59,6 @@ Once the environment has been created, the dashboard can be run through:
 poetry run python eit_dash/main.py
 ```
 
-## Installation
-
-To install eit_dash from GitHub repository, do:
-
-```console
-git clone git@github.com:EIT-ALIVE/eit_dash.git
-cd eit_dash
-python3 -m pip install .
-```
 
 ## Documentation
 
