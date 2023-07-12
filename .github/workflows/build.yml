@@ -43,12 +43,12 @@ jobs:
           python3 --version
       - name: Upgrade pip and install dependencies
         run: |
-          python3 -m pip install --upgrade pip setuptools
-          python3 -m pip install .[dev,publishing]
+          python3 -m pip install --upgrade pip poetry
+          poetry install --with test
       - name: Run unit tests
-        run: pytest -v
+        run: poetry run pytest -v
       - name: Verify that we can build the package
-        run: python3 setup.py sdist bdist_wheel
+        run: poetry build
 
   lint:
     if: github.event.pull_request.draft == false
@@ -69,9 +69,9 @@ jobs:
           python3 --version
       - name: Upgrade pip and install dependencies
         run: |
-          python3 -m pip install --upgrade pip setuptools
-          python3 -m pip install .[dev,publishing]
+          python3 -m pip install --upgrade pip poetry
+          poetry install --with test
       - name: Check style against standards using prospector
-        run: prospector
+        run: poetry run prospector
       # - name: Check import order
         # run: isort --check-only eit_dash tests --diff
