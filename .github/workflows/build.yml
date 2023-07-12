@@ -44,7 +44,7 @@ jobs:
       - name: Upgrade pip and install dependencies
         run: |
           python3 -m pip install --upgrade pip poetry
-          poetry install
+          poetry install --with test
       - name: Run unit tests
         run: poetry run pytest -v
       - name: Verify that we can build the package
@@ -70,7 +70,7 @@ jobs:
       - name: Upgrade pip and install dependencies
         run: |
           python3 -m pip install --upgrade pip poetry
-          poetry install
+          poetry install --with test
       - name: Check style against standards using prospector
         run: poetry run prospector
       # - name: Check import order
