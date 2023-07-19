@@ -18,7 +18,8 @@ def test_show_info_callback():
         dbc.Row("n_frames: 234", style={'margin-left': 10}),
         dbc.Row("filename: file.bin", style={'margin-left': 10}),
         dbc.Row("etc: etc", style={'margin-left': 10})
-    ]))]
+    ]),
+        id='card-1')]
 
     # Assessing the string converted objects, to check that the properties are the same.
     # Assessing for the equivalence of the objects directly will fail

@@ -46,7 +46,9 @@ jobs:
           python3 -m pip install --upgrade pip poetry
           poetry install --with test
       - name: Run unit tests
-        run: poetry run pytest -v
+        run: poetry run pytest -v unit_tests
+      - name: Run e2e tests
+        run: poetry run pytest -v --headless e2e_tests
       - name: Verify that we can build the package
         run: poetry build
 
