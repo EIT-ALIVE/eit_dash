@@ -25,10 +25,16 @@ def test_show_info_callback():
     # Assessing for the equivalence of the objects directly will fail
     assert str(output) == str(mock_data_card)
 
+    # rerun the callback with different inputs and verify that the output is different
+    output_new_params = show_info(1, None, 2)
+
+    assert str(output_new_params) != str(mock_data_card)
+
 
 def test_load_file_callback():
     output = load_file(True)
     assert output is False
+    assert output is not True
 
 
 def test_open_modal_callback():
@@ -41,4 +47,12 @@ def test_open_modal_callback():
 
     expected_output = (True, True)
 
+    # verify that a different input produces a different output
+    context_value.set(AttributeDict(**{"triggered_inputs": [
+        {"prop_id": f"{ids.ADD_DATA_BUTTON}.n_clicks"}
+    ]}))
+
+    output_new_params = open_modal(1, 1)
+
     assert output == expected_output
+    assert output_new_params != expected_output
