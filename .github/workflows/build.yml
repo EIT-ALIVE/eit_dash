@@ -47,10 +47,8 @@ jobs:
           poetry install --with test
       - name: Run unit tests
         run: poetry run pytest -v unit_tests
-      - name: Run e2e tests Chrome
-        run: poetry run pytest -v e2e_tests
-      - name: Run e2e tests Firefox
-        run: poetry run pytest -v  --webdriver Firefox e2e_tests
+      - name: Run e2e tests
+        run: poetry run pytest -v --headless e2e_tests
       - name: Verify that we can build the package
         run: poetry build
 
