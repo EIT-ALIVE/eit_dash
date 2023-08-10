@@ -34,7 +34,6 @@ def test_show_info_callback():
 def test_load_file_callback():
     output = load_file(True)
     assert output is False
-    assert output is not True
 
 
 def test_open_modal_callback():
