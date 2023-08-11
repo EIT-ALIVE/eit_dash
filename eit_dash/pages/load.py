@@ -1,9 +1,9 @@
 import dash_bootstrap_components as dbc
 from dash import dcc, html, register_page
 
-import definitions.element_ids as ids
-import definitions.layout_styles as styles
-from definitions.option_lists import InputFiletypes, SignalSelections
+import eit_dash.definitions.element_ids as ids
+import eit_dash.definitions.layout_styles as styles
+from eit_dash.definitions.option_lists import InputFiletypes, SignalSelections
 
 register_page(__name__, path='/load')
 

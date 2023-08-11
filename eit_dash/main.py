@@ -1,11 +1,11 @@
 import dash_bootstrap_components as dbc
 from dash import html, page_container
 
-import callbacks.load_callbacks  # noqa
-from app import app
+import eit_dash.callbacks.load_callbacks  # noqa
+from eit_dash.app import app
 
 app.layout = html.Div([
-    html.H1(children='EIT-ALIVE dashboard', style={'textAlign':'center'}),
+    html.H1(id='test-id',children='EIT-ALIVE dashboard', style={'textAlign':'center'}),
     dbc.Row([
         dbc.Col(dbc.NavLink('Load', href='/load')),
         dbc.Col(dbc.NavLink('Sync', href='/dummy')),
