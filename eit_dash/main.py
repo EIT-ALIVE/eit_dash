@@ -8,7 +8,7 @@ app.layout = html.Div([
     html.H1(id='test-id',children='EIT-ALIVE dashboard', style={'textAlign':'center'}),
     dbc.Row([
         dbc.Col(dbc.NavLink('Load', href='/load')),
-        dbc.Col(dbc.NavLink('Pre-processing', href='/dummy')),
+        dbc.Col(dbc.NavLink('Pre-processing', href='/preprocessing')),
         dbc.Col(dbc.NavLink('Analyze', href='/dummy')),
         dbc.Col(dbc.NavLink('Summarize', href='/dummy')),
     ],

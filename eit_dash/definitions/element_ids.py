@@ -1,3 +1,4 @@
+# load page
 ADD_DATA_BUTTON = 'add-data-button'
 CHOOSE_DATA_POPUP = 'choose-data-popup'
 INPUT_TYPE_SELECTOR = 'input-type-selector'
@@ -9,3 +10,12 @@ DATA_SELECTOR_OPTIONS = 'data-selector-options'
 NFILES_PLACEHOLDER = 'nfiles-placeholder'
 DATASET_CONTAINER = 'dataset-container'
 LOAD_CONFIRM_BUTTON = 'load-confirm-button'
+
+# preprocessing page
+CONFIRM_RESAMPLING_BUTTON = 'confirm-resampling-button'
+RESAMPLING_CARD = 'resampling-card'
+SUMMARY_COLUMN = 'summary-column'
+OPEN_FILTER_DATA_BUTTON = 'open-filter-data-button'
+OPEN_SELECT_RANGE_BUTTON = 'open-select-range-button'
+OPEN_SYNCH_BUTTON = 'open-synch-button'
+PREPROCESING_RESULTS_CONTAINER = 'preprocessing-results-container'
