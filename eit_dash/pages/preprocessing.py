@@ -36,9 +36,36 @@ results = dbc.Col([
 ],
     id=ids.PREPROCESING_RESULTS_CONTAINER)
 
+
+modal_synchronization = html.Div(
+    [
+        dbc.Modal(
+            [
+                dbc.ModalHeader(dbc.ModalTitle("Close"), close_button=True),
+                dbc.ModalBody(),
+                dbc.ModalFooter(
+                    dbc.Button(
+                        "Confirm",
+                        id=ids.SYNCHRONIZATION_CONFIRM_BUTTON,
+                        className="ms-auto",
+                        n_clicks=0,
+                    )
+                ),
+            ],
+            id=ids.SYNCHRONIZATION_POPUP,
+            centered=True,
+            is_open=False,
+            backdrop=False,
+            scrollable=True
+        ),
+    ]
+)
+
+
 layout = dbc.Row([
     html.H1('PRE-PROCESSING', style=styles.COLUMN_TITLE),
     summary,
     actions,
-    results
+    results,
+    modal_synchronization
 ])

@@ -56,3 +56,19 @@ def apply_resampling(apply_click, summary):  # pylint: disable=unused-argument
     return False, False, False, summary
 
 
+# open/close modal dialog for data synchronization
+@callback(
+    Output(ids.SYNCHRONIZATION_POPUP, 'is_open'),
+    [Input(ids.OPEN_SYNCH_BUTTON, 'n_clicks'),
+     Input(ids.SYNCHRONIZATION_CONFIRM_BUTTON, 'n_clicks')],
+    prevent_initial_call=True
+)
+def open_synch_modal(open_click, confirm_click):  # pylint: disable=unused-argument
+
+    trigger = ctx.triggered_id
+
+    if trigger == ids.OPEN_SYNCH_BUTTON:
+        return True
+    elif trigger == ids.SYNCHRONIZATION_CONFIRM_BUTTON:
+        return False
+

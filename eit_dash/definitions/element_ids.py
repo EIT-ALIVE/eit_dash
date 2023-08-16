@@ -13,6 +13,8 @@ LOAD_CONFIRM_BUTTON = 'load-confirm-button'
 
 # preprocessing page
 CONFIRM_RESAMPLING_BUTTON = 'confirm-resampling-button'
+SYNCHRONIZATION_POPUP = 'synchronization-popup'
+SYNCHRONIZATION_CONFIRM_BUTTON = 'synchronization-confirm-button'
 OPEN_FILTER_DATA_BUTTON = 'open-filter-data-button'
 OPEN_SELECT_RANGE_BUTTON = 'open-select-range-button'
 OPEN_SYNCH_BUTTON = 'open-synch-button'
