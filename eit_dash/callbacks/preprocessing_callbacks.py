@@ -43,10 +43,16 @@ def load_datasets(title):  # pylint: disable=unused-argument
 @callback(
     [Output(ids.OPEN_SYNCH_BUTTON, 'disabled'),
      Output(ids.OPEN_SELECT_RANGE_BUTTON, 'disabled'),
-     Output(ids.OPEN_FILTER_DATA_BUTTON, 'disabled')],
+     Output(ids.OPEN_FILTER_DATA_BUTTON, 'disabled'),
+     Output(ids.SUMMARY_COLUMN, 'children')],
     Input(ids.CONFIRM_RESAMPLING_BUTTON, 'n_clicks'),
+    State(ids.SUMMARY_COLUMN, 'children'),
     prevent_initial_call=True
 )
-def apply_resampling(apply_click): # pylint: disable=unused-argument
+def apply_resampling(apply_click, summary):  # pylint: disable=unused-argument
+    summary += [
+        dbc.Row([html.Div('Resampled dataset at 100Hz', style=styles.SUMMARY_ELEMENT)])
+    ]
+    return False, False, False, summary
 
-    return False, False, False
+

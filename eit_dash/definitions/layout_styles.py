@@ -1,3 +1,4 @@
+CARD_FOOTER = {'textAlign': 'right'}
 COLUMN_TITLE = {'textAlign': 'center'}
 LOAD_RESULTS = {'textAlign': 'center'}
-CARD_FOOTER = {'textAlign': 'right'}
+SUMMARY_ELEMENT = {'textAlign': 'center'}
