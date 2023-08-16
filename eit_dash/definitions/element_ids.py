@@ -13,9 +13,10 @@ LOAD_CONFIRM_BUTTON = 'load-confirm-button'
 
 # preprocessing page
 CONFIRM_RESAMPLING_BUTTON = 'confirm-resampling-button'
-RESAMPLING_CARD = 'resampling-card'
-SUMMARY_COLUMN = 'summary-column'
 OPEN_FILTER_DATA_BUTTON = 'open-filter-data-button'
 OPEN_SELECT_RANGE_BUTTON = 'open-select-range-button'
 OPEN_SYNCH_BUTTON = 'open-synch-button'
+PREPROCESING_TITLE = 'preprocessing-title'
 PREPROCESING_RESULTS_CONTAINER = 'preprocessing-results-container'
+RESAMPLING_CARD = 'resampling-card'
+SUMMARY_COLUMN = 'summary-column'

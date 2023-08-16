@@ -21,7 +21,7 @@ summary = dbc.Col([
     id=ids.SUMMARY_COLUMN)
 
 actions = dbc.Col([
-    html.H2('Pre-processing steps', style=styles.COLUMN_TITLE),
+    html.H2('Pre-processing steps', id=ids.PREPROCESING_TITLE, style=styles.COLUMN_TITLE),
     resampling_card,
     html.P(),
     dbc.Row(dbc.Button('Synchronize data', id=ids.OPEN_SYNCH_BUTTON, disabled=True)),
