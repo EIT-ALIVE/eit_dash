@@ -1,22 +1,24 @@
 from dash import html, Input, Output, State, callback, ctx
+from eit_dash.definitions.option_lists import SynchMethods
 
 import dash_bootstrap_components as dbc
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 
+dummy_data = [
+    dict(Number=1, sampling_frequency=100),
+    dict(Number=2, sampling_frequency=50),
+    dict(Number=3, sampling_frequency=250),
+]
+
 
 # this callback runs when the page is loaded (the title of the preprocessing is created)
-# and loads the data in the resampling card
+# and loads the data in the resampling card and in the dataset selrction menu
 @callback(
-    Output(ids.RESAMPLING_CARD, 'children'),
+    [Output(ids.RESAMPLING_CARD, 'children'), Output(ids.DATASET_SELECTION_CHECKBOX, 'options')],
     Input(ids.PREPROCESING_TITLE, 'children')
 )
 def load_datasets(title):  # pylint: disable=unused-argument
-    dummy_data = [
-        dict(Number=1, sampling_frequency=100),
-        dict(Number=2, sampling_frequency=50),
-        dict(Number=3, sampling_frequency=250),
-    ]
 
     row = [dbc.Row([
         dbc.Col([html.H6('Dataset')]),
@@ -36,7 +38,10 @@ def load_datasets(title):  # pylint: disable=unused-argument
         html.P()
     ]) for data in dummy_data]
 
-    return row
+    options = [{'label': f'Dateset {data["Number"]}', 'value': str(i)}
+               for i, data in enumerate(dummy_data)]
+
+    return row, options
 
 
 # apply resampling
@@ -71,4 +76,3 @@ def open_synch_modal(open_click, confirm_click):  # pylint: disable=unused-argum
         return True
     elif trigger == ids.SYNCHRONIZATION_CONFIRM_BUTTON:
         return False
-

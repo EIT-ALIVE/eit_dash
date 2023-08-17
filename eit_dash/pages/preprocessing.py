@@ -1,6 +1,7 @@
-import dash_bootstrap_components as dbc
 from dash import html, register_page
+from eit_dash.definitions.option_lists import SynchMethods
 
+import dash_bootstrap_components as dbc
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 
@@ -36,13 +37,22 @@ results = dbc.Col([
 ],
     id=ids.PREPROCESING_RESULTS_CONTAINER)
 
-
 modal_synchronization = html.Div(
     [
         dbc.Modal(
             [
-                dbc.ModalHeader(dbc.ModalTitle("Close"), close_button=True),
-                dbc.ModalBody(),
+                dbc.ModalHeader(dbc.ModalTitle("Data synchronization"), close_button=True),
+                dbc.ModalBody([
+                    dbc.Select(
+                        id=ids.SYNC_METHOD_SELECTOR,
+                        options=[{'label': method.name, "value": method.value} for method in
+                                 SynchMethods],
+                        value=str(SynchMethods.manual.value),
+                    ),
+                    html.P(),
+                    dbc.Row(dbc.Checklist(id=ids.DATASET_SELECTION_CHECKBOX)),
+                ]
+                ),
                 dbc.ModalFooter(
                     dbc.Button(
                         "Confirm",
@@ -56,11 +66,11 @@ modal_synchronization = html.Div(
             centered=True,
             is_open=False,
             backdrop=False,
-            scrollable=True
+            scrollable=True,
+            size='xl'
         ),
     ]
 )
-
 
 layout = dbc.Row([
     html.H1('PRE-PROCESSING', style=styles.COLUMN_TITLE),
