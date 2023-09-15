@@ -16,6 +16,12 @@ class SignalSelections(Enum):
     ignored = 3
 
 
+class PeriodsSelectMethods(Enum):
+    Manual = 0
+    AutomatedStablePeriods = 1
+    AutomatedPEEP = 2
+
+
 class SynchMethods(Enum):
     manual = 0
     algorithm_1 = 1

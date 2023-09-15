@@ -48,7 +48,7 @@ def load_datasets(title):  # pylint: disable=unused-argument
 # apply resampling
 @callback(
     [Output(ids.OPEN_SYNCH_BUTTON, 'disabled'),
-     Output(ids.OPEN_SELECT_RANGE_BUTTON, 'disabled'),
+     Output(ids.OPEN_SELECT_PERIODS_BUTTON, 'disabled'),
      Output(ids.OPEN_FILTER_DATA_BUTTON, 'disabled'),
      Output(ids.SUMMARY_COLUMN, 'children')],
     Input(ids.CONFIRM_RESAMPLING_BUTTON, 'n_clicks'),
@@ -76,6 +76,23 @@ def open_synch_modal(open_click, confirm_click):  # pylint: disable=unused-argum
     if trigger == ids.OPEN_SYNCH_BUTTON:
         return True
     elif trigger == ids.SYNCHRONIZATION_CONFIRM_BUTTON:
+        return False
+
+
+# open/close modal dialog for periods selection
+@callback(
+    Output(ids.PERIODS_SELECTION_POPUP, 'is_open'),
+    [Input(ids.OPEN_SELECT_PERIODS_BUTTON, 'n_clicks'),
+     Input(ids.PERIODS_CONFIRM_BUTTON, 'n_clicks')],
+    prevent_initial_call=True
+)
+def open_synch_modal(open_click, confirm_click):  # pylint: disable=unused-argument
+
+    trigger = ctx.triggered_id
+
+    if trigger == ids.OPEN_SELECT_PERIODS_BUTTON:
+        return True
+    elif trigger == ids.PERIODS_CONFIRM_BUTTON:
         return False
 
 

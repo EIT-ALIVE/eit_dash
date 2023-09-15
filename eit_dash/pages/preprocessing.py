@@ -1,5 +1,5 @@
 from dash import html, register_page
-from eit_dash.definitions.option_lists import SynchMethods
+from eit_dash.definitions.option_lists import SynchMethods, PeriodsSelectMethods
 
 import dash_bootstrap_components as dbc
 import eit_dash.definitions.element_ids as ids
@@ -27,7 +27,7 @@ actions = dbc.Col([
     html.P(),
     dbc.Row(dbc.Button('Synchronize data', id=ids.OPEN_SYNCH_BUTTON, disabled=True)),
     html.P(),
-    dbc.Row(dbc.Button('Select data range(s)', id=ids.OPEN_SELECT_RANGE_BUTTON, disabled=True)),
+    dbc.Row(dbc.Button('Select data range(s)', id=ids.OPEN_SELECT_PERIODS_BUTTON, disabled=True)),
     html.P(),
     dbc.Row(dbc.Button('Filter data', id=ids.OPEN_FILTER_DATA_BUTTON, disabled=True)),
 ])
@@ -37,6 +37,7 @@ results = dbc.Col([
 ],
     id=ids.PREPROCESING_RESULTS_CONTAINER)
 
+# popup for data synchronization
 modal_synchronization = html.Div(
     [
         dbc.Modal(
@@ -75,10 +76,45 @@ modal_synchronization = html.Div(
     ]
 )
 
+# popup for periods selection
+modal_selection = html.Div(
+    [
+        dbc.Modal(
+            [
+                dbc.ModalHeader(dbc.ModalTitle("Periods selection"), close_button=True),
+                dbc.ModalBody([
+                    dbc.Select(
+                        id=ids.PERIODS_METHOD_SELECTOR,
+                        options=[{'label': method.name, "value": method.value} for method in
+                                 PeriodsSelectMethods],
+                        value=str(PeriodsSelectMethods.Manual.value),
+                    )
+                ]
+                ),
+                dbc.ModalFooter(
+                    dbc.Button(
+                        "Confirm",
+                        id=ids.PERIODS_CONFIRM_BUTTON,
+                        className="ms-auto",
+                        n_clicks=0,
+                    )
+                ),
+            ],
+            id=ids.PERIODS_SELECTION_POPUP,
+            centered=True,
+            is_open=False,
+            backdrop=False,
+            scrollable=True,
+            size='xl'
+        ),
+    ]
+)
+
 layout = dbc.Row([
     html.H1('PRE-PROCESSING', style=styles.COLUMN_TITLE),
     summary,
     actions,
     results,
-    modal_synchronization
+    modal_synchronization,
+    modal_selection
 ])
