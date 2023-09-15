@@ -13,9 +13,12 @@ LOAD_CONFIRM_BUTTON = 'load-confirm-button'
 
 # preprocessing page
 CONFIRM_RESAMPLING_BUTTON = 'confirm-resampling-button'
+CONFIRM_SYNCH_BUTTON = 'confirm-synch-button'
 DATASET_SELECTION_CHECKBOX = 'dataset-selection-checkbox'
 SYNCHRONIZATION_POPUP = 'synchronization-popup'
 SYNCHRONIZATION_CONFIRM_BUTTON = 'synchronization-confirm-button'
+SYNC_DATA_PREVIEW_CONTAINER = 'sync-data-preview-container'
+SYNC_DATA_PREVIEW_GRAPH = 'sync-data-preview-graph'
 SYNC_METHOD_SELECTOR = 'sync-method-selector'
 OPEN_FILTER_DATA_BUTTON = 'open-filter-data-button'
 OPEN_SELECT_RANGE_BUTTON = 'open-select-range-button'

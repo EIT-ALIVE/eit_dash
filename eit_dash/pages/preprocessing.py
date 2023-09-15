@@ -51,6 +51,9 @@ modal_synchronization = html.Div(
                     ),
                     html.P(),
                     dbc.Row(dbc.Checklist(id=ids.DATASET_SELECTION_CHECKBOX)),
+                    html.P(),
+                    dbc.Row(id=ids.SYNC_DATA_PREVIEW_CONTAINER),
+                    dbc.Button('SYNCH PREVIEW', id=ids.CONFIRM_SYNCH_BUTTON)
                 ]
                 ),
                 dbc.ModalFooter(
