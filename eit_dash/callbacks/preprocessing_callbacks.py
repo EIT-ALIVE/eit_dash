@@ -1,4 +1,4 @@
-from dash import html, Input, Output, State, callback, ctx, dcc, ALL, MATCH
+from dash import html, Input, Output, State, callback, ctx, dcc, MATCH
 
 import dash_bootstrap_components as dbc
 import eit_dash.definitions.element_ids as ids
@@ -6,20 +6,27 @@ import eit_dash.definitions.layout_styles as styles
 import numpy as np
 import plotly.graph_objs as go
 
-dummy_data = [
-    dict(Number=1, sampling_frequency=100),
-    dict(Number=2, sampling_frequency=50),
-    dict(Number=3, sampling_frequency=250),
-]
+
+def get_loaded_data():
+
+    dummy_data = [
+        dict(Number=1, sampling_frequency=100),
+        dict(Number=2, sampling_frequency=50),
+        dict(Number=3, sampling_frequency=250),
+    ]
+
+    return dummy_data
 
 
 # this callback runs when the page is loaded (the title of the preprocessing is created)
-# and loads the data in the resampling card and in the dataset selrction menu
+# and loads the data in the resampling card and in the dataset selection menu
 @callback(
     [Output(ids.RESAMPLING_CARD, 'children'), Output(ids.DATASET_SELECTION_CHECKBOX, 'options')],
     Input(ids.PREPROCESING_TITLE, 'children')
 )
 def load_datasets(title):  # pylint: disable=unused-argument
+
+    dummy_data = get_loaded_data()
 
     row = [dbc.Row([
         dbc.Col([html.H6('Dataset')]),
@@ -86,7 +93,7 @@ def open_synch_modal(open_click, confirm_click):  # pylint: disable=unused-argum
      Input(ids.PERIODS_CONFIRM_BUTTON, 'n_clicks')],
     prevent_initial_call=True
 )
-def open_synch_modal(open_click, confirm_click):  # pylint: disable=unused-argument
+def open_periods_modal(open_click, confirm_click):  # pylint: disable=unused-argument
 
     trigger = ctx.triggered_id
 
@@ -96,21 +103,6 @@ def open_synch_modal(open_click, confirm_click):  # pylint: disable=unused-argum
         return False
 
 
-# logic for synchronization algorithm selection
-# @callback(
-#     Output(ids.DATASET_SELECTION_CHECKBOX, 'style'),
-#     Input(ids.SYNC_METHOD_SELECTOR, 'value'),
-#     prevent_initial_call=False
-# )
-# def open_synch_modal(synch_method):  # pylint: disable=unused-argument
-#
-#     style = {'visibility': 'hidden'}
-#
-#     if synch_method == str(SynchMethods.manual.value):
-#         style['visibility'] = 'visible'
-#
-#     return style
-
 # Show dataset
 @callback(
     Output(ids.SYNC_DATA_PREVIEW_CONTAINER, 'children'),
@@ -118,9 +110,10 @@ def open_synch_modal(open_click, confirm_click):  # pylint: disable=unused-argum
     State(ids.SYNC_DATA_PREVIEW_CONTAINER, 'children'),
     prevent_initial_call=True
 )
-def open_synch_modal(selected_dataset, current_content):  # pylint: disable=unused-argument
+def show_data(selected_dataset, current_content):  # pylint: disable=unused-argument
 
-    sample_data = np.load('C:\\Users\\WalterBaccinelli\\Documents\\EIT\\EIT-dashboard\\sample.npy')
+    x = np.linspace(-2*np.pi, 2*np.pi, 201)
+    sample_data = np.sin(x)
 
     fig = go.Figure(data=[go.Scatter(y=sample_data)])
 
@@ -137,7 +130,7 @@ def open_synch_modal(selected_dataset, current_content):  # pylint: disable=unus
     State({'type': ids.SYNC_DATA_PREVIEW_GRAPH, 'index': MATCH}, 'figure'),
     prevent_initial_call=True
 )
-def open_synch_modal(selected_point, figure):  # pylint: disable=unused-argument
+def mark_selected_point(selected_point, figure):  # pylint: disable=unused-argument
     fig = go.Figure(figure)
 
     x = selected_point['points'][0]['x']
