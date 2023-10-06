@@ -1,15 +1,21 @@
 import dash_bootstrap_components as dbc
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
+import numpy as np
+import plotly.graph_objs as go
 import pytest
 
 from dash._callback_context import context_value
 from dash._utils import AttributeDict
-from dash import html
+from dash import dcc, html
 from eit_dash.callbacks.preprocessing_callbacks import (apply_resampling, load_datasets,
-                                                        open_periods_modal, open_synch_modal,
-                                                        show_data)
+                                                        mark_selected_point, open_periods_modal,
+                                                        open_synch_modal, show_data)
 from unittest.mock import MagicMock
+
+
+mock_series = np.sin(np.linspace(-2 * np.pi, 2 * np.pi, 201))
+mock_fig = go.Figure(data=[go.Scatter(y=mock_series)])
 
 
 def test_load_datasets_callback():
@@ -96,3 +102,27 @@ def test_open_periods_modal_callback():
     assert output == expected_output
     assert output_new_params != expected_output
 
+
+def test_show_data_callback():
+
+    dataset = 1
+
+    expected_output = [dcc.Graph(figure=mock_fig,
+                                 id={'type': ids.SYNC_DATA_PREVIEW_GRAPH, 'index': dataset})]
+
+    output = show_data([dataset], [])
+
+    assert str(expected_output) == str(output)
+
+
+def test_mark_selected_point_callback():
+
+    x_selected = 10
+    mock_selected_point = {'points': [{'x': x_selected}]}
+
+    output = mark_selected_point(mock_selected_point, mock_fig)
+
+    mock_fig_vline = mock_fig.add_vline(x=x_selected, line_width=3,
+                                        line_dash="dash", line_color="green")
+
+    assert str(mock_fig_vline) == str(output)
