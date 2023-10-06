@@ -21,24 +21,18 @@ def test_load_datasets_callback():
                   mock_get_loaded_data)
 
         mock_data_row = [dbc.Row([
-            dbc.Col([html.H6('Dataset')]),
-            dbc.Col([html.H6('Sampling frequency')]),
-            dbc.Col([html.H6('Resample to')])
+            dbc.Col([html.H6('Sequence')]),
+            dbc.Col([html.H6('Sampling frequency')])
         ]),
             html.P(),
             dbc.Row([
-                dbc.Col('Dataset 1'),
+                dbc.Col('Sequence 1'),
                 dbc.Col('10 Hz'),
-                dbc.Col([dbc.Input(
-                    type="number",
-                    placeholder="Resampling frequency",
-                    value=100
-                )]),
                 html.P()
             ])
         ]
 
-        mock_options = [{'label': 'Dateset 1', 'value': '0'}]
+        mock_options = [{'label': 'Sequence 1', 'value': '0'}]
 
         mock_return = (mock_data_row, mock_options)
 
@@ -49,9 +43,13 @@ def test_load_datasets_callback():
 
 
 def test_apply_resampling_callback():
-    output = apply_resampling(0, [])
 
-    added_row = [dbc.Row([html.Div('Resampled dataset at 100Hz', style=styles.SUMMARY_ELEMENT)])]
+    test_frequency = 10
+
+    output = apply_resampling(0, [], test_frequency)
+
+    added_row = [dbc.Row([html.Div(f'Resampled dataset at {test_frequency}Hz',
+                                   style=styles.SUMMARY_ELEMENT)])]
 
     assert output[0] is False
     assert output[1] is False

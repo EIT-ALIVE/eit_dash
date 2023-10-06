@@ -29,24 +29,18 @@ def load_datasets(title):  # pylint: disable=unused-argument
     dummy_data = get_loaded_data()
 
     row = [dbc.Row([
-        dbc.Col([html.H6('Dataset')]),
-        dbc.Col([html.H6('Sampling frequency')]),
-        dbc.Col([html.H6('Resample to')])
+        dbc.Col([html.H6('Sequence')]),
+        dbc.Col([html.H6('Sampling frequency')])
     ]),
         html.P()]
 
     row += [dbc.Row([
-        dbc.Col(f'Dataset {data["Number"]}'),
+        dbc.Col(f'Sequence {data["Number"]}'),
         dbc.Col(f'{data["sampling_frequency"]} Hz'),
-        dbc.Col([dbc.Input(
-            type="number",
-            placeholder="Resampling frequency",
-            value=100
-        )]),
         html.P()
     ]) for data in dummy_data]
 
-    options = [{'label': f'Dateset {data["Number"]}', 'value': str(i)}
+    options = [{'label': f'Sequence {data["Number"]}', 'value': str(i)}
                for i, data in enumerate(dummy_data)]
 
     return row, options
@@ -59,12 +53,12 @@ def load_datasets(title):  # pylint: disable=unused-argument
      Output(ids.OPEN_FILTER_DATA_BUTTON, 'disabled'),
      Output(ids.SUMMARY_COLUMN, 'children')],
     Input(ids.CONFIRM_RESAMPLING_BUTTON, 'n_clicks'),
-    State(ids.SUMMARY_COLUMN, 'children'),
+    [State(ids.SUMMARY_COLUMN, 'children'), State(ids.RESAMPLING_FREQUENCY_INPUT, 'value')],
     prevent_initial_call=True
 )
-def apply_resampling(apply_click, summary):  # pylint: disable=unused-argument
-    summary += [
-        dbc.Row([html.Div('Resampled dataset at 100Hz', style=styles.SUMMARY_ELEMENT)])
+def apply_resampling(apply_click, summary, frequency):  # pylint: disable=unused-argument
+    summary = [
+        dbc.Row([html.Div(f'Resampled dataset at {frequency}Hz', style=styles.SUMMARY_ELEMENT)])
     ]
     return False, False, False, summary
 

@@ -11,7 +11,16 @@ resampling_card = dbc.Card([
     dbc.CardHeader('Resampling'),
     dbc.CardBody(id=ids.RESAMPLING_CARD),
     dbc.CardFooter([
-        dbc.Button('Apply', id=ids.CONFIRM_RESAMPLING_BUTTON)
+        dbc.Row([dbc.Col([dbc.Input(
+            type="number",
+            placeholder="Resampling frequency",
+            value=100,
+            id=ids.RESAMPLING_FREQUENCY_INPUT
+        )]),
+            dbc.Col([
+                dbc.Button('Apply', id=ids.CONFIRM_RESAMPLING_BUTTON)
+            ])
+        ])
     ],
         style=styles.CARD_FOOTER)
 ])
