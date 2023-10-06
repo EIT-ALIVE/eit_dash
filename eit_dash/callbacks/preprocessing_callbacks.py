@@ -10,9 +10,9 @@ import plotly.graph_objs as go
 def get_loaded_data():
 
     dummy_data = [
-        dict(Number=1, sampling_frequency=100),
-        dict(Number=2, sampling_frequency=50),
-        dict(Number=3, sampling_frequency=250),
+        {"Number": 1, "sampling_frequency": 100},
+        {"Number": 2, "sampling_frequency": 50},
+        {"Number": 3, "sampling_frequency": 250},
     ]
 
     return dummy_data
@@ -76,8 +76,8 @@ def open_synch_modal(open_click, confirm_click):  # pylint: disable=unused-argum
 
     if trigger == ids.OPEN_SYNCH_BUTTON:
         return True
-    elif trigger == ids.SYNCHRONIZATION_CONFIRM_BUTTON:
-        return False
+
+    return False
 
 
 # open/close modal dialog for periods selection
@@ -93,8 +93,8 @@ def open_periods_modal(open_click, confirm_click):  # pylint: disable=unused-arg
 
     if trigger == ids.OPEN_SELECT_PERIODS_BUTTON:
         return True
-    elif trigger == ids.PERIODS_CONFIRM_BUTTON:
-        return False
+
+    return False
 
 
 # Show dataset
@@ -124,11 +124,10 @@ def show_data(selected_dataset, current_content):  # pylint: disable=unused-argu
     State({'type': ids.SYNC_DATA_PREVIEW_GRAPH, 'index': MATCH}, 'figure'),
     prevent_initial_call=True
 )
-def mark_selected_point(selected_point, figure):  # pylint: disable=unused-argument
+def mark_selected_point(selected_point, figure):
     fig = go.Figure(figure)
 
     x = selected_point['points'][0]['x']
 
     fig.add_vline(x=x, line_width=3, line_dash="dash", line_color="green")
     return fig
-

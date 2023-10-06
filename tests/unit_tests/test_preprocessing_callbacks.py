@@ -20,7 +20,7 @@ mock_fig = go.Figure(data=[go.Scatter(y=mock_series)])
 
 def test_load_datasets_callback():
     mock_get_loaded_data = MagicMock()
-    mock_get_loaded_data.return_value = [dict(Number=1, sampling_frequency=10)]
+    mock_get_loaded_data.return_value = [{"Number": 1, "sampling_frequency": 10}]
 
     with pytest.MonkeyPatch.context() as m:
         m.setattr('eit_dash.callbacks.preprocessing_callbacks.get_loaded_data',
