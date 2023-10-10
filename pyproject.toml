@@ -27,6 +27,8 @@ repository = "git@github.com:EIT-ALIVE/eit_dash"
 python = "^3.10"
 dash = {extras = ["testing"], version = "^2.11.1"}
 dash-bootstrap-components = "^1.4.1"
+numpy = "^1.25.2"
+pandas = "^2.0.3"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
