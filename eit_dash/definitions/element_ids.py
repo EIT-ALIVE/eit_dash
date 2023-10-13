@@ -1,6 +1,8 @@
 # load page
 ADD_DATA_BUTTON = 'add-data-button'
 CHOOSE_DATA_POPUP = 'choose-data-popup'
+CWD = 'cwd'
+CWD_FILES = 'cwd-files'
 INPUT_TYPE_SELECTOR = 'input-type-selector'
 SELECT_FILES_BUTTON = 'select-files-button'
 METADATA = 'metadata'
@@ -10,6 +12,9 @@ DATA_SELECTOR_OPTIONS = 'data-selector-options'
 NFILES_PLACEHOLDER = 'nfiles-placeholder'
 DATASET_CONTAINER = 'dataset-container'
 LOAD_CONFIRM_BUTTON = 'load-confirm-button'
+LOAD_CANCEL_BUTTON = 'load-cancel-button'
+PARENT_DIR = 'parent-dir'
+STORED_CWD = 'stored-cwd'
 
 # preprocessing page
 CONFIRM_RESAMPLING_BUTTON = 'confirm-resampling-button'
