@@ -24,9 +24,10 @@ repository = "git@github.com:EIT-ALIVE/eit_dash"
 "Bug Tracker" = "git@github.com:EIT-ALIVE/eit_dash/issues"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.13"
 dash = {extras = ["testing"], version = "^2.11.1"}
 dash-bootstrap-components = "^1.4.1"
+eitprocessing = {git = "https://github.com/EIT-ALIVE/eitprocessing", rev = "main"}
 numpy = "^1.25.2"
 pandas = "^2.0.3"
 

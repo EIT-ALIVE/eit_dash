@@ -30,24 +30,20 @@ input_type_selector = html.Div([
 ])
 
 max_slider_length = 100
-add_data_selector = html.Div(
+add_data_selector = dcc.Loading(
+    html.Div(
     id=ids.DATA_SELECTOR_OPTIONS,
     hidden=True,
     children=[
         html.P(),
         html.H5('Signal selections'),
-        dbc.Row(dbc.Checklist(id=ids.CHECKBOX,
-                              options=[{'label': signal.name, "value": signal.value} for signal in
-                                       SignalSelections],
-                              # value = [signal.value for signal in SignalSelections],
-                              )),
+        dbc.Row(dcc.Checklist(id=ids.CHECKBOX_SIGNALS)),
         html.P(),
         html.H5('Pre selection'),
         dcc.RangeSlider(0, max_slider_length, 1,
-                        value=[10, 50],
                         id=ids.FILE_LENGTH_SLIDER,
-                        marks={n: str(n) for n in
-                               range(0, max_slider_length, max_slider_length // 10)},
+                        # marks={n: str(n) for n in
+                        #        range(0, max_slider_length, max_slider_length // 10)},
                         tooltip={"placement": "bottom", "always_visible": True},
                         allowCross=False,
                         ),
@@ -74,6 +70,7 @@ add_data_selector = html.Div(
         ],
             style={'textAlign': 'center'}),
     ]
+)
 )
 
 actions = dbc.Col([
@@ -102,12 +99,21 @@ file_browser = html.Div([
     ])
 ])
 
+alert_load = dbc.Alert(
+            "The selected file cannot be loaded",
+            id=ids.ALERT_LOAD,
+            color="primary",
+            dismissable=True,
+            is_open=False,
+            duration=3000
+        )
+
 modal_dialog = html.Div(
     [
-        dbc.Modal(
+        dcc.Loading([dbc.Modal(
             [
                 dbc.ModalHeader(dbc.ModalTitle("Select a file"), close_button=True),
-                dbc.ModalBody([file_browser]),
+                dbc.ModalBody([alert_load, file_browser]),
                 dbc.ModalFooter(
                     dbc.Button(
                         "Confirm",
@@ -119,10 +125,11 @@ modal_dialog = html.Div(
             ],
             id=ids.CHOOSE_DATA_POPUP,
             centered=True,
-            is_open=True,
+            is_open=False,
             backdrop=False,
             scrollable=True
-        ),
+        )])
+
     ]
 )
 
