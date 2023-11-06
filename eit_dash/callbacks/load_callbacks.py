@@ -13,7 +13,7 @@ from eitprocessing.binreader.sequence import Sequence
 file_data = None
 
 
-# managing the file selection
+# managing the file selection. Confirm button clicked
 @callback(
     Output(ids.CHOOSE_DATA_POPUP, 'is_open'),
     Output(ids.NFILES_PLACEHOLDER, 'children'),
@@ -24,17 +24,26 @@ file_data = None
     State(ids.INPUT_TYPE_SELECTOR, 'value'),
     prevent_initial_call=True
 )
-def open_modal(open_btn, close_btn, file_path, file_type):  # pylint: disable=unused-argument
+# load the information selected from the file (e.g., signals, time span)
+def load_selected_data(select_file, confirm_select, file_path, file_type):  # pylint: disable=unused-argument
     open_modal = True
     data = None
     show_alert = False
     read_data_flag = False
 
+    global file_data
+
     trigger = ctx.triggered_id
+
+    # when the button for selecting the file has been clicked
+    if trigger == ids.SELECT_FILES_BUTTON:
+        # if a file has been loaded already, the data should not be cancelled,
+        # unless a new file is loaded. if `data` is None, the selection is cancelled
+        data = file_path if file_data else None
 
     # if the callback has not been triggered by the select files button,
     # get the information on the selected file and try to read it
-    if trigger != ids.SELECT_FILES_BUTTON:
+    if trigger == ids.LOAD_CONFIRM_BUTTON:
         path = Path(file_path)
         extension = path.suffix if not path.name.startswith('.') else path.name
 
@@ -55,28 +64,77 @@ def open_modal(open_btn, close_btn, file_path, file_type):  # pylint: disable=un
     return open_modal, data, show_alert
 
 
+# # managing the file selection. Cancel button clicked
+# @callback(
+#     Output(ids.CHOOSE_DATA_POPUP, 'is_open'),
+#     Output(ids.NFILES_PLACEHOLDER, 'children'),
+#     Output(ids.ALERT_LOAD, 'is_open'),
+#     Input(ids.LOAD_CANCEL_BUTTON, 'n_clicks'),
+#     prevent_initial_call=True
+# )
+# # load the information selected from the file (e.g., signals, time span)
+# def load_selected_data(open_btn, close_btn, file_path, file_type):  # pylint: disable=unused-argument
+#     open_modal = True
+#     data = None
+#     show_alert = False
+#     read_data_flag = False
+#
+#     trigger = ctx.triggered_id
+#
+#     # if the callback has not been triggered by the select files button,
+#     # get the information on the selected file and try to read it
+#     if trigger != ids.SELECT_FILES_BUTTON:
+#         path = Path(file_path)
+#         extension = path.suffix if not path.name.startswith('.') else path.name
+#
+#         # check if the file extension is compatible with the file type selected
+#         if (int(file_type)) == InputFiletypes.Draeger.value:
+#             if extension == '.bin':
+#                 read_data_flag = True
+#
+#         # if the type check is ok, then close the file selector and read the data
+#         if read_data_flag:
+#             data = file_path
+#             open_modal = False
+#
+#         # if it's not ok, then show an alert
+#         else:
+#             show_alert = True
+#
+#     return open_modal, data, show_alert
+
+
 @callback(
     Output(ids.DATA_SELECTOR_OPTIONS, 'hidden'),
     Output(ids.CHECKBOX_SIGNALS, 'options'),
     Output(ids.FILE_LENGTH_SLIDER, 'min'),
     Output(ids.FILE_LENGTH_SLIDER, 'max'),
     Input(ids.NFILES_PLACEHOLDER, 'children'),
+    Input(ids.LOAD_CANCEL_BUTTON, 'n_clicks'),
     State(ids.INPUT_TYPE_SELECTOR, 'value'),
     prevent_initial_call=True)
-def open_data_selector(data, file_type):
+# read the file selected in the file selector
+def open_data_selector(data, cancel_load, file_type):
     options = []
     min_slider = 0
     max_slider = 0
 
+    global file_data
+
+    trigger = ctx.triggered_id
+
+    # cancelled selection. Reset the data and turn of the data selector
+    if trigger == ids.LOAD_CANCEL_BUTTON:
+        data = None
+        file_data = None
+
     if not data:
         return True, options, min_slider, max_slider
 
-    global file_data
-
     path = Path(data)
     file_data = Sequence.from_path(path, vendor=InputFiletypes(int(file_type)).name)
-    min_slider=file_data.time[0]
-    max_slider=file_data.time[-1]
+    min_slider = file_data.time[0]
+    max_slider = file_data.time[-1]
 
     for frameset in file_data.framesets:
         if frameset == 'raw':

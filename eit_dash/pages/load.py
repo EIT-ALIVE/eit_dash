@@ -32,45 +32,44 @@ input_type_selector = html.Div([
 max_slider_length = 100
 add_data_selector = dcc.Loading(
     html.Div(
-    id=ids.DATA_SELECTOR_OPTIONS,
-    hidden=True,
-    children=[
-        html.P(),
-        html.H5('Signal selections'),
-        dbc.Row(dcc.Checklist(id=ids.CHECKBOX_SIGNALS)),
-        html.P(),
-        html.H5('Pre selection'),
-        dcc.RangeSlider(0, max_slider_length, 1,
-                        id=ids.FILE_LENGTH_SLIDER,
-                        # marks={n: str(n) for n in
-                        #        range(0, max_slider_length, max_slider_length // 10)},
-                        tooltip={"placement": "bottom", "always_visible": True},
-                        allowCross=False,
-                        ),
-        dbc.Row([
-            dbc.Col([
-                dbc.Button(
-                    "Confirm",
-                    id=ids.LOAD_CONFIRM_BUTTON,
-                    className="ms-auto",
-                    color='success',
-                    n_clicks=0,
-                )
-            ]),
+        id=ids.DATA_SELECTOR_OPTIONS,
+        hidden=True,
+        children=[
+            html.P(),
+            html.H5('Signal selections'),
+            dbc.Row(dcc.Checklist(id=ids.CHECKBOX_SIGNALS)),
+            html.P(),
+            html.H5('Pre selection'),
+            dcc.RangeSlider(0, max_slider_length, 1,
+                            id=ids.FILE_LENGTH_SLIDER,
+                            marks=None,
+                            tooltip={"placement": "bottom", "always_visible": True},
+                            allowCross=False,
+                            ),
+            dbc.Row([
+                dbc.Col([
+                    dbc.Button(
+                        "Confirm",
+                        id=ids.LOAD_CONFIRM_BUTTON,
+                        className="ms-auto",
+                        color='success',
+                        n_clicks=0,
+                    )
+                ]),
 
-            dbc.Col([
-                dbc.Button(
-                    "Cancel",
-                    id=ids.LOAD_CANCEL_BUTTON,
-                    className="ms-auto",
-                    color='danger',
-                    n_clicks=0,
-                )
-            ])
-        ],
-            style={'textAlign': 'center'}),
-    ]
-)
+                dbc.Col([
+                    dbc.Button(
+                        "Cancel",
+                        id=ids.LOAD_CANCEL_BUTTON,
+                        className="ms-auto",
+                        color='danger',
+                        n_clicks=0,
+                    )
+                ])
+            ],
+                style={'textAlign': 'center'}),
+        ]
+    )
 )
 
 actions = dbc.Col([
@@ -100,13 +99,13 @@ file_browser = html.Div([
 ])
 
 alert_load = dbc.Alert(
-            "The selected file cannot be loaded",
-            id=ids.ALERT_LOAD,
-            color="primary",
-            dismissable=True,
-            is_open=False,
-            duration=3000
-        )
+    "The selected file cannot be loaded",
+    id=ids.ALERT_LOAD,
+    color="primary",
+    dismissable=True,
+    is_open=False,
+    duration=3000
+)
 
 modal_dialog = html.Div(
     [
