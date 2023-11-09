@@ -116,7 +116,7 @@ modal_dialog = html.Div(
                 dbc.ModalFooter(
                     dbc.Button(
                         "Confirm",
-                        id=ids.LOAD_CONFIRM_BUTTON,
+                        id=ids.SELECT_CONFIRM_BUTTON,
                         className="ms-auto",
                         n_clicks=0,
                     )

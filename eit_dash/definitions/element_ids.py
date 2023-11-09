@@ -16,6 +16,7 @@ LOAD_CONFIRM_BUTTON = 'load-confirm-button'
 LOAD_CANCEL_BUTTON = 'load-cancel-button'
 PARENT_DIR = 'parent-dir'
 STORED_CWD = 'stored-cwd'
+SELECT_CONFIRM_BUTTON = 'select-confirm-button'
 
 # preprocessing page
 CONFIRM_RESAMPLING_BUTTON = 'confirm-resampling-button'

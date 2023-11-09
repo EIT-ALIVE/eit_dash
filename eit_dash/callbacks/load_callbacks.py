@@ -7,6 +7,7 @@ from dash import Input, Output, State, callback, ctx, html, ALL
 from dash.exceptions import PreventUpdate
 
 import eit_dash.definitions.element_ids as ids
+from eit_dash.app import data_object
 from eit_dash.definitions.option_lists import InputFiletypes, SignalSelections
 from eitprocessing.binreader.sequence import Sequence
 
@@ -19,7 +20,7 @@ file_data = None
     Output(ids.NFILES_PLACEHOLDER, 'children'),
     Output(ids.ALERT_LOAD, 'is_open'),
     Input(ids.SELECT_FILES_BUTTON, 'n_clicks'),
-    Input(ids.LOAD_CONFIRM_BUTTON, 'n_clicks'),
+    Input(ids.SELECT_CONFIRM_BUTTON, 'n_clicks'),
     State(ids.STORED_CWD, 'data'),
     State(ids.INPUT_TYPE_SELECTOR, 'value'),
     prevent_initial_call=True
@@ -43,7 +44,7 @@ def load_selected_data(select_file, confirm_select, file_path, file_type):  # py
 
     # if the callback has not been triggered by the select files button,
     # get the information on the selected file and try to read it
-    if trigger == ids.LOAD_CONFIRM_BUTTON:
+    if trigger == ids.SELECT_CONFIRM_BUTTON:
         path = Path(file_path)
         extension = path.suffix if not path.name.startswith('.') else path.name
 
@@ -146,49 +147,54 @@ def open_data_selector(data, cancel_load, file_type):
     return False, options, min_slider, max_slider
 
 
-# @callback(
-#     Output(ids.DATASET_CONTAINER, 'children'),
-#     Input(ids.LOAD_CONFIRM_BUTTON, 'n_clicks'),
-#     State(ids.NFILES_PLACEHOLDER, 'children'),
-#     State(ids.DATASET_CONTAINER, 'children'),
-#     State(ids.INPUT_TYPE_SELECTOR, 'value'),
-#     prevent_initial_call=True,
-# )
-# def show_info(btn_click, loaded_data, container_state, filetype):
-#     # TODO read data from file
-#     # TODO read secondary input parameters from input selection
-#
-#     if file_data:
-#         name = file_data.path.name
-#         nframes = file_data.nframes
-#         vendor = file_data.vendor
-#         path = str(file_data.path)
-#
-#         info_data = {
-#                    'Name': name,
-#                    'n_frames': nframes,
-#                    'vendor': vendor,
-#                    'path': path
-#                }
-#
-#         card_list = [
-#             html.H4(f'Dataset ', className="card-title"),
-#             html.H6(InputFiletypes(int(filetype)).name, className="card-subtitle"),
-#         ]
-#         card_list += [dbc.Row(f'{data}: {value}', style={'margin-left': 10}) for data, value in
-#                       info_data.items()]
-#
-#         card = dbc.Card(
-#             dbc.CardBody(card_list),
-#             id='card-1'
-#         )
-#
-#         if container_state:
-#             container_state += [card]
-#         else:
-#             container_state = [card]
-#
-#     return container_state
+@callback(
+    Output(ids.DATASET_CONTAINER, 'children'),
+    Input(ids.LOAD_CONFIRM_BUTTON, 'n_clicks'),
+    State(ids.NFILES_PLACEHOLDER, 'children'),
+    State(ids.DATASET_CONTAINER, 'children'),
+    State(ids.INPUT_TYPE_SELECTOR, 'value'),
+    State(ids.FILE_LENGTH_SLIDER, 'value'),
+    prevent_initial_call=True,
+)
+def show_info(btn_click, loaded_data, container_state, filetype, selected_values):
+    # TODO read data from file
+    # TODO read secondary input parameters from input selection
+    global file_data
+
+    if file_data:
+        name = file_data.path.name
+        nframes = file_data.nframes
+        vendor = file_data.vendor
+        path = str(file_data.path)
+
+        info_data = {
+                   'Name': name,
+                   'n_frames': nframes,
+                   'vendor': vendor,
+                   'path': path
+               }
+
+        card_list = [
+            html.H4(f'Dataset ', className="card-title"),
+            html.H6(InputFiletypes(int(filetype)).name, className="card-subtitle"),
+        ]
+        card_list += [dbc.Row(f'{data}: {value}', style={'margin-left': 10}) for data, value in
+                      info_data.items()]
+
+        card = dbc.Card(
+            dbc.CardBody(card_list),
+            id='card-1'
+        )
+
+        if container_state:
+            container_state += [card]
+        else:
+            container_state = [card]
+
+        # save the selected data in the singleton
+        data_object.add_sequence(file_data)
+
+    return container_state
 
 
 # file browser
