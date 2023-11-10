@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Dict
 
 import dash_bootstrap_components as dbc
-from dash import Input, Output, State, callback, ctx, html, ALL,dcc
+from dash import Input, Output, State, callback, ctx, html, ALL
 from dash.exceptions import PreventUpdate
 
 import eit_dash.definitions.element_ids as ids
@@ -112,14 +112,12 @@ def get_signal_options(dataset: Sequence) -> List[Dict[str, int | str]]:
     prevent_initial_call=True
 )
 # load the information selected from the file (e.g., signals, time span)
-def load_selected_data(select_file, confirm_select, file_path,
-                       file_type):  # pylint: disable=unused-argument
+def load_selected_data(select_file, confirm_select,  # pylint: disable=unused-argument
+                       file_path, file_type):
     open_modal = True
     data = None
     show_alert = False
     read_data_flag = False
-
-    global file_data
 
     trigger = ctx.triggered_id
 
@@ -161,7 +159,7 @@ def load_selected_data(select_file, confirm_select, file_path,
     State(ids.INPUT_TYPE_SELECTOR, 'value'),
     prevent_initial_call=True)
 # read the file selected in the file selector
-def open_data_selector(data, cancel_load, file_type):
+def open_data_selector(data, cancel_load, file_type):  # pylint: disable=unused-argument
 
     global file_data
 
@@ -197,15 +195,12 @@ def open_data_selector(data, cancel_load, file_type):
     State(ids.CHECKBOX_SIGNALS, 'value'),
     prevent_initial_call=True,
 )
-def show_info(btn_click, loaded_data, container_state, filetype, slidebar_stat, selected_signals):
-    global file_data
+def show_info(btn_click, loaded_data,  # pylint: disable=unused-argument, disable=too-many-arguments
+              container_state, filetype, slidebar_stat, selected_signals):
 
     if file_data and selected_signals is not None:
 
         if slidebar_stat is not None and 'xaxis.range' in slidebar_stat:
-            start_sample = slidebar_stat['xaxis.range'][0]
-            stop_sample = slidebar_stat['xaxis.range'][1]
-        elif slidebar_stat is not None and ('xaxis.range[0]' and 'xaxis.range[1]' in slidebar_stat):
             start_sample = slidebar_stat['xaxis.range'][0]
             stop_sample = slidebar_stat['xaxis.range'][1]
         else:
@@ -236,7 +231,7 @@ def show_info(btn_click, loaded_data, container_state, filetype, slidebar_stat, 
     Input(ids.PARENT_DIR, 'n_clicks'),
     Input(ids.CWD, 'children'),
     prevent_initial_call=True)
-def get_parent_directory(stored_cwd, n_clicks, currentdir):
+def get_parent_directory(stored_cwd, n_clicks, currentdir):  # pylint: disable=unused-argument
     triggered_id = ctx.triggered_id
     if triggered_id == ids.STORED_CWD:
         return stored_cwd
