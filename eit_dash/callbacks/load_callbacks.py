@@ -1,14 +1,17 @@
 import os
 from pathlib import Path
+from typing import List, Dict
 
 import dash_bootstrap_components as dbc
-from dash import Input, Output, State, callback, ctx, html, ALL
+from dash import Input, Output, State, callback, ctx, html, ALL,dcc
 from dash.exceptions import PreventUpdate
 
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
-from eit_dash.definitions.option_lists import InputFiletypes, SignalSelections
+from eit_dash.definitions.option_lists import InputFiletypes
 from eitprocessing.binreader.sequence import Sequence
+
+import plotly.graph_objects as go
 
 file_data: Sequence | None = None
 
@@ -48,6 +51,54 @@ def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
 
     return card
 
+
+def create_slider_figure(dataset: Sequence) -> go.Figure:
+    """
+    Create the figure for the selection of range.
+
+    Args:
+        dataset: Sequence object containing the selected dataset
+    """
+
+    traces = [{
+        'x': dataset.time,
+        'y': dataset.framesets['raw'].global_impedance,
+        'type': 'scatter',
+        'mode': 'lines',
+        'name': 'a_level'
+    }]
+
+    figure = go.Figure(
+        data=traces,
+        layout=go.Layout(
+            xaxis={
+                'rangeslider': {'visible': True}
+            },
+        )
+    )
+
+    return figure
+
+
+def get_signal_options(dataset: Sequence) -> List[Dict[str, int | str]]:
+    """
+    Get the options for signal selection to be shown in the signal selection section.
+
+    Args:
+        dataset: Sequence object containing the selected dataset
+    """
+    options = []
+
+    for frameset in dataset.framesets:
+        if frameset == 'raw':
+            label = 'raw'
+            value = 3
+        else:
+            label = frameset
+            value = 5
+        options.append({'label': label, 'value': value})
+
+    return options
 
 # managing the file selection. Confirm button clicked
 @callback(
@@ -104,19 +155,13 @@ def load_selected_data(select_file, confirm_select, file_path,
 @callback(
     Output(ids.DATA_SELECTOR_OPTIONS, 'hidden'),
     Output(ids.CHECKBOX_SIGNALS, 'options'),
-    Output(ids.FILE_LENGTH_SLIDER, 'min'),
-    Output(ids.FILE_LENGTH_SLIDER, 'max'),
-    Output(ids.FILE_LENGTH_SLIDER, 'value'),
+    Output(ids.FILE_LENGTH_SLIDER, 'figure'),
     Input(ids.NFILES_PLACEHOLDER, 'children'),
     Input(ids.LOAD_CANCEL_BUTTON, 'n_clicks'),
     State(ids.INPUT_TYPE_SELECTOR, 'value'),
     prevent_initial_call=True)
 # read the file selected in the file selector
 def open_data_selector(data, cancel_load, file_type):
-    options = []
-    min_slider = 0
-    max_slider = 10
-    selcted_range = [0, 10]
 
     global file_data
 
@@ -128,24 +173,18 @@ def open_data_selector(data, cancel_load, file_type):
         file_data = None
 
     if not data:
-        return True, options, min_slider, max_slider, selcted_range
+        # this is needed, because a figure object must be returned for the graph, evn if empty
+        figure = go.Figure()
+        return True, [], figure
 
     path = Path(data)
     file_data = Sequence.from_path(path, vendor=InputFiletypes(int(file_type)).name)
-    min_slider = file_data.time[0]
-    max_slider = file_data.time[-1]
-    selcted_range = [min_slider, max_slider]
 
-    for frameset in file_data.framesets:
-        if frameset == 'raw':
-            label = 'raw'
-            value = 3
-        else:
-            label = frameset
-            value = 5
-        options.append({'label': label, 'value': value})
+    options = get_signal_options(file_data)
 
-    return False, options, min_slider, max_slider, selcted_range
+    figure = create_slider_figure(file_data)
+
+    return False, options, figure
 
 
 @callback(
@@ -154,16 +193,26 @@ def open_data_selector(data, cancel_load, file_type):
     State(ids.NFILES_PLACEHOLDER, 'children'),
     State(ids.DATASET_CONTAINER, 'children'),
     State(ids.INPUT_TYPE_SELECTOR, 'value'),
-    State(ids.FILE_LENGTH_SLIDER, 'value'),
+    State(ids.FILE_LENGTH_SLIDER, 'relayoutData'),
     State(ids.CHECKBOX_SIGNALS, 'value'),
     prevent_initial_call=True,
 )
-def show_info(btn_click, loaded_data, container_state, filetype, selected_range, selected_signals):
+def show_info(btn_click, loaded_data, container_state, filetype, slidebar_stat, selected_signals):
     global file_data
 
     if file_data and selected_signals is not None:
 
-        cut_data = file_data.select_by_time(selected_range[0], selected_range[1])
+        if slidebar_stat is not None and 'xaxis.range' in slidebar_stat:
+            start_sample = slidebar_stat['xaxis.range'][0]
+            stop_sample = slidebar_stat['xaxis.range'][1]
+        elif slidebar_stat is not None and ('xaxis.range[0]' and 'xaxis.range[1]' in slidebar_stat):
+            start_sample = slidebar_stat['xaxis.range'][0]
+            stop_sample = slidebar_stat['xaxis.range'][1]
+        else:
+            start_sample = file_data.time[0]
+            stop_sample = file_data.time[-1]
+
+        cut_data = file_data.select_by_time(start_sample, stop_sample)
 
         # save the selected data in the singleton
         data_object.add_sequence(cut_data)

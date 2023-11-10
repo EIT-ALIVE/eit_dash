@@ -6,8 +6,24 @@ from dash import dcc, html, register_page
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 from eit_dash.definitions.option_lists import InputFiletypes, SignalSelections
-
+import plotly.graph_objects as go
 register_page(__name__, path='/load')
+
+traces = [{
+    'x': [1,2,3,4],
+    'y': [1,2,3,4],
+    'type': 'scatter',
+    'mode': 'lines',
+    'name': 'a_level'
+}]
+figure = go.Figure(
+    data=traces,
+    layout=go.Layout(
+        xaxis={
+            'rangeslider': {'visible': True}
+        },
+    )
+)
 
 summary = dbc.Col([
     html.H2('Summary', style=styles.COLUMN_TITLE)
@@ -38,14 +54,9 @@ add_data_selector = dcc.Loading(
             html.P(),
             html.H5('Signal selections'),
             dbc.Row(dcc.Checklist(id=ids.CHECKBOX_SIGNALS)),
-            html.P(),
             html.H5('Pre selection'),
-            dcc.RangeSlider(0, max_slider_length, 1,
-                            id=ids.FILE_LENGTH_SLIDER,
-                            marks=None,
-                            tooltip={"placement": "bottom", "always_visible": True},
-                            allowCross=False,
-                            ),
+            dcc.Graph(id=ids.FILE_LENGTH_SLIDER, figure=figure),
+            html.Div(),
             dbc.Row([
                 dbc.Col([
                     dbc.Button(
