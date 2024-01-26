@@ -1,8 +1,6 @@
 from threading import Lock
 from typing import List
-
-from eitprocessing.binreader.sequence import Sequence
-
+from eitprocessing.sequence import Sequence
 
 _singleton = None
 _lock = Lock()
@@ -19,7 +17,6 @@ def get_singleton():
 
 
 class LoadedData:
-
     def __init__(self):
         self._data: List[Sequence] = []
 

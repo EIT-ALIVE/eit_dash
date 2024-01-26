@@ -10,11 +10,12 @@ class InputFiletypes(Enum):
 
 
 class SignalSelections(Enum):
-    airway_pressure = 0
-    flow = 1
-    esophageal_pressure = 2
-    raw = 3
-    ignored = 4
+    raw = 0
+    airway_pressure = 1
+    flow = 2
+    esophageal_pressure = 3
+    volume = 4
+    CO2 = 5
 
 
 class PeriodsSelectMethods(Enum):
