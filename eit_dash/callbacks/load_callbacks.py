@@ -73,6 +73,7 @@ def create_slider_figure(dataset: Sequence) -> go.Figure:
         data=traces,
         layout=go.Layout(
             xaxis={"rangeslider": {"visible": True}},
+            margin={"t": 0, "l": 0, "b": 0, "r": 0},
         ),
     )
     for event in dataset.eit_data.events:
