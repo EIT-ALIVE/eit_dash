@@ -38,7 +38,7 @@ max_slider_length = 100
 add_data_selector = dcc.Loading(
     html.Div(
         id=ids.DATA_SELECTOR_OPTIONS,
-        hidden=False,
+        hidden=True,
         children=[
             html.P(),
             html.H5("Signal selections", style=styles.SECTION_TITLE),
