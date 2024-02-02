@@ -139,7 +139,8 @@ modal_selection = html.Div(
                             ],
                             value=str(PeriodsSelectMethods.Manual.value),
                         ),
-                    ],
+                        html.Div(dbc.Col(id=ids.PERIODS_SELECTION_BODY)),
+                    ]
                 ),
                 dbc.ModalFooter(
                     dbc.Button(
