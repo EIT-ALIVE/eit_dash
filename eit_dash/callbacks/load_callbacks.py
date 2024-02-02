@@ -214,7 +214,9 @@ def open_data_selector(data, cancel_load, file_type):  # pylint: disable=unused-
 
     path = Path(data)
     eit_data, continuous_data, sparse_data = EITData.from_path(
-        path, vendor=InputFiletypes(int(file_type)).name, return_non_eit_data=True
+        path,
+        vendor=InputFiletypes(int(file_type)).name.lower(),
+        return_non_eit_data=True,
     )
 
     file_data = Sequence(
