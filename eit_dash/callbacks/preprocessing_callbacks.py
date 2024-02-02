@@ -50,6 +50,19 @@ def create_resampling_card(loaded_data):
     return row, options
 
 
+def create_loaded_data_summary():
+    loaded = []
+
+    loaded_data = data_object.get_all_sequences()
+
+    for dataset in loaded_data:
+        loaded.append(
+            dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})])
+        )
+
+    return loaded
+
+
 def get_loaded_data():
     loaded_data = data_object.get_all_sequences()
     data = []
@@ -112,25 +125,21 @@ def load_datasets(title):  # pylint: disable=unused-argument
         Output(ids.OPEN_FILTER_DATA_BUTTON, "disabled"),
         Output(ids.SUMMARY_COLUMN, "children"),
     ],
-    Input(ids.CONFIRM_RESAMPLING_BUTTON, "n_clicks"),
+    [
+        Input(ids.PREPROCESING_TITLE, "children"),
+    ],
     [
         State(ids.SUMMARY_COLUMN, "children"),
-        State(ids.RESAMPLING_FREQUENCY_INPUT, "value"),
     ],
-    prevent_initial_call=True,
+    prevent_initial_call=False,
 )
-def apply_resampling(
-    apply_click, summary, frequency
-):  # pylint: disable=unused-argument
-    summary = [
-        dbc.Row(
-            [
-                html.Div(
-                    f"Resampled dataset at {frequency}Hz", style=styles.SUMMARY_ELEMENT
-                )
-            ]
-        )
-    ]
+def update_summary(start, summary):  # pylint: disable=unused-argument
+    trigger = ctx.triggered_id
+
+    if trigger is None:
+        data = create_loaded_data_summary()
+        summary += data
+
     return False, False, False, summary
 
 
