@@ -17,7 +17,7 @@ import plotly.graph_objects as go
 file_data: Sequence | None = None
 
 
-def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
+def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> dbc.Card:
     """
     Create the card with the information on the loaded dataset
     to be displayed in the Results section
@@ -35,10 +35,8 @@ def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
         "path": str(dataset.eit_data.path),
     }
 
-    dataset_n = data_object.get_list_length()
-
     card_list = [
-        html.H4(f"Dataset {dataset_n}", className="card-title"),
+        html.H4(dataset_name, className="card-title"),
         html.H6(InputFiletypes(file_type).name, className="card-subtitle"),
     ]
     card_list += [
@@ -256,16 +254,19 @@ def show_info(
             start_sample = file_data.eit_data.time[0]
             stop_sample = file_data.eit_data.time[-1]
 
+        dataset_name = f"Dataset {data_object.get_list_length()}"
+
         # TODO: adapt this to also continuous data
         cut_data = Sequence(
-            eit_data=file_data.eit_data.select_by_time(start_sample, stop_sample)
+            label=dataset_name,
+            eit_data=file_data.eit_data.select_by_time(start_sample, stop_sample),
         )
 
         # save the selected data in the singleton
         data_object.add_sequence(cut_data)
 
         # create the info summary card
-        card = create_info_card(cut_data, int(filetype))
+        card = create_info_card(cut_data, int(filetype), dataset_name)
 
         # add the card to the current results
         if container_state:
