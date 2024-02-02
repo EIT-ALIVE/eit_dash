@@ -140,7 +140,6 @@ modal_selection = html.Div(
                 dbc.ModalHeader(dbc.ModalTitle("Periods selection"), close_button=True),
                 dbc.ModalBody(
                     [
-                        html.H6("Periods selection method"),
                         dbc.Select(
                             id=ids.PERIODS_METHOD_SELECTOR,
                             options=[

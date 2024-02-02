@@ -77,11 +77,10 @@ def get_loaded_data():
                     "Name": name,
                     "Data type": "EIT",
                     "Sampling frequency": dataset.eit_data.framerate,
-                },
+                }
             )
 
     return data
-
 
 def get_suggested_resampling(loaded_data):
     resampling_freq = 0
@@ -119,7 +118,6 @@ def load_datasets(title):  # pylint: disable=unused-argument
     # TODO: uncomment lines above for resampling
 
     return [], [], [], None
-
 
 
 # apply resampling
@@ -270,7 +268,7 @@ def show_data(selected_dataset, current_content):
 
     content = [
         dcc.Graph(
-            figure=fig, id={"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": selected},
+            figure=fig, id={"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": selected}
         )
         for selected in selected_dataset
     ]
