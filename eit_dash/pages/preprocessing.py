@@ -1,4 +1,4 @@
-from dash import html, register_page
+from dash import dcc, html, register_page
 from eit_dash.definitions.option_lists import SynchMethods, PeriodsSelectMethods
 
 import dash_bootstrap_components as dbc
@@ -123,7 +123,15 @@ modal_synchronization = html.Div(
     ]
 )
 
-# popup for periods selection
+modal_selection_body = html.Div(
+    [
+        dbc.Row(id=ids.PERIODS_SELECTION_SELECT_DATASET),
+        dbc.Row(id=ids.PREPROCESING_SIGNALS_CHECKBOX_ROW),
+        dbc.Row([dcc.Graph(id=ids.PREPROCESING_PERIODS_GRAPH)]),
+    ],
+    id=ids.PERIODS_SELECTION_BODY,
+)
+
 modal_selection = html.Div(
     [
         dbc.Modal(
@@ -131,15 +139,15 @@ modal_selection = html.Div(
                 dbc.ModalHeader(dbc.ModalTitle("Periods selection"), close_button=True),
                 dbc.ModalBody(
                     [
+                        html.H6("Periods selection method"),
                         dbc.Select(
                             id=ids.PERIODS_METHOD_SELECTOR,
                             options=[
                                 {"label": method.name, "value": method.value}
                                 for method in PeriodsSelectMethods
                             ],
-                            value=str(PeriodsSelectMethods.Manual.value),
                         ),
-                        html.Div(dbc.Col(id=ids.PERIODS_SELECTION_BODY)),
+                        modal_selection_body,
                     ]
                 ),
                 dbc.ModalFooter(

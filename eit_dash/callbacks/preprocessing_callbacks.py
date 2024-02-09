@@ -1,5 +1,7 @@
 from dash import html, Input, Output, State, callback, ctx, dcc, MATCH
 from eit_dash.app import data_object
+from eit_dash.definitions.option_lists import PeriodsSelectMethods
+from eit_dash.utils.common import create_slider_figure, get_signal_options
 from eitprocessing.sequence import Sequence
 
 import dash_bootstrap_components as dbc
@@ -86,7 +88,7 @@ def get_loaded_data():
 def get_suggested_resampling(loaded_data):
     resampling_freq = 0
     for data in loaded_data:
-        if data["Sampling frequency"] != "EIT":
+        if data["Data type"] != "EIT":
             resampling_freq = min(resampling_freq, data["Sampling frequency"])
 
     return resampling_freq
@@ -104,17 +106,21 @@ def get_suggested_resampling(loaded_data):
     Input(ids.PREPROCESING_TITLE, "children"),
 )
 def load_datasets(title):  # pylint: disable=unused-argument
-    loaded_data = get_loaded_data()
-    continuous_data_loaded = check_continuous_data_loaded()
+    # loaded_data = get_loaded_data()
+    # continuous_data_loaded = check_continuous_data_loaded()
+    #
+    # if not continuous_data_loaded:
+    #     return [], [], [], None
+    #
+    # suggested_resampling = get_suggested_resampling(loaded_data)
+    #
+    # row, options = create_resampling_card(loaded_data)
+    #
+    # return row, options, suggested_resampling
 
-    if not continuous_data_loaded:
-        return [], [], [], None
+    # TODO: uncomment lines above for resampling
 
-    suggested_resampling = get_suggested_resampling(loaded_data)
-
-    row, options = create_resampling_card(loaded_data)
-
-    return row, options, suggested_resampling
+    return [], [], [], None
 
 
 # apply resampling
@@ -177,6 +183,83 @@ def open_periods_modal(open_click, confirm_click):  # pylint: disable=unused-arg
         return True
 
     return False
+
+
+# populate modal body according to the selected method
+@callback(
+    Output(ids.PERIODS_SELECTION_SELECT_DATASET, "children"),
+    Input(ids.PERIODS_METHOD_SELECTOR, "value"),
+    prevent_initial_call=True,
+)
+def populate_periods_selection_datasets(method):  # pylint: disable=unused-argument
+    int_value = int(method)
+
+    if int_value == PeriodsSelectMethods.Manual.value:
+        signals = data_object.get_all_sequences()
+        options = [
+            {"label": sequence.label, "value": index}
+            for index, sequence in enumerate(signals)
+        ]
+
+        body = [
+            html.H6("Select one dataset"),
+            dbc.Select(
+                id=ids.PREPROCESING_DATASET_SELECT,
+                options=options,
+            ),
+        ]
+    else:
+        body = []
+
+    return body
+
+
+# populate signals selection in the manual selection case
+@callback(
+    Output(ids.PREPROCESING_SIGNALS_CHECKBOX_ROW, "children"),
+    Input(ids.PREPROCESING_DATASET_SELECT, "value"),
+    prevent_initial_call=True,
+)
+def populate_periods_selection_datasets(dataset):  # pylint: disable=unused-argument
+    if dataset:
+        options = get_signal_options(
+            data_object.get_sequence_at(int(dataset)), show_eit=True
+        )
+        body = [
+            html.H6("Select the signals to be displayed"),
+            dcc.Checklist(
+                id=ids.PREPROCESING_SIGNALS_CHECKBOX,
+                inputStyle=styles.CHECKBOX_INPUT,
+                options=options,
+            ),
+        ]
+
+        return body
+
+
+# show the selected signals
+@callback(
+    Output(ids.PREPROCESING_PERIODS_GRAPH, "figure"),
+    Input(ids.PREPROCESING_SIGNALS_CHECKBOX, "value"),
+    [
+        State(ids.PREPROCESING_SIGNALS_CHECKBOX, "options"),
+        State(ids.PREPROCESING_DATASET_SELECT, "value"),
+    ],
+    prevent_initial_call=True,
+)
+def plot_signal(signals, options, dataset):  # pylint: disable=unused-argument
+    data = data_object.get_sequence_at(int(dataset))
+    cont_data = []
+    eit_variants = []
+    for sig in signals:
+        if sig == 0:
+            eit_variants.append("raw")
+        else:
+            cont_data.append(options[sig]["label"])
+
+    figure = create_slider_figure(data, eit_variants, cont_data)
+
+    return figure
 
 
 # Show dataset
