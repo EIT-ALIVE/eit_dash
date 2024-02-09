@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from typing import List, Dict
 
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, ctx, html, ALL
@@ -8,7 +7,8 @@ from dash.exceptions import PreventUpdate
 
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
-from eit_dash.definitions.option_lists import InputFiletypes, SignalSelections
+from eit_dash.definitions.option_lists import InputFiletypes
+from eit_dash.utils.common import create_slider_figure, get_signal_options
 from eitprocessing.eit_data import EITData
 from eitprocessing.sequence import Sequence
 
@@ -47,86 +47,6 @@ def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> db
     card = dbc.Card(dbc.CardBody(card_list), id="card-1")
 
     return card
-
-
-def create_slider_figure(dataset: Sequence) -> go.Figure:
-    """
-    Create the figure for the selection of range.
-
-    Args:
-        dataset: Sequence object containing the selected dataset
-    """
-
-    traces = [
-        {
-            "x": dataset.eit_data.time,
-            "y": dataset.eit_data.variants["raw"].global_impedance,
-            "type": "scatter",
-            "mode": "lines",
-            "name": "a_level",
-        }
-    ]
-
-    figure = go.Figure(
-        data=traces,
-        layout=go.Layout(
-            xaxis={"rangeslider": {"visible": True}},
-            margin={"t": 0, "l": 0, "b": 0, "r": 0},
-        ),
-    )
-    for event in dataset.eit_data.events:
-        annotation = dict(text=f"{event.text}", textangle=-90)
-        figure.add_vline(
-            x=event.time,
-            line_width=3,
-            line_dash="dash",
-            line_color="green",
-            annotation=annotation,
-        )
-
-    return figure
-
-
-def get_signal_options(dataset: Sequence) -> List[Dict[str, int | str]]:
-    """
-    Get the options for signal selection to be shown in the signal selection section.
-
-    Args:
-        dataset: Sequence object containing the selected dataset
-    """
-    options = []
-    # iterate over eit data
-    # for variant in dataset.eit_data.variants:
-    #     if variant == "raw":
-    #         label = SignalSelections.raw.name
-    #         value = SignalSelections.raw.value
-    #     else:
-    #         label = variant
-    #         value = max(len(SignalSelections), len(options) + 1)
-    #     options.append({"label": label, "value": value})
-
-    for cont in dataset.continuous_data:
-        if cont == "airway pressure":
-            label = SignalSelections.airway_pressure.name
-            value = SignalSelections.airway_pressure.value
-        elif cont == "flow":
-            label = SignalSelections.flow.name
-            value = SignalSelections.flow.value
-        elif cont == "esophageal pressure":
-            label = SignalSelections.esophageal_pressure.name
-            value = SignalSelections.esophageal_pressure.value
-        elif cont == "volume":
-            label = SignalSelections.volume.name
-            value = SignalSelections.volume.value
-        elif cont == "CO2":
-            label = SignalSelections.CO2.name
-            value = SignalSelections.CO2.value
-        else:
-            label = cont
-            value = max(len(SignalSelections), len(options) + 1)
-        options.append({"label": label, "value": value})
-
-    return options
 
 
 # managing the file selection. Confirm button clicked
@@ -260,6 +180,7 @@ def show_info(
         cut_data = Sequence(
             label=dataset_name,
             eit_data=file_data.eit_data.select_by_time(start_sample, stop_sample),
+            continuous_data=file_data.continuous_data,
         )
 
         # save the selected data in the singleton

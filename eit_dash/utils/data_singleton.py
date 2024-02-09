@@ -31,3 +31,9 @@ class LoadedData:
 
     def get_list_length(self):
         return len(self._data)
+
+    def get_sequence_at(self, index: int):
+        if index > (length := self.get_list_length()):
+            raise ValueError(f"Index higher than list length {length}")
+
+        return self._data[index]
