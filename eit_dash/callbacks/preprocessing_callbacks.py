@@ -1,5 +1,6 @@
 from eit_dash.definitions.option_lists import PeriodsSelectMethods
-from eit_dash.utils.common import create_slider_figure, get_signal_options
+from eit_dash.utils.common import blank_fig, create_slider_figure, get_signal_options
+
 import dash_bootstrap_components as dbc
 import numpy as np
 import plotly.graph_objs as go
@@ -231,6 +232,7 @@ def populate_periods_selection_datasets(dataset):  # pylint: disable=unused-argu
 # show the selected signals
 @callback(
     Output(ids.PREPROCESING_PERIODS_GRAPH, "figure"),
+    Output(ids.PREPROCESING_PERIODS_GRAPH, "style"),
     Input(ids.PREPROCESING_SIGNALS_CHECKBOX, "value"),
     [
         State(ids.PREPROCESING_SIGNALS_CHECKBOX, "options"),
@@ -242,15 +244,21 @@ def plot_signal(signals, options, dataset):  # pylint: disable=unused-argument
     data = data_object.get_sequence_at(int(dataset))
     cont_data = []
     eit_variants = []
-    for sig in signals:
-        if sig == 0:
-            eit_variants.append("raw")
-        else:
-            cont_data.append(options[sig]["label"])
+    figure = blank_fig()
+    style = styles.EMPTY_ELEMENT
 
-    figure = create_slider_figure(data, eit_variants, cont_data)
+    # when the checkbox is created, the callback is triggered, but the list is empty
+    if signals:
+        for sig in signals:
+            if sig == 0:
+                eit_variants.append("raw")
+            else:
+                cont_data.append(options[sig]["label"])
 
-    return figure
+        figure = create_slider_figure(data, eit_variants, cont_data)
+        style = styles.GRAPH
+
+    return figure, style
 
 
 # Show dataset

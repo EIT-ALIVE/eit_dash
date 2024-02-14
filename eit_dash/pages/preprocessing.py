@@ -1,4 +1,5 @@
 from dash import dcc
+from eit_dash.utils.common import blank_fig
 import dash_bootstrap_components as dbc
 from dash import html, register_page
 
@@ -128,7 +129,15 @@ modal_selection_body = html.Div(
     [
         dbc.Row(id=ids.PERIODS_SELECTION_SELECT_DATASET),
         dbc.Row(id=ids.PREPROCESING_SIGNALS_CHECKBOX_ROW),
-        dbc.Row([dcc.Graph(id=ids.PREPROCESING_PERIODS_GRAPH)]),
+        dbc.Row(
+            [
+                dcc.Graph(
+                    id=ids.PREPROCESING_PERIODS_GRAPH,
+                    figure=blank_fig(),
+                    style=styles.EMPTY_ELEMENT,
+                )
+            ]
+        ),
     ],
     id=ids.PERIODS_SELECTION_BODY,
 )
