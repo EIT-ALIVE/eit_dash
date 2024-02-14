@@ -27,7 +27,9 @@ def create_slider_figure(
         eit_variants: list of the eit variants to be plotted
         continuous_data: list of the continuous data signals to be plotted
     """
-    traces = []
+    figure = go.Figure()
+    params = dict()
+    y_position = 0
 
     for eit_variant in eit_variants:
         # TODO: This is a patch! Needs to be changed
@@ -36,34 +38,37 @@ def create_slider_figure(
                 impedance = dataset.eit_data.variants[eit_variant].global_impedance
             except KeyError:
                 impedance = dataset.eit_data.variants[None].global_impedance
-        traces.append(
-            {
-                "x": dataset.eit_data.time,
-                "y": impedance,
-                "type": "scatter",
-                "mode": "lines",
-                "name": "a_level",
-            }
+        figure.add_trace(go.Scatter(x=dataset.eit_data.time, y=impedance, name="eit"))
+
+    for n, cont_signal in enumerate(continuous_data):
+        figure.add_trace(
+            go.Scatter(
+                x=dataset.continuous_data[cont_signal].time,
+                y=dataset.continuous_data[cont_signal].variants["raw"].values,
+                name=cont_signal,
+                opacity=0.5,
+                yaxis=f"y{n+2}",
+            )
+        )
+        # decide whether to put the axis left or right
+        if (n % 2) == 0:
+            side = "right"
+        else:
+            side = "left"
+
+        y_position += 0.1
+        new_y = dict(
+            title=cont_signal,
+            anchor="free",
+            overlaying="y",
+            side=side,
+            autoshift=True,
         )
 
-    for cont_signal in continuous_data:
-        traces.append(
-            {
-                "x": dataset.continuous_data[cont_signal].time,
-                "y": dataset.continuous_data[cont_signal].variants["raw"].values,
-                "type": "scatter",
-                "mode": "lines",
-                "name": "a_level",
-            }
-        )
+        # layout parameters for multiple y axis
+        param_name = f"yaxis{n+2}"
+        params.update({param_name: new_y})
 
-    figure = go.Figure(
-        data=traces,
-        layout=go.Layout(
-            xaxis={"rangeslider": {"visible": True}},
-            margin={"t": 0, "l": 0, "b": 0, "r": 0},
-        ),
-    )
     for event in dataset.eit_data.events:
         annotation = dict(text=f"{event.text}", textangle=-90)
         figure.add_vline(
@@ -73,6 +78,12 @@ def create_slider_figure(
             line_color="green",
             annotation=annotation,
         )
+
+    figure.update_layout(
+        xaxis={"rangeslider": {"visible": True}},
+        margin={"t": 0, "l": 0, "b": 0, "r": 0},
+        **params,
+    )
 
     return figure
 
