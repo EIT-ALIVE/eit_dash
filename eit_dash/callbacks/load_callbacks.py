@@ -39,10 +39,7 @@ def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> db
         html.H4(dataset_name, className="card-title"),
         html.H6(InputFiletypes(file_type).name, className="card-subtitle"),
     ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style={"margin-left": 10})
-        for data, value in info_data.items()
-    ]
+    card_list += [dbc.Row(f"{data}: {value}", style={"margin-left": 10}) for data, value in info_data.items()]
 
     card = dbc.Card(dbc.CardBody(card_list), id="card-1")
 
@@ -62,7 +59,10 @@ def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> db
 )
 # load the information selected from the file (e.g., signals, time span)
 def load_selected_data(
-    select_file, confirm_select, file_path, file_type  # pylint: disable=unused-argument
+    select_file,
+    confirm_select,
+    file_path,
+    file_type,  # pylint: disable=unused-argument
 ):
     open_modal = True
     data = None
@@ -138,7 +138,9 @@ def open_data_selector(data, cancel_load, file_type):  # pylint: disable=unused-
     )
 
     file_data = Sequence(
-        eit_data=eit_data, continuous_data=continuous_data, sparse_data=sparse_data
+        eit_data=eit_data,
+        continuous_data=continuous_data,
+        sparse_data=sparse_data,
     )
 
     options = get_signal_options(file_data)
@@ -206,9 +208,7 @@ def show_info(
     Input(ids.CWD, "children"),
     prevent_initial_call=True,
 )
-def get_parent_directory(
-    stored_cwd, n_clicks, currentdir
-):  # pylint: disable=unused-argument
+def get_parent_directory(stored_cwd, n_clicks, currentdir):  # pylint: disable=unused-argument
     triggered_id = ctx.triggered_id
     if triggered_id == ids.STORED_CWD:
         return stored_cwd

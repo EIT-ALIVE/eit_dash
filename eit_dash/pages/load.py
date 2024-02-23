@@ -22,10 +22,7 @@ input_type_selector = html.Div(
     [
         dbc.Select(
             id=ids.INPUT_TYPE_SELECTOR,
-            options=[
-                {"label": filetype.name, "value": filetype.value}
-                for filetype in InputFiletypes
-            ],
+            options=[{"label": filetype.name, "value": filetype.value} for filetype in InputFiletypes],
             value=str(InputFiletypes.Sentec.value),
         ),
         html.P(),
@@ -43,7 +40,7 @@ add_data_selector = dcc.Loading(
             html.P(),
             html.H5("Signal selections", style=styles.SECTION_TITLE),
             dbc.Row(
-                dcc.Checklist(id=ids.CHECKBOX_SIGNALS, inputStyle=styles.CHECKBOX_INPUT)
+                dcc.Checklist(id=ids.CHECKBOX_SIGNALS, inputStyle=styles.CHECKBOX_INPUT),
             ),
             html.H5("Pre selection", style=styles.SECTION_TITLE),
             dcc.Graph(id=ids.FILE_LENGTH_SLIDER),
@@ -100,9 +97,7 @@ file_browser = html.Div(
         dbc.Row(
             [
                 dcc.Store(id=ids.STORED_CWD, data=os.getcwd()),
-                html.H5(
-                    html.B(html.A("⬆️ Parent directory", href="#", id=ids.PARENT_DIR))
-                ),
+                html.H5(html.B(html.A("⬆️ Parent directory", href="#", id=ids.PARENT_DIR))),
                 html.H3([html.Code(os.getcwd(), id=ids.CWD)]),
                 html.Br(),
                 html.Br(),
@@ -128,7 +123,8 @@ modal_dialog = html.Div(
                 dbc.Modal(
                     [
                         dbc.ModalHeader(
-                            dbc.ModalTitle("Select a file"), close_button=True
+                            dbc.ModalTitle("Select a file"),
+                            close_button=True,
                         ),
                         dbc.ModalBody([alert_load, file_browser]),
                         dbc.ModalFooter(

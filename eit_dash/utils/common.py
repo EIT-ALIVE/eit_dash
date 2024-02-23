@@ -68,9 +68,7 @@ def create_slider_figure(
     return figure
 
 
-def get_signal_options(
-    dataset: Sequence, show_eit: bool = False
-) -> List[Dict[str, int | str]]:
+def get_signal_options(dataset: Sequence, show_eit: bool = False) -> List[Dict[str, int | str]]:
     """
     Get the options for signal selection to be shown in the signal selection section.
 
