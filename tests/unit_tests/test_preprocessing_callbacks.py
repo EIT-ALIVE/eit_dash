@@ -1,13 +1,15 @@
+from unittest.mock import MagicMock
+
 import dash_bootstrap_components as dbc
-import eit_dash.definitions.element_ids as ids
-import eit_dash.definitions.layout_styles as styles
 import numpy as np
 import plotly.graph_objs as go
 import pytest
-
+from dash import dcc, html
 from dash._callback_context import context_value
 from dash._utils import AttributeDict
-from dash import dcc, html
+
+import eit_dash.definitions.element_ids as ids
+import eit_dash.definitions.layout_styles as styles
 from eit_dash.callbacks.preprocessing_callbacks import (
     apply_resampling,
     load_datasets,
@@ -16,8 +18,6 @@ from eit_dash.callbacks.preprocessing_callbacks import (
     open_synch_modal,
     show_data,
 )
-from unittest.mock import MagicMock
-
 
 mock_series = np.sin(np.linspace(-2 * np.pi, 2 * np.pi, 201))
 mock_fig = go.Figure(data=[go.Scatter(y=mock_series)])
@@ -60,7 +60,7 @@ def test_apply_resampling_callback():
 
 
 def test_open_synch_modal_callback():
-    context_value.set(AttributeDict(**{"triggered_inputs": [{"prop_id": f"{ids.OPEN_SYNCH_BUTTON}.n_clicks"}]}))
+    context_value.set(AttributeDict(triggered_inputs=[{"prop_id": f"{ids.OPEN_SYNCH_BUTTON}.n_clicks"}]))
 
     output = open_synch_modal(1, 1)
 
@@ -68,7 +68,7 @@ def test_open_synch_modal_callback():
 
     # verify that a different input produces a different output
     context_value.set(
-        AttributeDict(**{"triggered_inputs": [{"prop_id": f"{ids.SYNCHRONIZATION_CONFIRM_BUTTON}.n_clicks"}]})
+        AttributeDict(triggered_inputs=[{"prop_id": f"{ids.SYNCHRONIZATION_CONFIRM_BUTTON}.n_clicks"}]),
     )
 
     output_new_params = open_synch_modal(1, 1)
@@ -79,7 +79,7 @@ def test_open_synch_modal_callback():
 
 def test_open_periods_modal_callback():
     context_value.set(
-        AttributeDict(**{"triggered_inputs": [{"prop_id": f"{ids.OPEN_SELECT_PERIODS_BUTTON}.n_clicks"}]})
+        AttributeDict(triggered_inputs=[{"prop_id": f"{ids.OPEN_SELECT_PERIODS_BUTTON}.n_clicks"}]),
     )
 
     output = open_periods_modal(1, 1)
@@ -87,7 +87,7 @@ def test_open_periods_modal_callback():
     expected_output = True
 
     # verify that a different input produces a different output
-    context_value.set(AttributeDict(**{"triggered_inputs": [{"prop_id": f"{ids.PERIODS_CONFIRM_BUTTON}.n_clicks"}]}))
+    context_value.set(AttributeDict(triggered_inputs=[{"prop_id": f"{ids.PERIODS_CONFIRM_BUTTON}.n_clicks"}]))
 
     output_new_params = open_periods_modal(1, 1)
 

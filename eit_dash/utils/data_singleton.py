@@ -1,5 +1,6 @@
 from threading import Lock
 from typing import List
+
 from eitprocessing.sequence import Sequence
 
 _singleton = None
@@ -34,6 +35,7 @@ class LoadedData:
 
     def get_sequence_at(self, index: int):
         if index > (length := self.get_list_length()):
-            raise ValueError(f"Index higher than list length {length}")
+            msg = f"Index higher than list length {length}"
+            raise ValueError(msg)
 
         return self._data[index]

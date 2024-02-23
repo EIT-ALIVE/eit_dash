@@ -1,9 +1,9 @@
-from dash import html, register_page
-from eit_dash.definitions.option_lists import SynchMethods, PeriodsSelectMethods
-
 import dash_bootstrap_components as dbc
+from dash import html, register_page
+
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
+from eit_dash.definitions.option_lists import PeriodsSelectMethods, SynchMethods
 
 register_page(__name__, path="/preprocessing")
 
@@ -22,16 +22,16 @@ resampling_card = dbc.Card(
                                     placeholder="Resampling frequency",
                                     value=100,
                                     id=ids.RESAMPLING_FREQUENCY_INPUT,
-                                )
-                            ]
+                                ),
+                            ],
                         ),
                         dbc.Col([dbc.Button("Apply", id=ids.CONFIRM_RESAMPLING_BUTTON)]),
-                    ]
-                )
+                    ],
+                ),
             ],
             style=styles.CARD_FOOTER,
         ),
-    ]
+    ],
 )
 
 summary = dbc.Col(
@@ -51,7 +51,7 @@ actions = dbc.Col(
         dbc.Row(dbc.Button("Select data range(s)", id=ids.OPEN_SELECT_PERIODS_BUTTON, disabled=True)),
         html.P(),
         dbc.Row(dbc.Button("Filter data", id=ids.OPEN_FILTER_DATA_BUTTON, disabled=True)),
-    ]
+    ],
 )
 
 results = dbc.Col([html.H2("Results", style=styles.COLUMN_TITLE)], id=ids.PREPROCESING_RESULTS_CONTAINER)
@@ -74,7 +74,7 @@ modal_synchronization = html.Div(
                         html.P(),
                         dbc.Row(id=ids.SYNC_DATA_PREVIEW_CONTAINER),
                         dbc.Button("SYNCH PREVIEW", id=ids.CONFIRM_SYNCH_BUTTON),
-                    ]
+                    ],
                 ),
                 dbc.ModalFooter(
                     dbc.Button(
@@ -82,7 +82,7 @@ modal_synchronization = html.Div(
                         id=ids.SYNCHRONIZATION_CONFIRM_BUTTON,
                         className="ms-auto",
                         n_clicks=0,
-                    )
+                    ),
                 ),
             ],
             id=ids.SYNCHRONIZATION_POPUP,
@@ -92,7 +92,7 @@ modal_synchronization = html.Div(
             scrollable=True,
             size="xl",
         ),
-    ]
+    ],
 )
 
 # popup for periods selection
@@ -107,8 +107,8 @@ modal_selection = html.Div(
                             id=ids.PERIODS_METHOD_SELECTOR,
                             options=[{"label": method.name, "value": method.value} for method in PeriodsSelectMethods],
                             value=str(PeriodsSelectMethods.Manual.value),
-                        )
-                    ]
+                        ),
+                    ],
                 ),
                 dbc.ModalFooter(
                     dbc.Button(
@@ -116,7 +116,7 @@ modal_selection = html.Div(
                         id=ids.PERIODS_CONFIRM_BUTTON,
                         className="ms-auto",
                         n_clicks=0,
-                    )
+                    ),
                 ),
             ],
             id=ids.PERIODS_SELECTION_POPUP,
@@ -126,7 +126,7 @@ modal_selection = html.Div(
             scrollable=True,
             size="xl",
         ),
-    ]
+    ],
 )
 
 layout = dbc.Row(
@@ -137,5 +137,5 @@ layout = dbc.Row(
         results,
         modal_synchronization,
         modal_selection,
-    ]
+    ],
 )

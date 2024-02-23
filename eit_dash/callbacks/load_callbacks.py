@@ -2,17 +2,16 @@ import os
 from pathlib import Path
 
 import dash_bootstrap_components as dbc
-from dash import Input, Output, State, callback, ctx, html, ALL
+import plotly.graph_objects as go
+from dash import ALL, Input, Output, State, callback, ctx, html
 from dash.exceptions import PreventUpdate
+from eitprocessing.eit_data import EITData
+from eitprocessing.sequence import Sequence
 
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
 from eit_dash.definitions.option_lists import InputFiletypes
 from eit_dash.utils.common import create_slider_figure, get_signal_options
-from eitprocessing.eit_data import EITData
-from eitprocessing.sequence import Sequence
-
-import plotly.graph_objects as go
 
 file_data: Sequence | None = None
 
@@ -20,7 +19,7 @@ file_data: Sequence | None = None
 def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> dbc.Card:
     """
     Create the card with the information on the loaded dataset
-    to be displayed in the Results section
+    to be displayed in the Results section.
 
     Args:
         dataset: Sequence object containing the selected dataset
@@ -236,7 +235,7 @@ def list_cwd_files(cwd):
                         id={"type": "listed_file", "index": i},
                         title=full_path,
                         style={"fontWeight": "bold"} if is_dir else {},
-                    )
+                    ),
                 ],
                 href="#",
             )

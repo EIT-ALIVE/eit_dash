@@ -1,5 +1,4 @@
 import eit_dash.definitions.element_ids as ids
-
 from eit_dash.main import app
 
 

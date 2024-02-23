@@ -1,14 +1,15 @@
-from eit_dash.definitions.option_lists import SignalSelections
-from eitprocessing.sequence import Sequence
-from typing import List, Dict
+from typing import Dict, List, Optional
 
 import plotly.graph_objects as go
+from eitprocessing.sequence import Sequence
+
+from eit_dash.definitions.option_lists import SignalSelections
 
 
 def create_slider_figure(
     dataset: Sequence,
-    eit_variants: List[str] = ["raw"],
-    continuous_data: List[str] = [],
+    eit_variants: [List[str]] | None = None,
+    continuous_data: [List[str]] | None = None,
 ) -> go.Figure:
     """
     Create the figure for the selection of range.
@@ -18,6 +19,10 @@ def create_slider_figure(
         eit_variants: list of the eit variants to be plotted
         continuous_data: list of the continuous data signals to be plotted
     """
+    if continuous_data is None:
+        continuous_data = []
+    if eit_variants is None:
+        eit_variants = ["raw"]
     traces = []
 
     for eit_variant in eit_variants:
@@ -34,7 +39,7 @@ def create_slider_figure(
                 "type": "scatter",
                 "mode": "lines",
                 "name": "a_level",
-            }
+            },
         )
 
     for cont_signal in continuous_data:
@@ -45,7 +50,7 @@ def create_slider_figure(
                 "type": "scatter",
                 "mode": "lines",
                 "name": "a_level",
-            }
+            },
         )
 
     figure = go.Figure(

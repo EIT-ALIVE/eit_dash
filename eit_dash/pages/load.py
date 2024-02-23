@@ -15,7 +15,7 @@ results = dbc.Col(
     [
         html.H2("Results", style=styles.COLUMN_TITLE),
         html.Div(id=ids.DATASET_CONTAINER, style=styles.LOAD_RESULTS),
-    ]
+    ],
 )
 
 input_type_selector = html.Div(
@@ -28,7 +28,7 @@ input_type_selector = html.Div(
         html.P(),
         dbc.Row(dbc.Button("Select files", id=ids.SELECT_FILES_BUTTON)),
         dbc.Row(dbc.Label(id=ids.METADATA)),
-    ]
+    ],
 )
 
 max_slider_length = 100
@@ -55,8 +55,8 @@ add_data_selector = dcc.Loading(
                                 className="ms-auto",
                                 color="success",
                                 n_clicks=0,
-                            )
-                        ]
+                            ),
+                        ],
                     ),
                     dbc.Col(
                         [
@@ -66,14 +66,14 @@ add_data_selector = dcc.Loading(
                                 className="ms-auto",
                                 color="danger",
                                 n_clicks=0,
-                            )
-                        ]
+                            ),
+                        ],
                     ),
                 ],
                 style=styles.BUTTONS_ROW,
             ),
         ],
-    )
+    ),
 )
 
 actions = dbc.Col(
@@ -83,7 +83,7 @@ actions = dbc.Col(
         input_type_selector,
         html.P(),
         add_data_selector,
-    ]
+    ],
 )
 
 placeholder_nfiles = html.Div(
@@ -102,9 +102,9 @@ file_browser = html.Div(
                 html.Br(),
                 html.Br(),
                 html.Div(id=ids.CWD_FILES, style=styles.FILE_BROWSER),
-            ]
-        )
-    ]
+            ],
+        ),
+    ],
 )
 
 alert_load = dbc.Alert(
@@ -133,7 +133,7 @@ modal_dialog = html.Div(
                                 id=ids.SELECT_CONFIRM_BUTTON,
                                 className="ms-auto",
                                 n_clicks=0,
-                            )
+                            ),
                         ),
                     ],
                     id=ids.CHOOSE_DATA_POPUP,
@@ -141,10 +141,10 @@ modal_dialog = html.Div(
                     is_open=False,
                     backdrop=False,
                     scrollable=True,
-                )
-            ]
-        )
-    ]
+                ),
+            ],
+        ),
+    ],
 )
 
 layout = dbc.Row(
@@ -155,5 +155,5 @@ layout = dbc.Row(
         results,
         placeholder_nfiles,
         modal_dialog,
-    ]
+    ],
 )

@@ -1,10 +1,10 @@
-from dash import html, Input, Output, State, callback, ctx, dcc, MATCH
-
 import dash_bootstrap_components as dbc
-import eit_dash.definitions.element_ids as ids
-import eit_dash.definitions.layout_styles as styles
 import numpy as np
 import plotly.graph_objs as go
+from dash import MATCH, Input, Output, State, callback, ctx, dcc, html
+
+import eit_dash.definitions.element_ids as ids
+import eit_dash.definitions.layout_styles as styles
 
 
 def get_loaded_data():

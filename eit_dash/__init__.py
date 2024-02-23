@@ -1,4 +1,4 @@
-"""Documentation about eit_dash"""
+"""Documentation about eit_dash."""
 import logging
 
 logging.getLogger(__name__).addHandler(logging.NullHandler())
