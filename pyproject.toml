@@ -30,6 +30,7 @@ dash-bootstrap-components = "^1.4.1"
 eitprocessing = {git = "https://github.com/EIT-ALIVE/eitprocessing", rev = "181_refactor_sequence_psomhorst"}
 numpy = "^1.25.2"
 pandas = "^2.0.3"
+ruff = "^0.2.2"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
