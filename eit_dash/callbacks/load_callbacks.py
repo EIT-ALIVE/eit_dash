@@ -18,7 +18,7 @@ from eit_dash.utils.common import create_slider_figure, get_signal_options
 file_data: Sequence | None = None
 
 
-def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> dbc.Card:
+def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
     """Create the card with the information on the loaded dataset to be displayed in the Results section.
 
     Args:
@@ -35,7 +35,7 @@ def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> db
     }
 
     card_list = [
-        html.H4(dataset_name, className="card-title"),
+        html.H4(dataset.label, className="card-title"),
         html.H6(InputFiletypes(file_type).name, className="card-subtitle"),
     ]
     card_list += [dbc.Row(f"{data}: {value}", style={"margin-left": 10}) for data, value in info_data.items()]
@@ -190,7 +190,7 @@ def show_info(
         data_object.add_sequence(cut_data)
 
         # create the info summary card
-        card = create_info_card(cut_data, int(filetype), dataset_name)
+        card = create_info_card(cut_data, int(filetype))
 
         # add the card to the current results
         if container_state:
