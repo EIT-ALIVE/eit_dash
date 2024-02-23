@@ -102,24 +102,6 @@ def get_signal_options(dataset: Sequence, show_eit: bool = False) -> list[dict[s
 
     if dataset.continuous_data:
         for cont in dataset.continuous_data:
-            # if cont == "airway pressure":
-            #     label = SignalSelections.airway_pressure.name
-            #     value = SignalSelections.airway_pressure.value
-            # elif cont == "flow":
-            #     label = SignalSelections.flow.name
-            #     value = SignalSelections.flow.value
-            # elif cont == "esophageal pressure":
-            #     label = SignalSelections.esophageal_pressure.name
-            #     value = SignalSelections.esophageal_pressure.value
-            # elif cont == "volume":
-            #     label = SignalSelections.volume.name
-            #     value = SignalSelections.volume.value
-            # elif cont == "CO2":
-            #     label = SignalSelections.CO2.name
-            #     value = SignalSelections.CO2.value
-            # else:
-            # label = cont
-            # value = max(len(SignalSelections), len(options) + 1)
             options.append({"label": cont, "value": len(options)})
 
     return options
