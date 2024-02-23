@@ -1,13 +1,18 @@
-from threading import Lock
-from typing import List
+from __future__ import annotations
 
-from eitprocessing.sequence import Sequence
+from threading import Lock
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from eitprocessing.sequence import Sequence
+
+# ruff: noqa: D102
 
 _singleton = None
 _lock = Lock()
 
 
-def get_singleton():
+def get_singleton():  # noqa: D103
     with _lock:
         global _singleton
 
@@ -18,8 +23,10 @@ def get_singleton():
 
 
 class LoadedData:
+    """Loaded data."""
+
     def __init__(self):
-        self._data: List[Sequence] = []
+        self._data: list[Sequence] = []
 
     def add_sequence(self, new_sequence: Sequence) -> None:
         self._data.append(new_sequence)

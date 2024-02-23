@@ -2,7 +2,7 @@ import dash_bootstrap_components as dbc
 from dash import html, page_container
 
 from eit_dash.app import app
-from eit_dash.callbacks import load_callbacks, preprocessing_callbacks  # noqa
+from eit_dash.callbacks import load_callbacks, preprocessing_callbacks  # noqa: F401
 
 app.layout = html.Div(
     [

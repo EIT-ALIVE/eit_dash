@@ -12,11 +12,10 @@ if TYPE_CHECKING:
 
 def create_slider_figure(
     dataset: Sequence,
-    eit_variants: [list[str]] | None = None,
-    continuous_data: [list[str]] | None = None,
+    eit_variants: list[str] | None = None,
+    continuous_data: list[str] | None = None,
 ) -> go.Figure:
-    """
-    Create the figure for the selection of range.
+    """Create the figure for the selection of range.
 
     Args:
         dataset: Sequence object containing the selected dataset
@@ -47,10 +46,10 @@ def create_slider_figure(
         )
 
     for cont_signal in continuous_data:
-        traces.append(
+        traces.append(  # noqa: PERF401
             {
                 "x": dataset.continuous_data[cont_signal].time,
-                "y": dataset.continuous_data[cont_signal].variants["raw"].values,
+                "y": dataset.continuous_data[cont_signal].variants["raw"].values,  # noqa: PD011
                 "type": "scatter",
                 "mode": "lines",
                 "name": "a_level",
@@ -78,8 +77,7 @@ def create_slider_figure(
 
 
 def get_signal_options(dataset: Sequence, show_eit: bool = False) -> list[dict[str, int | str]]:
-    """
-    Get the options for signal selection to be shown in the signal selection section.
+    """Get the options for signal selection to be shown in the signal selection section.
 
     Args:
         dataset: Sequence object containing the selected dataset

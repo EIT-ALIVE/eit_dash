@@ -6,6 +6,8 @@ from dash import MATCH, Input, Output, State, callback, ctx, dcc, html
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 
+# ruff: noqa: D103  #TODO remove this line when finalizing this module
+
 
 def get_loaded_data():
     return [
@@ -15,14 +17,13 @@ def get_loaded_data():
     ]
 
 
-
 # this callback runs when the page is loaded (the title of the preprocessing is created)
 # and loads the data in the resampling card and in the dataset selection menu
 @callback(
     [Output(ids.RESAMPLING_CARD, "children"), Output(ids.DATASET_SELECTION_CHECKBOX, "options")],
     Input(ids.PREPROCESING_TITLE, "children"),
 )
-def load_datasets(title):  # pylint: disable=unused-argument
+def load_datasets(title):
     dummy_data = get_loaded_data()
 
     row = [dbc.Row([dbc.Col([html.H6("Sequence")]), dbc.Col([html.H6("Sampling frequency")])]), html.P()]
@@ -49,7 +50,7 @@ def load_datasets(title):  # pylint: disable=unused-argument
     [State(ids.SUMMARY_COLUMN, "children"), State(ids.RESAMPLING_FREQUENCY_INPUT, "value")],
     prevent_initial_call=True,
 )
-def apply_resampling(apply_click, summary, frequency):  # pylint: disable=unused-argument
+def apply_resampling(apply_click, summary, frequency):
     summary = [dbc.Row([html.Div(f"Resampled dataset at {frequency}Hz", style=styles.SUMMARY_ELEMENT)])]
     return False, False, False, summary
 
@@ -60,7 +61,7 @@ def apply_resampling(apply_click, summary, frequency):  # pylint: disable=unused
     [Input(ids.OPEN_SYNCH_BUTTON, "n_clicks"), Input(ids.SYNCHRONIZATION_CONFIRM_BUTTON, "n_clicks")],
     prevent_initial_call=True,
 )
-def open_synch_modal(open_click, confirm_click) -> bool:  # pylint: disable=unused-argument
+def open_synch_modal(open_click, confirm_click) -> bool:
     trigger = ctx.triggered_id
 
     if trigger == ids.OPEN_SYNCH_BUTTON:
@@ -75,7 +76,7 @@ def open_synch_modal(open_click, confirm_click) -> bool:  # pylint: disable=unus
     [Input(ids.OPEN_SELECT_PERIODS_BUTTON, "n_clicks"), Input(ids.PERIODS_CONFIRM_BUTTON, "n_clicks")],
     prevent_initial_call=True,
 )
-def open_periods_modal(open_click, confirm_click) -> bool:  # pylint: disable=unused-argument
+def open_periods_modal(open_click, confirm_click) -> bool:
     trigger = ctx.triggered_id
 
     if trigger == ids.OPEN_SELECT_PERIODS_BUTTON:
@@ -91,7 +92,7 @@ def open_periods_modal(open_click, confirm_click) -> bool:  # pylint: disable=un
     State(ids.SYNC_DATA_PREVIEW_CONTAINER, "children"),
     prevent_initial_call=True,
 )
-def show_data(selected_dataset, current_content):  # pylint: disable=unused-argument
+def show_data(selected_dataset, current_content):
     x = np.linspace(-2 * np.pi, 2 * np.pi, 201)
     sample_data = np.sin(x)
 
@@ -101,7 +102,6 @@ def show_data(selected_dataset, current_content):  # pylint: disable=unused-argu
         dcc.Graph(figure=fig, id={"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": selected})
         for selected in selected_dataset
     ]
-
 
 
 # mark clicked data points

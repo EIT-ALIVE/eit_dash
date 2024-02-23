@@ -1,6 +1,6 @@
 from dash import html, register_page
 
-# from app import app
+# from app import app  #noqa: ERA001
 
 register_page(__name__, path="/right")
 

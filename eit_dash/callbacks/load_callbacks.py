@@ -19,13 +19,11 @@ file_data: Sequence | None = None
 
 
 def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> dbc.Card:
-    """
-    Create the card with the information on the loaded dataset
-    to be displayed in the Results section.
+    """Create the card with the information on the loaded dataset to be displayed in the Results section.
 
     Args:
         dataset: Sequence object containing the selected dataset
-        file_type: index of the selected type of selected
+        file_type: Index of the selected type of selected
     """
     info_data = {
         "Name": dataset.eit_data.path.name,
@@ -45,7 +43,6 @@ def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> db
     return dbc.Card(dbc.CardBody(card_list), id="card-1")
 
 
-
 # managing the file selection. Confirm button clicked
 @callback(
     Output(ids.CHOOSE_DATA_POPUP, "is_open"),
@@ -57,13 +54,16 @@ def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> db
     State(ids.INPUT_TYPE_SELECTOR, "value"),
     prevent_initial_call=True,
 )
-# load the information selected from the file (e.g., signals, time span)
 def load_selected_data(
     select_file,
     confirm_select,
     file_path,
-    file_type,  # pylint: disable=unused-argument
+    file_type,
 ):
+    """Load the information selected from the file.
+
+    E.g., signals, time span.
+    """
     open_modal = True
     data = None
     show_alert = False
@@ -114,8 +114,8 @@ def load_selected_data(
     State(ids.INPUT_TYPE_SELECTOR, "value"),
     prevent_initial_call=True,
 )
-# read the file selected in the file selector
-def open_data_selector(data, cancel_load, file_type):  # pylint: disable=unused-argument
+def open_data_selector(data, cancel_load, file_type):
+    """Read the file selected in the file selector."""
     global file_data
 
     trigger = ctx.triggered_id
@@ -162,12 +162,13 @@ def open_data_selector(data, cancel_load, file_type):  # pylint: disable=unused-
 )
 def show_info(
     btn_click,
-    loaded_data,  # pylint: disable=unused-argument, disable=too-many-arguments
+    loaded_data,
     container_state,
     filetype,
     slidebar_stat,
     selected_signals,
 ):
+    """Creates the preview for preselecting part of the dataset."""
     if file_data:
         if slidebar_stat is not None and "xaxis.range" in slidebar_stat:
             start_sample = slidebar_stat["xaxis.range"][0]
@@ -208,7 +209,8 @@ def show_info(
     Input(ids.CWD, "children"),
     prevent_initial_call=True,
 )
-def get_parent_directory(stored_cwd, n_clicks, currentdir):  # pylint: disable=unused-argument
+def get_parent_directory(stored_cwd, n_clicks, currentdir):
+    """Return path of parent directory."""
     triggered_id = ctx.triggered_id
     if triggered_id == ids.STORED_CWD:
         return stored_cwd
@@ -217,6 +219,7 @@ def get_parent_directory(stored_cwd, n_clicks, currentdir):  # pylint: disable=u
 
 @callback(Output(ids.CWD_FILES, "children"), Input(ids.CWD, "children"))
 def list_cwd_files(cwd):
+    """List files in thde directory."""
     path = Path(cwd)
 
     cwd_files = []
@@ -252,6 +255,7 @@ def list_cwd_files(cwd):
     State({"type": "listed_file", "index": ALL}, "title"),
 )
 def store_clicked_file(n_clicks, title):
+    """Saves path of currently clicked file."""
     if not n_clicks or set(n_clicks) == {None}:
         raise PreventUpdate
     index = ctx.triggered_id["index"]
