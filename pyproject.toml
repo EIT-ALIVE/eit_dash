@@ -5,19 +5,16 @@ description = "GUI to load and analyze image data from electrical impedance tomo
 authors = ["Your Name <you@example.com>"]
 license = "Apache 2.0"
 readme = "README.md"
-classifiers =[
+classifiers = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: Apache Software License",
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10"
+    "Programming Language :: Python :: 3.10",
 ]
-keywords =[
-    "EIT - Electrical Impedance Tomography",
-    "GUI"
-]
-packages = [{include = "eit_dash"}]
+keywords = ["EIT - Electrical Impedance Tomography", "GUI"]
+packages = [{ include = "eit_dash" }]
 
 [tool.poetry.urls]
 repository = "git@github.com:EIT-ALIVE/eit_dash"
@@ -25,16 +22,16 @@ repository = "git@github.com:EIT-ALIVE/eit_dash"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
-dash = {extras = ["testing"], version = "^2.11.1"}
+dash = { extras = ["testing"], version = "^2.11.1" }
 dash-bootstrap-components = "^1.4.1"
-eitprocessing = {git = "https://github.com/EIT-ALIVE/eitprocessing", rev = "181_refactor_sequence_psomhorst"}
+eitprocessing = { git = "https://github.com/EIT-ALIVE/eitprocessing", rev = "181_refactor_sequence_psomhorst" }
 numpy = "^1.25.2"
 pandas = "^2.0.3"
 ruff = "^0.2.2"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
-prospector = {extras = ["with-pyroma"], version = "^1.10.2"}
+prospector = { extras = ["with-pyroma"], version = "^1.10.2" }
 urllib3 = "<2.0.2"
 
 [build-system]
@@ -58,3 +55,67 @@ skip_missing_interpreters = true
 commands = pytest
 extras = dev
 """
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    # Not conducive for dash coding
+    "ARG001",  # Unused function argument
+    "ANN",     # Type hinting
+    "PLR0913", # Too many arguments
+    "PLW0603", # Using globals 
+    # Unwanted (potentially)
+    "FBT",    # Using boolean arguments
+    "S105",   # Possible hardcoded password
+    "S311",   # insecure random generators
+    "PT011",  # pytest-raises-too-broad
+    "TD",     # TODOs
+    "FIX002", # Resolve TODOs
+    "B028",   # No explicit `stacklevel` keyword argument found in warning
+    # "SIM108", # Use ternary operator (not sure if we want to ignore this)
+    # Unneeded docstrings
+    "D100", # Missing module docstring
+    "D104", # Missing public package docstring
+    "D105", # Missing docstring in magic method
+    "D107", # Missing docstring in `__init__`
+    # Rules irrelevant to the Google style
+    "D203", # 1 blank line required before class docstring
+    "D204",
+    "D212", # Multi-line docstring summary should start at the first line
+    "D213", # Multi-line docstring summary should start at the second line
+    "D215",
+    "D400",
+    "D401",
+    "D404", # First word of the docstring should not be This
+    "D406",
+    "D407",
+    "D408",
+    "D409",
+    "D413",
+]
+# Allow autofix for all enabled rules.
+fixable = ["ALL"]
+unfixable = ["F401"] # unused imports (should not disappear while editing)
+extend-safe-fixes = [
+    "D415",   # First line should end with a period, question mark, or exclamation point
+    "D300",   # Use triple double quotes `"""`
+    "D200",   # One-line docstring should fit on one line
+    "TCH",    # Format type checking only imports
+    "ISC001", # Implicitly concatenated strings on a single line
+    "EM",     # Exception message variables
+    "RUF013", # Implicit Optional
+    "B006",   # Mutable default argument
+]
+isort.known-first-party = ["eit_dash"]
+
+[tool.ruff.lint.per-file-ignores]
+"*.ipynb" = ["ERA001"] # Commented out code
+"tests/*" = [
+    "S101",   # Use of `assert` detected
+    "ANN201", # Missing return type
+    "D103",   # Missing function docstring
+]
+"docs/*" = ["ALL"]
