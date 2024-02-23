@@ -1,5 +1,15 @@
 from eit_dash.definitions.option_lists import PeriodsSelectMethods
+<<<<<<< HEAD
 from eit_dash.utils.common import blank_fig, create_slider_figure, get_signal_options
+=======
+from eit_dash.utils.common import (
+    blank_fig,
+    create_slider_figure,
+    get_signal_options,
+    mark_selected_period,
+)
+from eitprocessing.sequence import Sequence
+>>>>>>> ad40a1b (mark selected periods on graph)
 
 import dash_bootstrap_components as dbc
 import numpy as np
@@ -11,6 +21,8 @@ import eit_dash.definitions.layout_styles as styles
 from eit_dash.app import data_object
 
 # ruff: noqa: D103  #TODO remove this line when finalizing this module
+
+created_figure: go.Figure
 
 
 def check_continuous_data_loaded() -> bool:
@@ -229,23 +241,57 @@ def populate_periods_selection_datasets(dataset):  # pylint: disable=unused-argu
         return body
 
 
+# make visible the div containing the graphs and the buttons
+@callback(
+    Output(ids.PERIODS_SELECTION_DIV, "hidden"),
+    Input(ids.PREPROCESING_SIGNALS_CHECKBOX, "value"),
+    prevent_initial_call=True,
+)
+def show_selection_div(signals):  # pylint: disable=unused-argument
+    if signals:
+        return False
+
+    return True
+
+
 # show the selected signals
 @callback(
-    Output(ids.PREPROCESING_PERIODS_GRAPH, "figure"),
-    Output(ids.PREPROCESING_PERIODS_GRAPH, "style"),
-    Input(ids.PREPROCESING_SIGNALS_CHECKBOX, "value"),
+    [
+        Output(ids.PREPROCESING_PERIODS_GRAPH, "figure"),
+        Output(ids.PREPROCESING_PERIODS_GRAPH, "style"),
+        Output(ids.PREPROCESING_RESULTS_CONTAINER, "children"),
+    ],
+    [
+        Input(ids.PREPROCESING_SIGNALS_CHECKBOX, "value"),
+        Input(ids.PREPROCESING_SELECT_BTN, "n_clicks"),
+    ],
     [
         State(ids.PREPROCESING_SIGNALS_CHECKBOX, "options"),
         State(ids.PREPROCESING_DATASET_SELECT, "value"),
+        State(ids.PREPROCESING_PERIODS_GRAPH, "relayoutData"),
+        State(ids.PREPROCESING_PERIODS_GRAPH, "figure"),
+        State(ids.PREPROCESING_RESULTS_CONTAINER, "children"),
     ],
     prevent_initial_call=True,
 )
-def plot_signal(signals, options, dataset):  # pylint: disable=unused-argument
+def plot_signal(
+    signals,
+    select_periods,
+    options,
+    dataset,
+    slidebar_stat,
+    current_figure,
+    current_summary,
+):  # pylint: disable=unused-argument
+    global created_figure
+
     data = data_object.get_sequence_at(int(dataset))
     cont_data = []
     eit_variants = []
     figure = blank_fig()
     style = styles.EMPTY_ELEMENT
+
+    triggered_id = ctx.triggered_id
 
     # when the checkbox is created, the callback is triggered, but the list is empty
     if signals:
@@ -255,10 +301,40 @@ def plot_signal(signals, options, dataset):  # pylint: disable=unused-argument
             else:
                 cont_data.append(options[sig]["label"])
 
-        figure = create_slider_figure(data, eit_variants, cont_data)
         style = styles.GRAPH
 
-    return figure, style
+    # triggered by signal selection
+    if triggered_id == ids.PREPROCESING_SIGNALS_CHECKBOX:
+        figure = create_slider_figure(data, eit_variants, cont_data)
+
+    elif triggered_id == ids.PREPROCESING_SELECT_BTN:
+        if slidebar_stat is not None and "xaxis.range" in slidebar_stat:
+            start_sample = slidebar_stat["xaxis.range"][0]
+            stop_sample = slidebar_stat["xaxis.range"][1]
+        else:
+            start_sample = data.eit_data.time[0]
+            stop_sample = data.eit_data.time[-1]
+
+        content = [
+            dbc.Row(
+                [html.Div(f"Selected new period from {start_sample} to {stop_sample}")]
+            )
+        ]
+
+        cut_data = Sequence(
+            label="whatever",
+            eit_data=data.eit_data.select_by_time(start_sample, stop_sample),
+            continuous_data=data.continuous_data,
+        )
+
+        # fig_obj = go.Figure(current_figure)
+        figure = mark_selected_period(created_figure, cut_data, eit_variants, cont_data)
+        # figure = create_slider_figure(cut_data, eit_variants, cont_data)
+        current_summary += content
+
+    created_figure = figure
+
+    return figure, style, current_summary
 
 
 # Show dataset

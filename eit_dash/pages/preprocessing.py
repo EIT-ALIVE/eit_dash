@@ -128,15 +128,42 @@ modal_synchronization = html.Div(
 modal_selection_body = html.Div(
     [
         dbc.Row(id=ids.PERIODS_SELECTION_SELECT_DATASET),
+        html.P(),
         dbc.Row(id=ids.PREPROCESING_SIGNALS_CHECKBOX_ROW),
-        dbc.Row(
+        html.P(),
+        html.Div(
             [
-                dcc.Graph(
-                    id=ids.PREPROCESING_PERIODS_GRAPH,
-                    figure=blank_fig(),
-                    style=styles.EMPTY_ELEMENT,
-                )
-            ]
+                dbc.Row(
+                    [
+                        dcc.Graph(
+                            id=ids.PREPROCESING_PERIODS_GRAPH,
+                            figure=blank_fig(),
+                            style=styles.EMPTY_ELEMENT,
+                        )
+                    ]
+                ),
+                html.P(),
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            [
+                                dbc.Button(
+                                    "Select all", id=ids.PREPROCESING_SELECT_ALL_BTN
+                                )
+                            ]
+                        ),
+                        dbc.Col(
+                            [
+                                dbc.Button(
+                                    "Add selection", id=ids.PREPROCESING_SELECT_BTN
+                                )
+                            ]
+                        ),
+                    ]
+                ),
+            ],
+            id=ids.PERIODS_SELECTION_DIV,
+            hidden=True,
         ),
     ],
     id=ids.PERIODS_SELECTION_BODY,
