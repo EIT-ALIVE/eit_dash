@@ -1,15 +1,19 @@
-from typing import Dict, List, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import plotly.graph_objects as go
-from eitprocessing.sequence import Sequence
 
 from eit_dash.definitions.option_lists import SignalSelections
+
+if TYPE_CHECKING:
+    from eitprocessing.sequence import Sequence
 
 
 def create_slider_figure(
     dataset: Sequence,
-    eit_variants: [List[str]] | None = None,
-    continuous_data: [List[str]] | None = None,
+    eit_variants: [list[str]] | None = None,
+    continuous_data: [list[str]] | None = None,
 ) -> go.Figure:
     """
     Create the figure for the selection of range.
@@ -61,7 +65,7 @@ def create_slider_figure(
         ),
     )
     for event in dataset.eit_data.events:
-        annotation = dict(text=f"{event.text}", textangle=-90)
+        annotation = {"text": f"{event.text}", "textangle": -90}
         figure.add_vline(
             x=event.time,
             line_width=3,
@@ -73,7 +77,7 @@ def create_slider_figure(
     return figure
 
 
-def get_signal_options(dataset: Sequence, show_eit: bool = False) -> List[Dict[str, int | str]]:
+def get_signal_options(dataset: Sequence, show_eit: bool = False) -> list[dict[str, int | str]]:
     """
     Get the options for signal selection to be shown in the signal selection section.
 

@@ -8,13 +8,12 @@ import eit_dash.definitions.layout_styles as styles
 
 
 def get_loaded_data():
-    dummy_data = [
+    return [
         {"Number": 1, "sampling_frequency": 100},
         {"Number": 2, "sampling_frequency": 50},
         {"Number": 3, "sampling_frequency": 250},
     ]
 
-    return dummy_data
 
 
 # this callback runs when the page is loaded (the title of the preprocessing is created)
@@ -61,7 +60,7 @@ def apply_resampling(apply_click, summary, frequency):  # pylint: disable=unused
     [Input(ids.OPEN_SYNCH_BUTTON, "n_clicks"), Input(ids.SYNCHRONIZATION_CONFIRM_BUTTON, "n_clicks")],
     prevent_initial_call=True,
 )
-def open_synch_modal(open_click, confirm_click):  # pylint: disable=unused-argument
+def open_synch_modal(open_click, confirm_click) -> bool:  # pylint: disable=unused-argument
     trigger = ctx.triggered_id
 
     if trigger == ids.OPEN_SYNCH_BUTTON:
@@ -76,7 +75,7 @@ def open_synch_modal(open_click, confirm_click):  # pylint: disable=unused-argum
     [Input(ids.OPEN_SELECT_PERIODS_BUTTON, "n_clicks"), Input(ids.PERIODS_CONFIRM_BUTTON, "n_clicks")],
     prevent_initial_call=True,
 )
-def open_periods_modal(open_click, confirm_click):  # pylint: disable=unused-argument
+def open_periods_modal(open_click, confirm_click) -> bool:  # pylint: disable=unused-argument
     trigger = ctx.triggered_id
 
     if trigger == ids.OPEN_SELECT_PERIODS_BUTTON:
@@ -98,12 +97,11 @@ def show_data(selected_dataset, current_content):  # pylint: disable=unused-argu
 
     fig = go.Figure(data=[go.Scatter(y=sample_data)])
 
-    content = [
+    return [
         dcc.Graph(figure=fig, id={"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": selected})
         for selected in selected_dataset
     ]
 
-    return content
 
 
 # mark clicked data points

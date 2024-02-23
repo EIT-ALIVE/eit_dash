@@ -21,10 +21,10 @@ class LoadedData:
     def __init__(self):
         self._data: List[Sequence] = []
 
-    def add_sequence(self, new_sequence: Sequence):
+    def add_sequence(self, new_sequence: Sequence) -> None:
         self._data.append(new_sequence)
 
-    def clear_data(self):
+    def clear_data(self) -> None:
         self._data.clear()
 
     def get_all_sequences(self):

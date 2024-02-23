@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 from pathlib import Path
 
@@ -40,9 +42,8 @@ def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> db
     ]
     card_list += [dbc.Row(f"{data}: {value}", style={"margin-left": 10}) for data, value in info_data.items()]
 
-    card = dbc.Card(dbc.CardBody(card_list), id="card-1")
+    return dbc.Card(dbc.CardBody(card_list), id="card-1")
 
-    return card
 
 
 # managing the file selection. Confirm button clicked
@@ -211,8 +212,7 @@ def get_parent_directory(stored_cwd, n_clicks, currentdir):  # pylint: disable=u
     triggered_id = ctx.triggered_id
     if triggered_id == ids.STORED_CWD:
         return stored_cwd
-    parent = Path(currentdir).parent.as_posix()
-    return parent
+    return Path(currentdir).parent.as_posix()
 
 
 @callback(Output(ids.CWD_FILES, "children"), Input(ids.CWD, "children"))
