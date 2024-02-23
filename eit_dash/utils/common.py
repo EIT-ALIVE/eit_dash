@@ -88,6 +88,53 @@ def create_slider_figure(
     return figure
 
 
+def mark_selected_period(
+    original_figure: go.Figure,
+    period: Sequence,
+    eit_variants: List[str] = ["raw"],
+    continuous_data: List[str] = [],
+) -> go.Figure:
+    """
+    Create the figure for the selection of range.
+
+    Args:
+        original_figure: figure to update
+        period: Sequence object containing the selected dataset.
+        These ranges, the signal is plotted in black
+        eit_variants: list of the eit variants to be plotted
+        continuous_data: list of the continuous data signals to be plotted
+        these ranges, the signal is plotted in black
+    """
+
+    for eit_variant in eit_variants:
+        # TODO: This is a patch! Needs to be changed
+        if eit_variant == "raw":
+            try:
+                impedance = period.eit_data.variants[eit_variant].global_impedance
+            except KeyError:
+                impedance = period.eit_data.variants[None].global_impedance
+
+        original_figure.add_trace(
+            go.Scatter(
+                x=period.eit_data.time, y=impedance, name="eit", line={"color": "black"}
+            )
+        )
+
+    for n, cont_signal in enumerate(continuous_data):
+        original_figure.add_trace(
+            go.Scatter(
+                x=period.continuous_data[cont_signal].time,
+                y=period.continuous_data[cont_signal].variants["raw"].values,
+                name=cont_signal,
+                opacity=0.5,
+                yaxis=f"y{n+2}",
+                line={"color": "black"},
+            )
+        )
+
+    return original_figure
+
+
 def get_signal_options(
     dataset: Sequence, show_eit: bool = False
 ) -> List[Dict[str, int | str]]:
