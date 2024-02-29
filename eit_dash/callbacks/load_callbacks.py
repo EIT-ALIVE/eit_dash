@@ -214,7 +214,7 @@ def get_parent_directory(stored_cwd, n_clicks, currentdir):
     triggered_id = ctx.triggered_id
     if triggered_id == ids.STORED_CWD:
         return stored_cwd
-    return Path(currentdir).parent.as_posix()
+    return str(Path(currentdir).parent)
 
 
 @callback(Output(ids.CWD_FILES, "children"), Input(ids.CWD, "children"))
@@ -227,8 +227,7 @@ def list_cwd_files(cwd):
         files = sorted(os.listdir(path), key=str.lower)
         for i, file in enumerate(files):
             filepath = Path(file)
-
-            full_path = os.path.join(cwd, filepath.as_posix())
+            full_path = Path(cwd) / filepath
 
             is_dir = Path(full_path).is_dir()
             link = html.A(
@@ -236,7 +235,7 @@ def list_cwd_files(cwd):
                     html.Span(
                         file,
                         id={"type": "listed_file", "index": i},
-                        title=full_path,
+                        title=str(full_path),
                         style={"fontWeight": "bold"} if is_dir else {},
                     ),
                 ],

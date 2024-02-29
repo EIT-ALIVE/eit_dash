@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import dash_bootstrap_components as dbc
 from dash import dcc, html, register_page
@@ -96,9 +96,11 @@ file_browser = html.Div(
     [
         dbc.Row(
             [
-                dcc.Store(id=ids.STORED_CWD, data=os.getcwd()),
-                html.H5(html.B(html.A("⬆️ Parent directory", href="#", id=ids.PARENT_DIR))),
-                html.H3([html.Code(os.getcwd(), id=ids.CWD)]),
+                dcc.Store(id=ids.STORED_CWD, data=str(Path.cwd())),
+                html.H5(
+                    html.B(html.A("⬆️ Parent directory", href="#", id=ids.PARENT_DIR)),
+                ),
+                html.H3([html.Code(str(Path.cwd()), id=ids.CWD)]),
                 html.Br(),
                 html.Br(),
                 html.Div(id=ids.CWD_FILES, style=styles.FILE_BROWSER),
