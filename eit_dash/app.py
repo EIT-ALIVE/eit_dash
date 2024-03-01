@@ -1,5 +1,6 @@
 import dash_bootstrap_components as dbc
 from dash import Dash
+
 from .utils import data_singleton
 
 # this is a shared object to use the data through different pages

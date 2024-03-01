@@ -1,23 +1,31 @@
-from eit_dash.definitions.option_lists import SignalSelections
-from eitprocessing.sequence import Sequence
-from typing import List, Dict
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 import plotly.graph_objects as go
+
+from eit_dash.definitions.option_lists import SignalSelections
+
+if TYPE_CHECKING:
+    from eitprocessing.sequence import Sequence
 
 
 def create_slider_figure(
     dataset: Sequence,
-    eit_variants: List[str] = ["raw"],
-    continuous_data: List[str] = [],
+    eit_variants: list[str] | None = None,
+    continuous_data: list[str] | None = None,
 ) -> go.Figure:
-    """
-    Create the figure for the selection of range.
+    """Create the figure for the selection of range.
 
     Args:
         dataset: Sequence object containing the selected dataset
         eit_variants: list of the eit variants to be plotted
         continuous_data: list of the continuous data signals to be plotted
     """
+    if continuous_data is None:
+        continuous_data = []
+    if eit_variants is None:
+        eit_variants = ["raw"]
     traces = []
 
     for eit_variant in eit_variants:
@@ -34,18 +42,18 @@ def create_slider_figure(
                 "type": "scatter",
                 "mode": "lines",
                 "name": "a_level",
-            }
+            },
         )
 
     for cont_signal in continuous_data:
-        traces.append(
+        traces.append(  # noqa: PERF401
             {
                 "x": dataset.continuous_data[cont_signal].time,
-                "y": dataset.continuous_data[cont_signal].variants["raw"].values,
+                "y": dataset.continuous_data[cont_signal].variants["raw"].values,  # noqa: PD011
                 "type": "scatter",
                 "mode": "lines",
                 "name": "a_level",
-            }
+            },
         )
 
     figure = go.Figure(
@@ -56,7 +64,7 @@ def create_slider_figure(
         ),
     )
     for event in dataset.eit_data.events:
-        annotation = dict(text=f"{event.text}", textangle=-90)
+        annotation = {"text": f"{event.text}", "textangle": -90}
         figure.add_vline(
             x=event.time,
             line_width=3,
@@ -68,11 +76,8 @@ def create_slider_figure(
     return figure
 
 
-def get_signal_options(
-    dataset: Sequence, show_eit: bool = False
-) -> List[Dict[str, int | str]]:
-    """
-    Get the options for signal selection to be shown in the signal selection section.
+def get_signal_options(dataset: Sequence, show_eit: bool = False) -> list[dict[str, int | str]]:
+    """Get the options for signal selection to be shown in the signal selection section.
 
     Args:
         dataset: Sequence object containing the selected dataset
@@ -97,24 +102,6 @@ def get_signal_options(
 
     if dataset.continuous_data:
         for cont in dataset.continuous_data:
-            # if cont == "airway pressure":
-            #     label = SignalSelections.airway_pressure.name
-            #     value = SignalSelections.airway_pressure.value
-            # elif cont == "flow":
-            #     label = SignalSelections.flow.name
-            #     value = SignalSelections.flow.value
-            # elif cont == "esophageal pressure":
-            #     label = SignalSelections.esophageal_pressure.name
-            #     value = SignalSelections.esophageal_pressure.value
-            # elif cont == "volume":
-            #     label = SignalSelections.volume.name
-            #     value = SignalSelections.volume.value
-            # elif cont == "CO2":
-            #     label = SignalSelections.CO2.name
-            #     value = SignalSelections.CO2.value
-            # else:
-            # label = cont
-            # value = max(len(SignalSelections), len(options) + 1)
             options.append({"label": cont, "value": len(options)})
 
     return options

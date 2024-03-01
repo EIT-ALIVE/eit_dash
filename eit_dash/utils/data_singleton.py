@@ -1,12 +1,18 @@
+from __future__ import annotations
+
 from threading import Lock
-from typing import List
-from eitprocessing.sequence import Sequence
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from eitprocessing.sequence import Sequence
+
+# ruff: noqa: D102
 
 _singleton = None
 _lock = Lock()
 
 
-def get_singleton():
+def get_singleton():  # noqa: D103
     with _lock:
         global _singleton
 
@@ -17,13 +23,15 @@ def get_singleton():
 
 
 class LoadedData:
-    def __init__(self):
-        self._data: List[Sequence] = []
+    """Loaded data."""
 
-    def add_sequence(self, new_sequence: Sequence):
+    def __init__(self):
+        self._data: list[Sequence] = []
+
+    def add_sequence(self, new_sequence: Sequence) -> None:
         self._data.append(new_sequence)
 
-    def clear_data(self):
+    def clear_data(self) -> None:
         self._data.clear()
 
     def get_all_sequences(self):
@@ -34,6 +42,7 @@ class LoadedData:
 
     def get_sequence_at(self, index: int):
         if index > (length := self.get_list_length()):
-            raise ValueError(f"Index higher than list length {length}")
+            msg = f"Index higher than list length {length}"
+            raise ValueError(msg)
 
         return self._data[index]

@@ -1,30 +1,29 @@
+from __future__ import annotations
+
 import os
 from pathlib import Path
 
 import dash_bootstrap_components as dbc
-from dash import Input, Output, State, callback, ctx, html, ALL
+import plotly.graph_objects as go
+from dash import ALL, Input, Output, State, callback, ctx, html
 from dash.exceptions import PreventUpdate
+from eitprocessing.eit_data import EITData
+from eitprocessing.sequence import Sequence
 
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
 from eit_dash.definitions.option_lists import InputFiletypes
 from eit_dash.utils.common import create_slider_figure, get_signal_options
-from eitprocessing.eit_data import EITData
-from eitprocessing.sequence import Sequence
-
-import plotly.graph_objects as go
 
 file_data: Sequence | None = None
 
 
-def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> dbc.Card:
-    """
-    Create the card with the information on the loaded dataset
-    to be displayed in the Results section
+def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
+    """Create the card with the information on the loaded dataset to be displayed in the Results section.
 
     Args:
         dataset: Sequence object containing the selected dataset
-        file_type: index of the selected type of selected
+        file_type: Index of the selected type of selected
     """
     info_data = {
         "Name": dataset.eit_data.path.name,
@@ -36,17 +35,12 @@ def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> db
     }
 
     card_list = [
-        html.H4(dataset_name, className="card-title"),
+        html.H4(dataset.label, className="card-title"),
         html.H6(InputFiletypes(file_type).name, className="card-subtitle"),
     ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style={"margin-left": 10})
-        for data, value in info_data.items()
-    ]
+    card_list += [dbc.Row(f"{data}: {value}", style={"margin-left": 10}) for data, value in info_data.items()]
 
-    card = dbc.Card(dbc.CardBody(card_list), id="card-1")
-
-    return card
+    return dbc.Card(dbc.CardBody(card_list), id="card-1")
 
 
 # managing the file selection. Confirm button clicked
@@ -60,10 +54,16 @@ def create_info_card(dataset: Sequence, file_type: int, dataset_name: str) -> db
     State(ids.INPUT_TYPE_SELECTOR, "value"),
     prevent_initial_call=True,
 )
-# load the information selected from the file (e.g., signals, time span)
 def load_selected_data(
-    select_file, confirm_select, file_path, file_type  # pylint: disable=unused-argument
+    select_file,
+    confirm_select,
+    file_path,
+    file_type,
 ):
+    """Load the information selected from the file.
+
+    E.g., signals, time span.
+    """
     open_modal = True
     data = None
     show_alert = False
@@ -114,8 +114,8 @@ def load_selected_data(
     State(ids.INPUT_TYPE_SELECTOR, "value"),
     prevent_initial_call=True,
 )
-# read the file selected in the file selector
-def open_data_selector(data, cancel_load, file_type):  # pylint: disable=unused-argument
+def open_data_selector(data, cancel_load, file_type):
+    """Read the file selected in the file selector."""
     global file_data
 
     trigger = ctx.triggered_id
@@ -138,7 +138,9 @@ def open_data_selector(data, cancel_load, file_type):  # pylint: disable=unused-
     )
 
     file_data = Sequence(
-        eit_data=eit_data, continuous_data=continuous_data, sparse_data=sparse_data
+        eit_data=eit_data,
+        continuous_data=continuous_data,
+        sparse_data=sparse_data,
     )
 
     options = get_signal_options(file_data)
@@ -160,12 +162,13 @@ def open_data_selector(data, cancel_load, file_type):  # pylint: disable=unused-
 )
 def show_info(
     btn_click,
-    loaded_data,  # pylint: disable=unused-argument, disable=too-many-arguments
+    loaded_data,
     container_state,
     filetype,
     slidebar_stat,
     selected_signals,
 ):
+    """Creates the preview for preselecting part of the dataset."""
     if file_data:
         if slidebar_stat is not None and "xaxis.range" in slidebar_stat:
             start_sample = slidebar_stat["xaxis.range"][0]
@@ -187,7 +190,7 @@ def show_info(
         data_object.add_sequence(cut_data)
 
         # create the info summary card
-        card = create_info_card(cut_data, int(filetype), dataset_name)
+        card = create_info_card(cut_data, int(filetype))
 
         # add the card to the current results
         if container_state:
@@ -206,18 +209,17 @@ def show_info(
     Input(ids.CWD, "children"),
     prevent_initial_call=True,
 )
-def get_parent_directory(
-    stored_cwd, n_clicks, currentdir
-):  # pylint: disable=unused-argument
+def get_parent_directory(stored_cwd, n_clicks, currentdir):
+    """Return path of parent directory."""
     triggered_id = ctx.triggered_id
     if triggered_id == ids.STORED_CWD:
         return stored_cwd
-    parent = Path(currentdir).parent.as_posix()
-    return parent
+    return str(Path(currentdir).parent)
 
 
 @callback(Output(ids.CWD_FILES, "children"), Input(ids.CWD, "children"))
 def list_cwd_files(cwd):
+    """List files in thde directory."""
     path = Path(cwd)
 
     cwd_files = []
@@ -225,8 +227,7 @@ def list_cwd_files(cwd):
         files = sorted(os.listdir(path), key=str.lower)
         for i, file in enumerate(files):
             filepath = Path(file)
-
-            full_path = os.path.join(cwd, filepath.as_posix())
+            full_path = Path(cwd) / filepath
 
             is_dir = Path(full_path).is_dir()
             link = html.A(
@@ -234,9 +235,9 @@ def list_cwd_files(cwd):
                     html.Span(
                         file,
                         id={"type": "listed_file", "index": i},
-                        title=full_path,
+                        title=str(full_path),
                         style={"fontWeight": "bold"} if is_dir else {},
-                    )
+                    ),
                 ],
                 href="#",
             )
@@ -253,6 +254,7 @@ def list_cwd_files(cwd):
     State({"type": "listed_file", "index": ALL}, "title"),
 )
 def store_clicked_file(n_clicks, title):
+    """Saves path of currently clicked file."""
     if not n_clicks or set(n_clicks) == {None}:
         raise PreventUpdate
     index = ctx.triggered_id["index"]
