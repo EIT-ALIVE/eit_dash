@@ -111,10 +111,12 @@ def load_selected_data(
     Output(ids.FILE_LENGTH_SLIDER, "figure"),
     Input(ids.NFILES_PLACEHOLDER, "children"),
     Input(ids.LOAD_CANCEL_BUTTON, "n_clicks"),
+    Input(ids.CHECKBOX_SIGNALS, "value"),
     State(ids.INPUT_TYPE_SELECTOR, "value"),
+    State(ids.FILE_LENGTH_SLIDER, "figure"),
     prevent_initial_call=True,
 )
-def open_data_selector(data, cancel_load, file_type):
+def open_data_selector(data, cancel_load, sig, file_type, fig):
     """Read the file selected in the file selector."""
     global file_data
 
@@ -130,22 +132,41 @@ def open_data_selector(data, cancel_load, file_type):
         figure = go.Figure()
         return True, [], figure
 
-    path = Path(data)
-    eit_data, continuous_data, sparse_data = EITData.from_path(
-        path,
-        vendor=InputFiletypes(int(file_type)).name.lower(),
-        return_non_eit_data=True,
-    )
+    if trigger in [ids.NFILES_PLACEHOLDER, ids.CHECKBOX_SIGNALS]:
+        if trigger == ids.CHECKBOX_SIGNALS:
+            options = get_signal_options(file_data)
+            figure = fig
+        else:
+            path = Path(data)
+            eit_data, continuous_data, sparse_data = EITData.from_path(
+                path,
+                vendor=InputFiletypes(int(file_type)).name.lower(),
+                return_non_eit_data=True,
+            )
 
-    file_data = Sequence(
-        eit_data=eit_data,
-        continuous_data=continuous_data,
-        sparse_data=sparse_data,
-    )
+            file_data = Sequence(
+                eit_data=eit_data,
+                continuous_data=continuous_data,
+                sparse_data=sparse_data,
+            )
 
-    options = get_signal_options(file_data)
+            options = get_signal_options(file_data)
 
-    figure = create_slider_figure(file_data)
+            figure = create_slider_figure(
+                file_data,
+                ["raw"],
+                [continuous_datum for continuous_datum in continuous_data],
+            )
+
+        ok = ["raw"]
+        if sig:
+            ok += [options[s]["label"] for s in sig]
+
+        for s in figure["data"]:
+            if s["name"] in ok:
+                s["visible"] = True
+            else:
+                s["visible"] = False
 
     return False, options, figure
 

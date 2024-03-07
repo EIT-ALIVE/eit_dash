@@ -42,8 +42,7 @@ def create_slider_figure(
                 impedance = dataset.eit_data.variants[eit_variant].global_impedance
             except KeyError:
                 impedance = dataset.eit_data.variants[None].global_impedance
-
-        figure.add_trace(go.Scatter(x=dataset.eit_data.time, y=impedance, name="eit"))
+        figure.add_trace(go.Scatter(x=dataset.eit_data.time, y=impedance, name="raw"))
 
     for n, cont_signal in enumerate(continuous_data):
         figure.add_trace(
@@ -87,6 +86,7 @@ def create_slider_figure(
     figure.update_layout(
         xaxis={"rangeslider": {"visible": True}},
         margin={"t": 0, "l": 0, "b": 0, "r": 0},
+        legend={"itemclick": False, "itemdoubleclick": False},
         **params,
     )
 
@@ -121,7 +121,11 @@ def mark_selected_period(
 
         original_figure.add_trace(
             go.Scatter(
-                x=period.eit_data.time, y=impedance, name="eit", line={"color": "black"}
+                x=period.eit_data.time,
+                y=impedance,
+                name="eit",
+                line={"color": "black"},
+                showlegend=False,
             )
         )
 
@@ -134,6 +138,7 @@ def mark_selected_period(
                 opacity=0.5,
                 yaxis=f"y{n+2}",
                 line={"color": "black"},
+                showlegend=False,
             )
         )
 

@@ -264,6 +264,7 @@ def show_selection_div(signals):  # pylint: disable=unused-argument
     [
         Input(ids.PREPROCESING_SIGNALS_CHECKBOX, "value"),
         Input(ids.PREPROCESING_SELECT_BTN, "n_clicks"),
+        Input(ids.PREPROCESING_DATASET_SELECT, "value"),
     ],
     [
         State(ids.PREPROCESING_SIGNALS_CHECKBOX, "options"),
@@ -277,6 +278,7 @@ def show_selection_div(signals):  # pylint: disable=unused-argument
 def plot_signal(
     signals,
     select_periods,
+    selected_manual,
     options,
     dataset,
     slidebar_stat,
@@ -288,10 +290,28 @@ def plot_signal(
     data = data_object.get_sequence_at(int(dataset))
     cont_data = []
     eit_variants = []
-    figure = blank_fig()
+    figure = []  # blank_fig()
     style = styles.EMPTY_ELEMENT
 
     triggered_id = ctx.triggered_id
+
+    # create the figure
+    if triggered_id == ids.PREPROCESING_SIGNALS_CHECKBOX:
+        ok = [options[s]["label"] for s in signals]
+        if not current_figure:
+            current_figure = create_slider_figure(
+                data,
+                ["raw"],
+                [continuous_datum for continuous_datum in data.continuous_data],
+            )
+
+        for s in current_figure["data"]:
+            if s["name"] in ok:
+                s["visible"] = True
+            else:
+                s["visible"] = False
+        style = styles.GRAPH
+        return current_figure, style, current_summary
 
     # when the checkbox is created, the callback is triggered, but the list is empty
     if signals:
@@ -303,9 +323,13 @@ def plot_signal(
 
         style = styles.GRAPH
 
-    # triggered by signal selection
-    if triggered_id == ids.PREPROCESING_SIGNALS_CHECKBOX:
-        figure = create_slider_figure(data, eit_variants, cont_data)
+    if triggered_id == ids.PREPROCESING_DATASET_SELECT:
+        figure = create_slider_figure(
+            data,
+            ["raw"],
+            [continuous_datum for continuous_datum in data.continuous_data],
+        )
+        created_figure = figure
 
     elif triggered_id == ids.PREPROCESING_SELECT_BTN:
         if slidebar_stat is not None and "xaxis.range" in slidebar_stat:

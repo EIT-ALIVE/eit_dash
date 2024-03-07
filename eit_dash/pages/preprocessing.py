@@ -137,7 +137,7 @@ modal_selection_body = html.Div(
                     [
                         dcc.Graph(
                             id=ids.PREPROCESING_PERIODS_GRAPH,
-                            figure=blank_fig(),
+                            # figure=blank_fig(),
                             style=styles.EMPTY_ELEMENT,
                         )
                     ]
