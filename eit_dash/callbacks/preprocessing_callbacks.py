@@ -1,3 +1,7 @@
+from dash import html, Input, Output, State, callback, ctx, dcc, MATCH
+from eit_dash.app import data_object
+from eitprocessing.sequence import Sequence
+
 import dash_bootstrap_components as dbc
 import numpy as np
 import plotly.graph_objs as go
@@ -9,33 +13,100 @@ import eit_dash.definitions.layout_styles as styles
 # ruff: noqa: D103  #TODO remove this line when finalizing this module
 
 
-def get_loaded_data():
-    return [
-        {"Number": 1, "sampling_frequency": 100},
-        {"Number": 2, "sampling_frequency": 50},
-        {"Number": 3, "sampling_frequency": 250},
+def check_continuous_data_loaded() -> bool:
+    """
+    Checks if continuous data have been loaded.
+
+    Return: True if continuous data are present, False otherwise
+    """
+    loaded_data = data_object.get_all_sequences()
+    for dataset in loaded_data:
+        if dataset.continuous_data:
+            return True
+
+    return False
+
+
+def create_resampling_card(loaded_data):
+    row = [
+        dbc.Row(
+            [dbc.Col([html.H6("Dataset")]), dbc.Col([html.H6("Sampling frequency")])]
+        ),
+        html.P(),
     ]
+
+    row += [
+        dbc.Row(
+            [
+                dbc.Col(f'{data["Name"]}'),
+                dbc.Col(f'{data["Sampling frequency"]} Hz'),
+                html.P(),
+            ]
+        )
+        for data in loaded_data
+    ]
+
+    options = [
+        {"label": f'{data["Name"]}', "value": str(i)}
+        for i, data in enumerate(loaded_data)
+    ]
+
+    return row, options
+
+
+def get_loaded_data():
+    loaded_data = data_object.get_all_sequences()
+    data = []
+    for dataset in loaded_data:
+        name = dataset.label
+        if dataset.continuous_data:
+            for channel in dataset.continuous_data:
+                data.append({"Name": name, "Data type": channel})
+        if dataset.eit_data:
+            data.append(
+                {
+                    "Name": name,
+                    "Data type": "EIT",
+                    "Sampling frequency": dataset.eit_data.framerate,
+                }
+            )
+
+    return data
+
+
+def get_suggested_resampling(loaded_data):
+    resampling_freq = 0
+    for data in loaded_data:
+        if data["Sampling frequency"] != "EIT":
+            resampling_freq = min(resampling_freq, data["Sampling frequency"])
+
+    return resampling_freq
 
 
 # this callback runs when the page is loaded (the title of the preprocessing is created)
 # and loads the data in the resampling card and in the dataset selection menu
 @callback(
-    [Output(ids.RESAMPLING_CARD, "children"), Output(ids.DATASET_SELECTION_CHECKBOX, "options")],
+    [
+        Output(ids.RESAMPLING_CARD, "children"),
+        Output(ids.RESAMPLING_CARD_BODY, "children"),
+        Output(ids.DATASET_SELECTION_CHECKBOX, "options"),
+        Output(ids.RESAMPLING_FREQUENCY_INPUT, "value"),
+    ],
     Input(ids.PREPROCESING_TITLE, "children"),
 )
-def load_datasets(title):
-    dummy_data = get_loaded_data()
+def load_datasets(title):  # pylint: disable=unused-argument
+    loaded_data = get_loaded_data()
+    continuous_data_loaded = check_continuous_data_loaded()
 
-    row = [dbc.Row([dbc.Col([html.H6("Sequence")]), dbc.Col([html.H6("Sampling frequency")])]), html.P()]
+    if not continuous_data_loaded:
+        return [], [], [], None
 
-    row += [
-        dbc.Row([dbc.Col(f'Sequence {data["Number"]}'), dbc.Col(f'{data["sampling_frequency"]} Hz'), html.P()])
-        for data in dummy_data
-    ]
+    suggested_resampling = get_suggested_resampling(loaded_data)
 
-    options = [{"label": f'Sequence {data["Number"]}', "value": str(i)} for i, data in enumerate(dummy_data)]
+    row, options = create_resampling_card(loaded_data)
 
-    return row, options
+    return row, options, suggested_resampling
+
 
 
 # apply resampling
@@ -98,10 +169,14 @@ def show_data(selected_dataset, current_content):
 
     fig = go.Figure(data=[go.Scatter(y=sample_data)])
 
-    return [
-        dcc.Graph(figure=fig, id={"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": selected})
+    content = [
+        dcc.Graph(
+            figure=fig, id={"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": selected}
+        )
         for selected in selected_dataset
     ]
+
+    return content
 
 
 # mark clicked data points

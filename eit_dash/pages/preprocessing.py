@@ -7,31 +7,36 @@ from eit_dash.definitions.option_lists import PeriodsSelectMethods, SynchMethods
 
 register_page(__name__, path="/preprocessing")
 
-resampling_card = dbc.Card(
-    [
-        dbc.CardHeader("Resampling"),
-        dbc.CardBody(id=ids.RESAMPLING_CARD),
-        dbc.CardFooter(
-            [
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            [
-                                dbc.Input(
-                                    type="number",
-                                    placeholder="Resampling frequency",
-                                    value=100,
-                                    id=ids.RESAMPLING_FREQUENCY_INPUT,
-                                ),
-                            ],
-                        ),
-                        dbc.Col([dbc.Button("Apply", id=ids.CONFIRM_RESAMPLING_BUTTON)]),
-                    ],
-                ),
-            ],
-            style=styles.CARD_FOOTER,
-        ),
-    ],
+resampling_card = html.Div(
+    dbc.Card(
+        [
+            dbc.CardHeader("Resampling"),
+            dbc.CardBody(id=ids.RESAMPLING_CARD_BODY),
+            dbc.CardFooter(
+                [
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    dbc.Input(
+                                        type="number",
+                                        placeholder="Resampling frequency",
+                                        value=100,
+                                        id=ids.RESAMPLING_FREQUENCY_INPUT,
+                                    )
+                                ]
+                            ),
+                            dbc.Col(
+                                [dbc.Button("Apply", id=ids.CONFIRM_RESAMPLING_BUTTON)]
+                            ),
+                        ]
+                    )
+                ],
+                style=styles.CARD_FOOTER,
+            ),
+        ]
+    ),
+    id=ids.RESAMPLING_CARD,
 )
 
 summary = dbc.Col(
@@ -43,30 +48,53 @@ summary = dbc.Col(
 
 actions = dbc.Col(
     [
-        html.H2("Pre-processing steps", id=ids.PREPROCESING_TITLE, style=styles.COLUMN_TITLE),
+        html.H2(
+            "Pre-processing steps", id=ids.PREPROCESING_TITLE, style=styles.COLUMN_TITLE
+        ),
         resampling_card,
         html.P(),
-        dbc.Row(dbc.Button("Synchronize data", id=ids.OPEN_SYNCH_BUTTON, disabled=True)),
+        html.Div(
+            dbc.Row(
+                dbc.Button("Synchronize data", id=ids.OPEN_SYNCH_BUTTON, disabled=True)
+            ),
+            hidden=True,
+        ),
         html.P(),
-        dbc.Row(dbc.Button("Select data range(s)", id=ids.OPEN_SELECT_PERIODS_BUTTON, disabled=True)),
+        dbc.Row(
+            dbc.Button(
+                "Select data range(s)",
+                id=ids.OPEN_SELECT_PERIODS_BUTTON,
+                disabled=False,
+            )
+        ),
         html.P(),
-        dbc.Row(dbc.Button("Filter data", id=ids.OPEN_FILTER_DATA_BUTTON, disabled=True)),
-    ],
+        dbc.Row(
+            dbc.Button("Filter data", id=ids.OPEN_FILTER_DATA_BUTTON, disabled=False)
+        ),
+    ]
 )
 
-results = dbc.Col([html.H2("Results", style=styles.COLUMN_TITLE)], id=ids.PREPROCESING_RESULTS_CONTAINER)
+results = dbc.Col(
+    [html.H2("Results", style=styles.COLUMN_TITLE)],
+    id=ids.PREPROCESING_RESULTS_CONTAINER,
+)
 
 # popup for data synchronization
 modal_synchronization = html.Div(
     [
         dbc.Modal(
             [
-                dbc.ModalHeader(dbc.ModalTitle("Data synchronization"), close_button=True),
+                dbc.ModalHeader(
+                    dbc.ModalTitle("Data synchronization"), close_button=True
+                ),
                 dbc.ModalBody(
                     [
                         dbc.Select(
                             id=ids.SYNC_METHOD_SELECTOR,
-                            options=[{"label": method.name, "value": method.value} for method in SynchMethods],
+                            options=[
+                                {"label": method.name, "value": method.value}
+                                for method in SynchMethods
+                            ],
                             value=str(SynchMethods.manual.value),
                         ),
                         html.P(),
@@ -74,7 +102,7 @@ modal_synchronization = html.Div(
                         html.P(),
                         dbc.Row(id=ids.SYNC_DATA_PREVIEW_CONTAINER),
                         dbc.Button("SYNCH PREVIEW", id=ids.CONFIRM_SYNCH_BUTTON),
-                    ],
+                    ]
                 ),
                 dbc.ModalFooter(
                     dbc.Button(
@@ -105,10 +133,13 @@ modal_selection = html.Div(
                     [
                         dbc.Select(
                             id=ids.PERIODS_METHOD_SELECTOR,
-                            options=[{"label": method.name, "value": method.value} for method in PeriodsSelectMethods],
+                            options=[
+                                {"label": method.name, "value": method.value}
+                                for method in PeriodsSelectMethods
+                            ],
                             value=str(PeriodsSelectMethods.Manual.value),
-                        ),
-                    ],
+                        )
+                    ]
                 ),
                 dbc.ModalFooter(
                     dbc.Button(
@@ -137,5 +168,5 @@ layout = dbc.Row(
         results,
         modal_synchronization,
         modal_selection,
-    ],
+    ]
 )
