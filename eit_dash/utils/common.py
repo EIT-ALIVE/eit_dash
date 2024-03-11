@@ -26,30 +26,20 @@ def create_slider_figure(
         continuous_data = []
     if eit_variants is None:
         eit_variants = ["raw"]
-    traces = []
 
-    for eit_variant in eit_variants:
-        # TODO: This is a patch! Needs to be changed
-        if eit_variant == "raw":
-            try:
-                impedance = dataset.eit_data.variants[eit_variant].global_impedance
-            except KeyError:
-                impedance = dataset.eit_data.variants[None].global_impedance
-        traces.append(
-            {
-                "x": dataset.eit_data.time,
-                "y": impedance,
+    traces = [{
+                "x": dataset.eit_data[eit_variant].time,
+                "y": dataset.eit_data[eit_variant].global_impedance,
                 "type": "scatter",
                 "mode": "lines",
                 "name": "a_level",
-            },
-        )
+            } for eit_variant in eit_variants]
 
     for cont_signal in continuous_data:
         traces.append(  # noqa: PERF401
             {
                 "x": dataset.continuous_data[cont_signal].time,
-                "y": dataset.continuous_data[cont_signal].variants["raw"].values,  # noqa: PD011
+                "y": dataset.continuous_data[cont_signal].values,  # noqa: PD011
                 "type": "scatter",
                 "mode": "lines",
                 "name": "a_level",
@@ -63,7 +53,8 @@ def create_slider_figure(
             margin={"t": 0, "l": 0, "b": 0, "r": 0},
         ),
     )
-    for event in dataset.eit_data.events:
+
+    for event in dataset.eit_data[eit_variants[0]].events:
         annotation = {"text": f"{event.text}", "textangle": -90}
         figure.add_vline(
             x=event.time,
@@ -88,19 +79,11 @@ def get_signal_options(dataset: Sequence, show_eit: bool = False) -> list[dict[s
     options = []
     if show_eit:
         # iterate over eit data
-        for variant in dataset.eit_data.variants:
-            # TODO: the None check is just a temporary fix.
-            #  The select_by_index should be adjusted instead.
-
-            if variant == "raw" or variant is None:
-                label = SignalSelections.raw.name
-                value = SignalSelections.raw.value
-            else:
-                label = variant
-                value = max(len(SignalSelections), len(options) + 1)
-            options.append({"label": label, "value": value})
+        for eit in dataset.eit_data:
+            options.append({"label": eit, "value": len(options)})
 
     if dataset.continuous_data:
+        # iterate over continuous data
         for cont in dataset.continuous_data:
             options.append({"label": cont, "value": len(options)})
 

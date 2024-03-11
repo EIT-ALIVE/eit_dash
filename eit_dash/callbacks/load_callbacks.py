@@ -7,6 +7,8 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 from dash import ALL, Input, Output, State, callback, ctx, html
 from dash.exceptions import PreventUpdate
+from eitprocessing.continuous_data import ContinuousData
+from eitprocessing.data_collection import DataCollection
 from eitprocessing.eit_data import EITData
 from eitprocessing.sequence import Sequence
 
@@ -26,12 +28,12 @@ def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
         file_type: Index of the selected type of selected
     """
     info_data = {
-        "Name": dataset.eit_data.path.name,
-        "n_frames": dataset.eit_data.nframes,
-        "start_time": dataset.eit_data.time[0],
-        "end_time": dataset.eit_data.time[-1],
-        "vendor": dataset.eit_data.vendor,
-        "path": str(dataset.eit_data.path),
+        "Name": dataset.eit_data["raw"].path.name,
+        "n_frames": dataset.eit_data["raw"].nframes,
+        "start_time": dataset.eit_data["raw"].time[0],
+        "end_time": dataset.eit_data["raw"].time[-1],
+        "vendor": dataset.eit_data["raw"].vendor,
+        "path": str(dataset.eit_data["raw"].path),
     }
 
     card_list = [
@@ -141,6 +143,7 @@ def open_data_selector(data, cancel_load, file_type):
         eit_data=eit_data,
         continuous_data=continuous_data,
         sparse_data=sparse_data,
+        label="selected data",
     )
 
     options = get_signal_options(file_data)
@@ -179,11 +182,22 @@ def show_info(
 
         dataset_name = f"Dataset {data_object.get_list_length()}"
 
-        # TODO: adapt this to also continuous data
+        # cut the eit data and the continuous data and add them to a new DataCollections
+
+        eit_data_cut = DataCollection(data_type=EITData)
+        continuous_data_cut = DataCollection(data_type=ContinuousData)
+
+        for data_type in (data := file_data.eit_data):
+            eit_data_cut.add(data[data_type].select_by_time(start_sample, stop_sample))
+
+        for data_type in (data := file_data.continuous_data):
+            continuous_data_cut.add(data[data_type].select_by_time(start_sample, stop_sample))
+
+        # add all the cut data to the new sequence
         cut_data = Sequence(
             label=dataset_name,
-            eit_data=file_data.eit_data.select_by_time(start_sample, stop_sample),
-            continuous_data=file_data.continuous_data,
+            eit_data=eit_data_cut,
+            continuous_data=continuous_data_cut,
         )
 
         # save the selected data in the singleton
