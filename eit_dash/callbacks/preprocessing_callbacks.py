@@ -1,7 +1,3 @@
-from dash import html, Input, Output, State, callback, ctx, dcc, MATCH
-from eit_dash.app import data_object
-from eitprocessing.sequence import Sequence
-
 import dash_bootstrap_components as dbc
 import numpy as np
 import plotly.graph_objs as go
@@ -9,6 +5,7 @@ from dash import MATCH, Input, Output, State, callback, ctx, dcc, html
 
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
+from eit_dash.app import data_object
 
 # ruff: noqa: D103  #TODO remove this line when finalizing this module
 
@@ -20,17 +17,14 @@ def check_continuous_data_loaded() -> bool:
     Return: True if continuous data are present, False otherwise
     """
     loaded_data = data_object.get_all_sequences()
-    for dataset in loaded_data:
-        if dataset.continuous_data:
-            return True
 
-    return False
+    return any(dataset.continuous_data for dataset in loaded_data)
 
 
 def create_resampling_card(loaded_data):
     row = [
         dbc.Row(
-            [dbc.Col([html.H6("Dataset")]), dbc.Col([html.H6("Sampling frequency")])]
+            [dbc.Col([html.H6("Dataset")]), dbc.Col([html.H6("Sampling frequency")])],
         ),
         html.P(),
     ]
@@ -41,7 +35,7 @@ def create_resampling_card(loaded_data):
                 dbc.Col(f'{data["Name"]}'),
                 dbc.Col(f'{data["Sampling frequency"]} Hz'),
                 html.P(),
-            ]
+            ],
         )
         for data in loaded_data
     ]
@@ -68,7 +62,7 @@ def get_loaded_data():
                     "Name": name,
                     "Data type": "EIT",
                     "Sampling frequency": dataset.eit_data.framerate,
-                }
+                },
             )
 
     return data
@@ -171,7 +165,7 @@ def show_data(selected_dataset, current_content):
 
     content = [
         dcc.Graph(
-            figure=fig, id={"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": selected}
+            figure=fig, id={"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": selected},
         )
         for selected in selected_dataset
     ]
