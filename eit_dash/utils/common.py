@@ -121,11 +121,7 @@ def mark_selected_period(
 
         original_figure.add_trace(
             go.Scatter(
-                x=period.eit_data.time,
-                y=impedance,
-                name="eit",
-                line={"color": "black"},
-                showlegend=False,
+                x=period.eit_data.time, y=impedance, name="eit", line={"color": "black"}
             )
         )
 
@@ -138,7 +134,6 @@ def mark_selected_period(
                 opacity=0.5,
                 yaxis=f"y{n+2}",
                 line={"color": "black"},
-                showlegend=False,
             )
         )
 

@@ -1,4 +1,5 @@
-from dash import dcc
+from dash import dcc, html, register_page
+from eit_dash.definitions.option_lists import SynchMethods, PeriodsSelectMethods
 from eit_dash.utils.common import blank_fig
 import dash_bootstrap_components as dbc
 from dash import html, register_page
@@ -58,6 +59,7 @@ actions = dbc.Col(
         html.Div(
             dbc.Row(
                 dbc.Button("Synchronize data", id=ids.OPEN_SYNCH_BUTTON, disabled=True),
+                dbc.Button("Synchronize data", id=ids.OPEN_SYNCH_BUTTON, disabled=True)
             ),
             hidden=True,
         ),
@@ -176,6 +178,7 @@ modal_selection = html.Div(
                 dbc.ModalHeader(dbc.ModalTitle("Periods selection"), close_button=True),
                 dbc.ModalBody(
                     [
+                        html.H6("Periods selection method"),
                         dbc.Select(
                             id=ids.PERIODS_METHOD_SELECTOR,
                             options=[

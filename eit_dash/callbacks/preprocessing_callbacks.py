@@ -1,7 +1,8 @@
 from eit_dash.definitions.option_lists import PeriodsSelectMethods
-<<<<<<< HEAD
 from eit_dash.utils.common import blank_fig, create_slider_figure, get_signal_options
-=======
+from dash import html, Input, Output, State, callback, ctx, dcc, MATCH
+from eit_dash.app import data_object
+from eit_dash.definitions.option_lists import PeriodsSelectMethods
 from eit_dash.utils.common import (
     blank_fig,
     create_slider_figure,
@@ -9,7 +10,6 @@ from eit_dash.utils.common import (
     mark_selected_period,
 )
 from eitprocessing.sequence import Sequence
->>>>>>> ad40a1b (mark selected periods on graph)
 
 import dash_bootstrap_components as dbc
 import numpy as np
@@ -94,6 +94,7 @@ def get_loaded_data():
             )
 
     return data
+
 
 def get_suggested_resampling(loaded_data):
     resampling_freq = 0
@@ -312,7 +313,6 @@ def plot_signal(
                 s["visible"] = False
         style = styles.GRAPH
         return current_figure, style, current_summary
-
     # when the checkbox is created, the callback is triggered, but the list is empty
     if signals:
         for sig in signals:
@@ -330,7 +330,6 @@ def plot_signal(
             [continuous_datum for continuous_datum in data.continuous_data],
         )
         created_figure = figure
-
     elif triggered_id == ids.PREPROCESING_SELECT_BTN:
         if slidebar_stat is not None and "xaxis.range" in slidebar_stat:
             start_sample = slidebar_stat["xaxis.range"][0]
