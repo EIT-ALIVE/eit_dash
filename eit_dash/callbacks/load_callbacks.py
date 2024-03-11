@@ -33,6 +33,7 @@ def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
         "start_time": dataset.eit_data["raw"].time[0],
         "end_time": dataset.eit_data["raw"].time[-1],
         "vendor": dataset.eit_data["raw"].vendor,
+        "continuous signals": str(list(dataset.continuous_data)),
         "path": str(dataset.eit_data["raw"].path),
     }
 
@@ -161,6 +162,7 @@ def open_data_selector(data, cancel_load, file_type):
     State(ids.INPUT_TYPE_SELECTOR, "value"),
     State(ids.FILE_LENGTH_SLIDER, "relayoutData"),
     State(ids.CHECKBOX_SIGNALS, "value"),
+    State(ids.CHECKBOX_SIGNALS, "options"),
     prevent_initial_call=True,
 )
 def show_info(
@@ -170,6 +172,7 @@ def show_info(
     filetype,
     slidebar_stat,
     selected_signals,
+    signals_options,
 ):
     """Creates the preview for preselecting part of the dataset."""
     if file_data:
@@ -177,10 +180,13 @@ def show_info(
             start_sample = slidebar_stat["xaxis.range"][0]
             stop_sample = slidebar_stat["xaxis.range"][1]
         else:
-            start_sample = file_data.eit_data.time[0]
-            stop_sample = file_data.eit_data.time[-1]
+            start_sample = file_data.eit_data["raw"].time[0]
+            stop_sample = file_data.eit_data["raw"].time[-1]
 
         dataset_name = f"Dataset {data_object.get_list_length()}"
+
+        # get the name of the selected continuous signals
+        selected = [signals_options[s]["label"] for s in selected_signals]
 
         # cut the eit data and the continuous data and add them to a new DataCollections
 
@@ -191,7 +197,9 @@ def show_info(
             eit_data_cut.add(data[data_type].select_by_time(start_sample, stop_sample))
 
         for data_type in (data := file_data.continuous_data):
-            continuous_data_cut.add(data[data_type].select_by_time(start_sample, stop_sample))
+            # add just the selected signals
+            if data_type in selected:
+                continuous_data_cut.add(data[data_type].select_by_time(start_sample, stop_sample))
 
         # add all the cut data to the new sequence
         cut_data = Sequence(

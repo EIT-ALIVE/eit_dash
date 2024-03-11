@@ -4,8 +4,6 @@ from typing import TYPE_CHECKING
 
 import plotly.graph_objects as go
 
-from eit_dash.definitions.option_lists import SignalSelections
-
 if TYPE_CHECKING:
     from eitprocessing.sequence import Sequence
 
