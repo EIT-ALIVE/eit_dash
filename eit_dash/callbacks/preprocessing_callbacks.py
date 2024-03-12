@@ -1,3 +1,5 @@
+from dash.exceptions import PreventUpdate
+
 from eit_dash.definitions.option_lists import PeriodsSelectMethods
 from eit_dash.utils.common import (
     create_slider_figure,
@@ -266,6 +268,12 @@ def initialize_figure(
     dataset,
 ):
     """When the dataset is selected, the figure is initialized"""
+
+    # the callback is run also when populating the dataset options.
+    # In this case we don't want to run it
+    if not dataset:
+        raise PreventUpdate
+
     data = data_object.get_sequence_at(int(dataset))
 
     style = styles.EMPTY_ELEMENT
@@ -299,7 +307,7 @@ def initialize_figure(
     ],
     prevent_initial_call=True,
 )
-def plot_signal(
+def mark_selected_period(
     select_periods,
     signals,
     options,
@@ -345,7 +353,7 @@ def plot_signal(
         eit_data=eit_data_cut,
         continuous_data=continuous_data_cut,
     )
-
+    # TODO: explore Patch https://dash.plotly.com/partial-properties
     current_figure = mark_selected_period(current_figure, cut_data)
 
     # TODO: refactor to avoid duplications
@@ -371,7 +379,6 @@ def plot_signal(
     ],
     [
         State(ids.PREPROCESING_SIGNALS_CHECKBOX, "options"),
-        State(ids.PREPROCESING_DATASET_SELECT, "value"),
         State(ids.PREPROCESING_PERIODS_GRAPH, "figure"),
     ],
     prevent_initial_call=True,
@@ -379,23 +386,13 @@ def plot_signal(
 def select_signals(
     signals,
     options,
-    dataset,
     current_figure,
 ):
     """React to ticking a signal. The function updates the figure by showing the ticked signals
     and hiding the unticked ones"""
 
-    data = data_object.get_sequence_at(int(dataset))
-
     signals = signals or []
     selected = [options[s]["label"] for s in signals]
-
-    if not current_figure:
-        current_figure = create_slider_figure(
-                data,
-                ["raw"],
-                [continuous_datum for continuous_datum in data.continuous_data],
-        )
 
     for s in current_figure["data"]:
         if s["name"] in selected:
