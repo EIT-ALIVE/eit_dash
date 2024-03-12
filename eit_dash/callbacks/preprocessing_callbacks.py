@@ -1,10 +1,5 @@
 from eit_dash.definitions.option_lists import PeriodsSelectMethods
-from eit_dash.utils.common import blank_fig, create_slider_figure, get_signal_options
-from dash import html, Input, Output, State, callback, ctx, dcc, MATCH
-from eit_dash.app import data_object
-from eit_dash.definitions.option_lists import PeriodsSelectMethods
 from eit_dash.utils.common import (
-    blank_fig,
     create_slider_figure,
     get_signal_options,
     mark_selected_period,
@@ -19,6 +14,10 @@ from dash import MATCH, Input, Output, State, callback, ctx, dcc, html
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 from eit_dash.app import data_object
+from eitprocessing.continuous_data import ContinuousData
+from eitprocessing.data_collection import DataCollection
+from eitprocessing.eit_data import EITData
+
 
 # ruff: noqa: D103  #TODO remove this line when finalizing this module
 
@@ -287,14 +286,16 @@ def plot_signal(
     data = data_object.get_sequence_at(int(dataset))
     cont_data = []
     eit_variants = []
-    figure = []  # blank_fig()
     style = styles.EMPTY_ELEMENT
 
     triggered_id = ctx.triggered_id
 
     # create the figure
     if triggered_id == ids.PREPROCESING_SIGNALS_CHECKBOX:
-        ok = [options[s]["label"] for s in signals]
+
+        signals = signals or []
+        selected = [options[s]["label"] for s in signals]
+
         if not current_figure:
             current_figure = create_slider_figure(
                 data,
@@ -303,7 +304,7 @@ def plot_signal(
             )
 
         for s in current_figure["data"]:
-            if s["name"] in ok:
+            if s["name"] in selected:
                 s["visible"] = True
             else:
                 s["visible"] = False
@@ -311,6 +312,7 @@ def plot_signal(
         style = styles.GRAPH
 
         return current_figure, style, current_summary
+
     # when the checkbox is created, the callback is triggered, but the list is empty
     if signals:
         for sig in signals:
@@ -343,10 +345,25 @@ def plot_signal(
             )
         ]
 
+        # TODO: refactor to avoid duplications
+
+        # cut the eit data and the continuous data and add them to a new DataCollections
+
+        eit_data_cut = DataCollection(data_type=EITData)
+        continuous_data_cut = DataCollection(data_type=ContinuousData)
+
+        for data_type in (eit := data.eit_data):
+            eit_data_cut.add(eit[data_type].select_by_time(start_sample, stop_sample))
+
+        for data_type in (cont := data.continuous_data):
+            # add just the selected signals
+            if data_type in cont:
+                continuous_data_cut.add(cont[data_type].select_by_time(start_sample, stop_sample))
+
         cut_data = Sequence(
             label="whatever",
-            eit_data=data.eit_data.select_by_time(start_sample, stop_sample),
-            continuous_data=data.continuous_data,
+            eit_data=eit_data_cut,
+            continuous_data=continuous_data_cut,
         )
 
         current_figure = mark_selected_period(current_figure, cut_data)
