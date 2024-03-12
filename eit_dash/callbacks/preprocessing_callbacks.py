@@ -22,8 +22,6 @@ from eit_dash.app import data_object
 
 # ruff: noqa: D103  #TODO remove this line when finalizing this module
 
-created_figure: go.Figure
-
 
 def check_continuous_data_loaded() -> bool:
     """
@@ -286,8 +284,6 @@ def plot_signal(
     current_figure,
     current_summary,
 ):  # pylint: disable=unused-argument
-    global created_figure
-
     data = data_object.get_sequence_at(int(dataset))
     cont_data = []
     eit_variants = []
@@ -311,7 +307,9 @@ def plot_signal(
                 s["visible"] = True
             else:
                 s["visible"] = False
+
         style = styles.GRAPH
+
         return current_figure, style, current_summary
     # when the checkbox is created, the callback is triggered, but the list is empty
     if signals:
@@ -329,7 +327,8 @@ def plot_signal(
             ["raw"],
             [continuous_datum for continuous_datum in data.continuous_data],
         )
-        created_figure = figure
+        current_figure = figure
+
     elif triggered_id == ids.PREPROCESING_SELECT_BTN:
         if slidebar_stat is not None and "xaxis.range" in slidebar_stat:
             start_sample = slidebar_stat["xaxis.range"][0]
@@ -350,14 +349,18 @@ def plot_signal(
             continuous_data=data.continuous_data,
         )
 
-        # fig_obj = go.Figure(current_figure)
-        figure = mark_selected_period(created_figure, cut_data, eit_variants, cont_data)
-        # figure = create_slider_figure(cut_data, eit_variants, cont_data)
+        current_figure = mark_selected_period(current_figure, cut_data)
+        # TODO: refactor to avoid duplications
+        ok = [options[s]["label"] for s in signals]
+        for s in current_figure["data"]:
+            if s["name"] in ok:
+                s["visible"] = True
+            else:
+                s["visible"] = False
+
         current_summary += content
 
-    created_figure = figure
-
-    return figure, style, current_summary
+    return current_figure, style, current_summary
 
 
 # Show dataset

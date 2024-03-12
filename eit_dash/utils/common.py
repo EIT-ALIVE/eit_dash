@@ -94,10 +94,7 @@ def create_slider_figure(
 
 
 def mark_selected_period(
-    original_figure: go.Figure,
-    period: Sequence,
-    eit_variants: List[str] = ["raw"],
-    continuous_data: List[str] = [],
+    original_figure: go.Figure | dict, period: Sequence
 ) -> go.Figure:
     """
     Create the figure for the selection of range.
@@ -111,31 +108,34 @@ def mark_selected_period(
         these ranges, the signal is plotted in black
     """
 
-    for eit_variant in eit_variants:
-        # TODO: This is a patch! Needs to be changed
-        if eit_variant == "raw":
-            try:
-                impedance = period.eit_data.variants[eit_variant].global_impedance
-            except KeyError:
-                impedance = period.eit_data.variants[None].global_impedance
+    # TODO: This is a patch! Needs to be changed
+    try:
+        impedance = period.eit_data.variants["raw"].global_impedance
+    except KeyError:
+        impedance = period.eit_data.variants[None].global_impedance
 
-        original_figure.add_trace(
-            go.Scatter(
-                x=period.eit_data.time, y=impedance, name="eit", line={"color": "black"}
-            )
-        )
+    selected_impedance = go.Scatter(
+        x=period.eit_data.time,
+        y=impedance,
+        name="raw",
+        line={"color": "black"},
+        showlegend=False,
+    ).to_plotly_json()
 
-    for n, cont_signal in enumerate(continuous_data):
-        original_figure.add_trace(
-            go.Scatter(
-                x=period.continuous_data[cont_signal].time,
-                y=period.continuous_data[cont_signal].variants["raw"].values,
-                name=cont_signal,
-                opacity=0.5,
-                yaxis=f"y{n+2}",
-                line={"color": "black"},
-            )
-        )
+    original_figure["data"].append(selected_impedance)
+
+    for n, cont_signal in enumerate(period.continuous_data):
+        selected_signal = go.Scatter(
+            x=period.continuous_data[cont_signal].time,
+            y=period.continuous_data[cont_signal].variants["raw"].values,
+            name=cont_signal,
+            opacity=0.5,
+            yaxis=f"y{n+2}",
+            line={"color": "black"},
+            showlegend=False,
+        ).to_plotly_json()
+
+        original_figure["data"].append(selected_signal)
 
     return original_figure
 

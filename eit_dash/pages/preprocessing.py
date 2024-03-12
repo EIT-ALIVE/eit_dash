@@ -59,7 +59,6 @@ actions = dbc.Col(
         html.Div(
             dbc.Row(
                 dbc.Button("Synchronize data", id=ids.OPEN_SYNCH_BUTTON, disabled=True),
-                dbc.Button("Synchronize data", id=ids.OPEN_SYNCH_BUTTON, disabled=True)
             ),
             hidden=True,
         ),
