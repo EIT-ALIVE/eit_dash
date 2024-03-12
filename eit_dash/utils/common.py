@@ -25,13 +25,16 @@ def create_slider_figure(
     if eit_variants is None:
         eit_variants = ["raw"]
 
-    traces = [{
-                "x": dataset.eit_data[eit_variant].time,
-                "y": dataset.eit_data[eit_variant].global_impedance,
-                "type": "scatter",
-                "mode": "lines",
-                "name": "a_level",
-            } for eit_variant in eit_variants]
+    traces = [
+        {
+            "x": dataset.eit_data[eit_variant].time,
+            "y": dataset.eit_data[eit_variant].global_impedance,
+            "type": "scatter",
+            "mode": "lines",
+            "name": "a_level",
+        }
+        for eit_variant in eit_variants
+    ]
 
     for cont_signal in continuous_data:
         traces.append(  # noqa: PERF401
