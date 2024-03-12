@@ -185,6 +185,7 @@ def show_info(
 
         dataset_name = f"Dataset {data_object.get_list_length()}"
 
+        selected_signals = selected_signals or []
         # get the name of the selected continuous signals
         selected = [signals_options[s]["label"] for s in selected_signals]
 
