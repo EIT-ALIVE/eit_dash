@@ -252,19 +252,45 @@ def show_selection_div(signals):  # pylint: disable=unused-argument
     return True
 
 
-# show the selected signals
 @callback(
     [
-        Output(ids.PREPROCESING_PERIODS_GRAPH, "figure"),
-        Output(ids.PREPROCESING_PERIODS_GRAPH, "style"),
+        Output(ids.PREPROCESING_PERIODS_GRAPH, "figure", allow_duplicate=True),
+        Output(ids.PREPROCESING_PERIODS_GRAPH, "style", allow_duplicate=True),
+    ],
+    [
+        Input(ids.PREPROCESING_DATASET_SELECT, "value"),
+    ],
+    prevent_initial_call=True,
+)
+def initialize_figure(
+    dataset,
+):
+    """When the dataset is selected, the figure is initialized"""
+    data = data_object.get_sequence_at(int(dataset))
+
+    style = styles.EMPTY_ELEMENT
+
+    figure = create_slider_figure(
+            data,
+            ["raw"],
+            [continuous_datum for continuous_datum in data.continuous_data],
+        )
+    current_figure = figure
+
+    return current_figure, style
+
+
+@callback(
+    [
+        Output(ids.PREPROCESING_PERIODS_GRAPH, "figure", allow_duplicate=True),
         Output(ids.PREPROCESING_RESULTS_CONTAINER, "children"),
     ],
     [
-        Input(ids.PREPROCESING_SIGNALS_CHECKBOX, "value"),
+
         Input(ids.PREPROCESING_SELECT_BTN, "n_clicks"),
-        Input(ids.PREPROCESING_DATASET_SELECT, "value"),
     ],
     [
+        State(ids.PREPROCESING_SIGNALS_CHECKBOX, "value"),
         State(ids.PREPROCESING_SIGNALS_CHECKBOX, "options"),
         State(ids.PREPROCESING_DATASET_SELECT, "value"),
         State(ids.PREPROCESING_PERIODS_GRAPH, "relayoutData"),
@@ -274,110 +300,112 @@ def show_selection_div(signals):  # pylint: disable=unused-argument
     prevent_initial_call=True,
 )
 def plot_signal(
-    signals,
     select_periods,
-    selected_manual,
+    signals,
     options,
     dataset,
     slidebar_stat,
     current_figure,
     current_summary,
-):  # pylint: disable=unused-argument
+):
+    """Mark the selected periods in the graph"""
+
     data = data_object.get_sequence_at(int(dataset))
-    cont_data = []
-    eit_variants = []
-    style = styles.EMPTY_ELEMENT
 
-    triggered_id = ctx.triggered_id
+    if slidebar_stat is not None and "xaxis.range" in slidebar_stat:
+        start_sample = slidebar_stat["xaxis.range"][0]
+        stop_sample = slidebar_stat["xaxis.range"][1]
+    else:
+        start_sample = data.eit_data.time[0]
+        stop_sample = data.eit_data.time[-1]
 
-    # create the figure
-    if triggered_id == ids.PREPROCESING_SIGNALS_CHECKBOX:
+    content = [
+        dbc.Row(
+            [html.Div(f"Selected new period from {start_sample} to {stop_sample}")]
+        )
+    ]
 
-        signals = signals or []
-        selected = [options[s]["label"] for s in signals]
+    # TODO: refactor to avoid duplications
 
-        if not current_figure:
-            current_figure = create_slider_figure(
+    # cut the eit data and the continuous data and add them to a new DataCollections
+
+    eit_data_cut = DataCollection(data_type=EITData)
+    continuous_data_cut = DataCollection(data_type=ContinuousData)
+
+    for data_type in (eit := data.eit_data):
+        eit_data_cut.add(eit[data_type].select_by_time(start_sample, stop_sample))
+
+    for data_type in (cont := data.continuous_data):
+        # add just the selected signals
+        if data_type in cont:
+            continuous_data_cut.add(cont[data_type].select_by_time(start_sample, stop_sample))
+
+    cut_data = Sequence(
+        label="whatever",
+        eit_data=eit_data_cut,
+        continuous_data=continuous_data_cut,
+    )
+
+    current_figure = mark_selected_period(current_figure, cut_data)
+
+    # TODO: refactor to avoid duplications
+    ok = [options[s]["label"] for s in signals]
+    for s in current_figure["data"]:
+        if s["name"] in ok:
+            s["visible"] = True
+        else:
+            s["visible"] = False
+
+    current_summary += content
+
+    return current_figure, current_summary
+
+
+@callback(
+    [
+        Output(ids.PREPROCESING_PERIODS_GRAPH, "figure", allow_duplicate=True),
+        Output(ids.PREPROCESING_PERIODS_GRAPH, "style", allow_duplicate=True),
+    ],
+    [
+        Input(ids.PREPROCESING_SIGNALS_CHECKBOX, "value"),
+    ],
+    [
+        State(ids.PREPROCESING_SIGNALS_CHECKBOX, "options"),
+        State(ids.PREPROCESING_DATASET_SELECT, "value"),
+        State(ids.PREPROCESING_PERIODS_GRAPH, "figure"),
+    ],
+    prevent_initial_call=True,
+)
+def select_signals(
+    signals,
+    options,
+    dataset,
+    current_figure,
+):
+    """React to ticking a signal. The function updates the figure by showing the ticked signals
+    and hiding the unticked ones"""
+
+    data = data_object.get_sequence_at(int(dataset))
+
+    signals = signals or []
+    selected = [options[s]["label"] for s in signals]
+
+    if not current_figure:
+        current_figure = create_slider_figure(
                 data,
                 ["raw"],
                 [continuous_datum for continuous_datum in data.continuous_data],
-            )
-
-        for s in current_figure["data"]:
-            if s["name"] in selected:
-                s["visible"] = True
-            else:
-                s["visible"] = False
-
-        style = styles.GRAPH
-
-        return current_figure, style, current_summary
-
-    # when the checkbox is created, the callback is triggered, but the list is empty
-    if signals:
-        for sig in signals:
-            if sig == 0:
-                eit_variants.append("raw")
-            else:
-                cont_data.append(options[sig]["label"])
-
-        style = styles.GRAPH
-
-    if triggered_id == ids.PREPROCESING_DATASET_SELECT:
-        figure = create_slider_figure(
-            data,
-            ["raw"],
-            [continuous_datum for continuous_datum in data.continuous_data],
         )
-        current_figure = figure
 
-    elif triggered_id == ids.PREPROCESING_SELECT_BTN:
-        if slidebar_stat is not None and "xaxis.range" in slidebar_stat:
-            start_sample = slidebar_stat["xaxis.range"][0]
-            stop_sample = slidebar_stat["xaxis.range"][1]
+    for s in current_figure["data"]:
+        if s["name"] in selected:
+            s["visible"] = True
         else:
-            start_sample = data.eit_data.time[0]
-            stop_sample = data.eit_data.time[-1]
+            s["visible"] = False
 
-        content = [
-            dbc.Row(
-                [html.Div(f"Selected new period from {start_sample} to {stop_sample}")]
-            )
-        ]
+    style = styles.GRAPH
 
-        # TODO: refactor to avoid duplications
-
-        # cut the eit data and the continuous data and add them to a new DataCollections
-
-        eit_data_cut = DataCollection(data_type=EITData)
-        continuous_data_cut = DataCollection(data_type=ContinuousData)
-
-        for data_type in (eit := data.eit_data):
-            eit_data_cut.add(eit[data_type].select_by_time(start_sample, stop_sample))
-
-        for data_type in (cont := data.continuous_data):
-            # add just the selected signals
-            if data_type in cont:
-                continuous_data_cut.add(cont[data_type].select_by_time(start_sample, stop_sample))
-
-        cut_data = Sequence(
-            label="whatever",
-            eit_data=eit_data_cut,
-            continuous_data=continuous_data_cut,
-        )
-
-        current_figure = mark_selected_period(current_figure, cut_data)
-        # TODO: refactor to avoid duplications
-        ok = [options[s]["label"] for s in signals]
-        for s in current_figure["data"]:
-            if s["name"] in ok:
-                s["visible"] = True
-            else:
-                s["visible"] = False
-
-        current_summary += content
-
-    return current_figure, style, current_summary
+    return current_figure, style
 
 
 # Show dataset
