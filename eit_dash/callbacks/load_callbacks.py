@@ -89,9 +89,9 @@ def load_selected_data(
         int_type = int(file_type)
 
         # check if the file extension is compatible with the file type selected
-        if (int_type == InputFiletypes.Draeger.value and extension == ".bin") or (
-            int_type == InputFiletypes.Timpel.value
-            and extension == ".txt"
+        if (
+            (int_type == InputFiletypes.Draeger.value and extension == ".bin")
+            or (int_type == InputFiletypes.Timpel.value and extension == ".txt")
             or (int_type == InputFiletypes.Sentec.value and extension == ".zri")
         ):
             read_data_flag = True
