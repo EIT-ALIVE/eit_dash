@@ -4,8 +4,6 @@ from typing import TYPE_CHECKING, List
 
 import plotly.graph_objects as go
 
-from eit_dash.definitions.option_lists import SignalSelections
-
 if TYPE_CHECKING:
     from eitprocessing.sequence import Sequence
 
@@ -31,24 +29,24 @@ def create_slider_figure(
         eit_variants: list of the eit variants to be plotted
         continuous_data: list of the continuous data signals to be plotted
     """
+
     figure = go.Figure()
     params = dict()
     y_position = 0
 
+    if continuous_data is None:
+        continuous_data = []
+    if eit_variants is None:
+        eit_variants = ["raw"]
+
     for eit_variant in eit_variants:
-        # TODO: This is a patch! Needs to be changed
-        if eit_variant == "raw":
-            try:
-                impedance = dataset.eit_data.variants[eit_variant].global_impedance
-            except KeyError:
-                impedance = dataset.eit_data.variants[None].global_impedance
-        figure.add_trace(go.Scatter(x=dataset.eit_data.time, y=impedance, name="raw"))
+        figure.add_trace(go.Scatter(x=dataset.eit_data[eit_variant].time, y=dataset.eit_data[eit_variant].global_impedance, name=eit_variant))
 
     for n, cont_signal in enumerate(continuous_data):
         figure.add_trace(
             go.Scatter(
                 x=dataset.continuous_data[cont_signal].time,
-                y=dataset.continuous_data[cont_signal].variants["raw"].values,  # noqa: PD011
+                y=dataset.continuous_data[cont_signal].values,  # noqa: PD011
                 name=cont_signal,
                 opacity=0.5,
                 yaxis=f"y{n+2}",
@@ -73,7 +71,7 @@ def create_slider_figure(
         param_name = f"yaxis{n+2}"
         params.update({param_name: new_y})
 
-    for event in dataset.eit_data.events:
+    for event in dataset.eit_data[eit_variants[0]].events:
         annotation = {"text": f"{event.text}", "textangle": -90}
         figure.add_vline(
             x=event.time,
@@ -152,19 +150,11 @@ def get_signal_options(dataset: Sequence, show_eit: bool = False) -> list[dict[s
     options = []
     if show_eit:
         # iterate over eit data
-        for variant in dataset.eit_data.variants:
-            # TODO: the None check is just a temporary fix.
-            #  The select_by_index should be adjusted instead.
-
-            if variant == "raw" or variant is None:
-                label = SignalSelections.raw.name
-                value = SignalSelections.raw.value
-            else:
-                label = variant
-                value = max(len(SignalSelections), len(options) + 1)
-            options.append({"label": label, "value": value})
+        for eit in dataset.eit_data:
+            options.append({"label": eit, "value": len(options)})
 
     if dataset.continuous_data:
+        # iterate over continuous data
         for cont in dataset.continuous_data:
             options.append({"label": cont, "value": len(options)})
 

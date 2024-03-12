@@ -7,6 +7,8 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 from dash import ALL, Input, Output, State, callback, ctx, html
 from dash.exceptions import PreventUpdate
+from eitprocessing.continuous_data import ContinuousData
+from eitprocessing.data_collection import DataCollection
 from eitprocessing.eit_data import EITData
 from eitprocessing.sequence import Sequence
 
@@ -26,12 +28,13 @@ def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
         file_type: Index of the selected type of selected
     """
     info_data = {
-        "Name": dataset.eit_data.path.name,
-        "n_frames": dataset.eit_data.nframes,
-        "start_time": dataset.eit_data.time[0],
-        "end_time": dataset.eit_data.time[-1],
-        "vendor": dataset.eit_data.vendor,
-        "path": str(dataset.eit_data.path),
+        "Name": dataset.eit_data["raw"].path.name,
+        "n_frames": dataset.eit_data["raw"].nframes,
+        "start_time": dataset.eit_data["raw"].time[0],
+        "end_time": dataset.eit_data["raw"].time[-1],
+        "vendor": dataset.eit_data["raw"].vendor,
+        "continuous signals": str(list(dataset.continuous_data)),
+        "path": str(dataset.eit_data["raw"].path),
     }
 
     card_list = [
@@ -86,9 +89,9 @@ def load_selected_data(
         int_type = int(file_type)
 
         # check if the file extension is compatible with the file type selected
-        if (int_type == InputFiletypes.Draeger.value and extension == ".bin") or (
-            int_type == InputFiletypes.Timpel.value
-            and extension == ".txt"
+        if (
+            (int_type == InputFiletypes.Draeger.value and extension == ".bin")
+            or (int_type == InputFiletypes.Timpel.value and extension == ".txt")
             or (int_type == InputFiletypes.Sentec.value and extension == ".zri")
         ):
             read_data_flag = True
@@ -148,6 +151,7 @@ def open_data_selector(data, cancel_load, sig, file_type, fig):
                 eit_data=eit_data,
                 continuous_data=continuous_data,
                 sparse_data=sparse_data,
+                label="selected data",
             )
 
             options = get_signal_options(file_data)
@@ -179,6 +183,7 @@ def open_data_selector(data, cancel_load, sig, file_type, fig):
     State(ids.INPUT_TYPE_SELECTOR, "value"),
     State(ids.FILE_LENGTH_SLIDER, "relayoutData"),
     State(ids.CHECKBOX_SIGNALS, "value"),
+    State(ids.CHECKBOX_SIGNALS, "options"),
     prevent_initial_call=True,
 )
 def show_info(
@@ -188,6 +193,7 @@ def show_info(
     filetype,
     slidebar_stat,
     selected_signals,
+    signals_options,
 ):
     """Creates the preview for preselecting part of the dataset."""
     if file_data:
@@ -195,16 +201,33 @@ def show_info(
             start_sample = slidebar_stat["xaxis.range"][0]
             stop_sample = slidebar_stat["xaxis.range"][1]
         else:
-            start_sample = file_data.eit_data.time[0]
-            stop_sample = file_data.eit_data.time[-1]
+            start_sample = file_data.eit_data["raw"].time[0]
+            stop_sample = file_data.eit_data["raw"].time[-1]
 
         dataset_name = f"Dataset {data_object.get_list_length()}"
 
-        # TODO: adapt this to also continuous data
+        selected_signals = selected_signals or []
+        # get the name of the selected continuous signals
+        selected = [signals_options[s]["label"] for s in selected_signals]
+
+        # cut the eit data and the continuous data and add them to a new DataCollections
+
+        eit_data_cut = DataCollection(data_type=EITData)
+        continuous_data_cut = DataCollection(data_type=ContinuousData)
+
+        for data_type in (data := file_data.eit_data):
+            eit_data_cut.add(data[data_type].select_by_time(start_sample, stop_sample))
+
+        for data_type in (data := file_data.continuous_data):
+            # add just the selected signals
+            if data_type in selected:
+                continuous_data_cut.add(data[data_type].select_by_time(start_sample, stop_sample))
+
+        # add all the cut data to the new sequence
         cut_data = Sequence(
             label=dataset_name,
-            eit_data=file_data.eit_data.select_by_time(start_sample, stop_sample),
-            continuous_data=file_data.continuous_data,
+            eit_data=eit_data_cut,
+            continuous_data=continuous_data_cut,
         )
 
         # save the selected data in the singleton
