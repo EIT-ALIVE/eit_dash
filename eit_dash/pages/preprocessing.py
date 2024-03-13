@@ -1,12 +1,10 @@
-from dash import dcc, html, register_page
-from eit_dash.definitions.option_lists import SynchMethods, PeriodsSelectMethods
-from eit_dash.utils.common import blank_fig
 import dash_bootstrap_components as dbc
-from dash import html, register_page
+from dash import dcc, html, register_page
 
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 from eit_dash.definitions.option_lists import PeriodsSelectMethods, SynchMethods
+from eit_dash.utils.common import blank_fig
 
 register_page(__name__, path="/preprocessing")
 
@@ -138,10 +136,9 @@ modal_selection_body = html.Div(
                     [
                         dcc.Graph(
                             id=ids.PREPROCESING_PERIODS_GRAPH,
-                            # figure=blank_fig(),
                             style=styles.EMPTY_ELEMENT,
-                        )
-                    ]
+                        ),
+                    ],
                 ),
                 html.P(),
                 dbc.Row(
@@ -149,18 +146,18 @@ modal_selection_body = html.Div(
                         dbc.Col(
                             [
                                 dbc.Button(
-                                    "Select all", id=ids.PREPROCESING_SELECT_ALL_BTN
-                                )
-                            ]
+                                    "Select all", id=ids.PREPROCESING_SELECT_ALL_BTN,
+                                ),
+                            ],
                         ),
                         dbc.Col(
                             [
                                 dbc.Button(
-                                    "Add selection", id=ids.PREPROCESING_SELECT_BTN
-                                )
-                            ]
+                                    "Add selection", id=ids.PREPROCESING_SELECT_BTN,
+                                ),
+                            ],
                         ),
-                    ]
+                    ],
                 ),
             ],
             id=ids.PERIODS_SELECTION_DIV,
@@ -186,7 +183,7 @@ modal_selection = html.Div(
                             ],
                         ),
                         modal_selection_body,
-                    ]
+                    ],
                 ),
                 dbc.ModalFooter(
                     dbc.Button(

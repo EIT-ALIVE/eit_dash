@@ -29,7 +29,6 @@ def create_slider_figure(
         eit_variants: list of the eit variants to be plotted
         continuous_data: list of the continuous data signals to be plotted
     """
-
     figure = go.Figure()
     params = dict()
     y_position = 0
@@ -46,11 +45,11 @@ def create_slider_figure(
         figure.add_trace(
             go.Scatter(
                 x=dataset.continuous_data[cont_signal].time,
-                y=dataset.continuous_data[cont_signal].values,  # noqa: PD011
+                y=dataset.continuous_data[cont_signal].values,
                 name=cont_signal,
                 opacity=0.5,
                 yaxis=f"y{n+2}",
-            )
+            ),
         )
         # decide whether to put the axis left or right
         if (n % 2) == 0:
@@ -92,7 +91,7 @@ def create_slider_figure(
 
 
 def mark_selected_period(
-    original_figure: go.Figure | dict, period: Sequence
+    original_figure: go.Figure | dict, period: Sequence,
 ) -> go.Figure:
     """
     Create the figure for the selection of range.
@@ -102,7 +101,6 @@ def mark_selected_period(
         period: Sequence object containing the selected dataset.
         These ranges, the signal is plotted in black
     """
-
     for eit_variant in period.eit_data:
         selected_impedance = go.Scatter(
             x=period.eit_data[eit_variant].time,

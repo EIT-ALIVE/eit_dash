@@ -1,25 +1,22 @@
+import dash_bootstrap_components as dbc
+import numpy as np
+import plotly.graph_objs as go
+from dash import MATCH, Input, Output, State, callback, ctx, dcc, html
 from dash.exceptions import PreventUpdate
+from eitprocessing.continuous_data import ContinuousData
+from eitprocessing.data_collection import DataCollection
+from eitprocessing.eit_data import EITData
+from eitprocessing.sequence import Sequence
 
+import eit_dash.definitions.element_ids as ids
+import eit_dash.definitions.layout_styles as styles
+from eit_dash.app import data_object
 from eit_dash.definitions.option_lists import PeriodsSelectMethods
 from eit_dash.utils.common import (
     create_slider_figure,
     get_signal_options,
     mark_selected_period,
 )
-from eitprocessing.sequence import Sequence
-
-import dash_bootstrap_components as dbc
-import numpy as np
-import plotly.graph_objs as go
-from dash import MATCH, Input, Output, State, callback, ctx, dcc, html
-
-import eit_dash.definitions.element_ids as ids
-import eit_dash.definitions.layout_styles as styles
-from eit_dash.app import data_object
-from eitprocessing.continuous_data import ContinuousData
-from eitprocessing.data_collection import DataCollection
-from eitprocessing.eit_data import EITData
-
 
 # ruff: noqa: D103  #TODO remove this line when finalizing this module
 
@@ -69,7 +66,7 @@ def create_loaded_data_summary():
 
     for dataset in loaded_data:
         loaded.append(
-            dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})])
+            dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})]),
         )
 
     return loaded
@@ -89,7 +86,7 @@ def get_loaded_data():
                     "Name": name,
                     "Data type": "EIT",
                     "Sampling frequency": dataset.eit_data.framerate,
-                }
+                },
             )
 
     return data
@@ -227,7 +224,7 @@ def populate_periods_selection_datasets(method):  # pylint: disable=unused-argum
 def populate_periods_selection_datasets(dataset):  # pylint: disable=unused-argument
     if dataset:
         options = get_signal_options(
-            data_object.get_sequence_at(int(dataset)), show_eit=True
+            data_object.get_sequence_at(int(dataset)), show_eit=True,
         )
         body = [
             html.H6("Select the signals to be displayed"),
@@ -267,8 +264,7 @@ def show_selection_div(signals):  # pylint: disable=unused-argument
 def initialize_figure(
     dataset,
 ):
-    """When the dataset is selected, the figure is initialized"""
-
+    """When the dataset is selected, the figure is initialized."""
     # the callback is run also when populating the dataset options.
     # In this case we don't want to run it
     if not dataset:
@@ -307,7 +303,7 @@ def initialize_figure(
     ],
     prevent_initial_call=True,
 )
-def mark_selected_period(
+def select_period(
     select_periods,
     signals,
     options,
@@ -316,21 +312,27 @@ def mark_selected_period(
     current_figure,
     current_summary,
 ):
-    """Mark the selected periods in the graph"""
-
+    """Mark the selected period in the graph and save it."""
     data = data_object.get_sequence_at(int(dataset))
 
-    if slidebar_stat is not None and "xaxis.range" in slidebar_stat:
-        start_sample = slidebar_stat["xaxis.range"][0]
-        stop_sample = slidebar_stat["xaxis.range"][1]
+    if slidebar_stat is not None:
+        if "xaxis.range" in slidebar_stat:
+            start_sample = slidebar_stat["xaxis.range"][0]
+            stop_sample = slidebar_stat["xaxis.range"][1]
+        elif ("xaxis.range[0]" in slidebar_stat) and ("xaxis.range[1]" in slidebar_stat):
+            start_sample = slidebar_stat["xaxis.range[0]"]
+            stop_sample = slidebar_stat["xaxis.range[1]"]
+        else:
+            start_sample = data.time[0]
+            stop_sample = data.time[-1]
     else:
-        start_sample = data.eit_data.time[0]
-        stop_sample = data.eit_data.time[-1]
+        start_sample = data.time[0]
+        stop_sample = data.time[-1]
 
     content = [
         dbc.Row(
-            [html.Div(f"Selected new period from {start_sample} to {stop_sample}")]
-        )
+            [html.Div(f"Selected new period from {start_sample} to {stop_sample}")],
+        ),
     ]
 
     # TODO: refactor to avoid duplications
@@ -389,8 +391,8 @@ def select_signals(
     current_figure,
 ):
     """React to ticking a signal. The function updates the figure by showing the ticked signals
-    and hiding the unticked ones"""
-
+    and hiding the unticked ones.
+    """
     # the callback is run also when populating the signals options (no figure created).
     # In this case we don't want to run it
     if not current_figure:
@@ -425,7 +427,7 @@ def show_data(selected_dataset, current_content):
 
     content = [
         dcc.Graph(
-            figure=fig, id={"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": selected}
+            figure=fig, id={"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": selected},
         )
         for selected in selected_dataset
     ]
