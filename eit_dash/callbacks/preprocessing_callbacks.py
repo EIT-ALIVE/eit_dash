@@ -391,6 +391,11 @@ def select_signals(
     """React to ticking a signal. The function updates the figure by showing the ticked signals
     and hiding the unticked ones"""
 
+    # the callback is run also when populating the signals options (no figure created).
+    # In this case we don't want to run it
+    if not current_figure:
+        raise PreventUpdate
+
     signals = signals or []
     selected = [options[s]["label"] for s in signals]
 
