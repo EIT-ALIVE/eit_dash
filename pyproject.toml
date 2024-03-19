@@ -31,7 +31,6 @@ ruff = "^0.3"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"
-prospector = { extras = ["with-pyroma"], version = "^1.10.2" }
 urllib3 = "<2.0.2"
 
 [build-system]
