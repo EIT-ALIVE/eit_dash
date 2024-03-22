@@ -351,10 +351,15 @@ def select_period(
             continuous_data_cut.add(cont[data_type].select_by_time(start_sample, stop_sample))
 
     cut_data = Sequence(
-        label="whatever",
+        label=f"stable period {data_object.get_stable_periods_list_length()}",
         eit_data=eit_data_cut,
         continuous_data=continuous_data_cut,
     )
+    # TODO: use the following when bug https://github.com/EIT-ALIVE/eitprocessing/issues/161 is fixed
+    # cut_data = data.select_by_time(start_time=start_sample, end_time=stop_sample)
+
+    data_object.add_stable_period(cut_data, int(dataset))
+
     # TODO: explore Patch https://dash.plotly.com/partial-properties
     current_figure = mark_selected_period(current_figure, cut_data)
 
