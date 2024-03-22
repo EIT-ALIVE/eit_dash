@@ -3,10 +3,10 @@ import numpy as np
 import plotly.graph_objs as go
 from dash import MATCH, Input, Output, State, callback, ctx, dcc, html
 from dash.exceptions import PreventUpdate
-from eitprocessing.continuous_data import ContinuousData
-from eitprocessing.data_collection import DataCollection
-from eitprocessing.eit_data import EITData
-from eitprocessing.sequence import Sequence
+from eitprocessing.datahandling.continuousdata import ContinuousData
+from eitprocessing.datahandling.datacollection import DataCollection
+from eitprocessing.datahandling.eitdata import EITData
+from eitprocessing.datahandling.sequence import Sequence
 
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
