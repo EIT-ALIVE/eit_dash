@@ -10,8 +10,8 @@ from dash.exceptions import PreventUpdate
 from eitprocessing.datahandling.continuousdata import ContinuousData
 from eitprocessing.datahandling.datacollection import DataCollection
 from eitprocessing.datahandling.eitdata import EITData
-from eitprocessing.datahandling.sequence import Sequence
 from eitprocessing.datahandling.loading import load_eit_data
+from eitprocessing.datahandling.sequence import Sequence
 
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
@@ -140,7 +140,6 @@ def open_data_selector(data, cancel_load, file_type):
         vendor=InputFiletypes(int(file_type)).name.lower(),
         label="selected data",
     )
-
 
     options = get_signal_options(file_data)
 
