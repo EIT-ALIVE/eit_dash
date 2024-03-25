@@ -39,7 +39,9 @@ def create_slider_figure(
         eit_variants = ["raw"]
 
     for eit_variant in eit_variants:
-        figure.add_trace(go.Scatter(x=dataset.eit_data[eit_variant].time, y=dataset.eit_data[eit_variant].global_impedance, name=eit_variant))
+        figure.add_trace(go.Scatter(x=dataset.eit_data[eit_variant].time,
+                                    y=dataset.eit_data[eit_variant].global_impedance,
+                                    name=eit_variant))
 
     for n, cont_signal in enumerate(continuous_data):
         figure.add_trace(
@@ -48,7 +50,7 @@ def create_slider_figure(
                 y=dataset.continuous_data[cont_signal].values,
                 name=cont_signal,
                 opacity=0.5,
-                yaxis=f"y{n+2}",
+                yaxis=f"y{n + 2}",
             ),
         )
         # decide whether to put the axis left or right
@@ -67,7 +69,7 @@ def create_slider_figure(
         )
 
         # layout parameters for multiple y axis
-        param_name = f"yaxis{n+2}"
+        param_name = f"yaxis{n + 2}"
         params.update({param_name: new_y})
 
     for event in dataset.eit_data[eit_variants[0]].events:
@@ -122,7 +124,7 @@ def mark_selected_periods(
                 y=period.continuous_data[cont_signal].values,
                 name=cont_signal,
                 opacity=0.5,
-                yaxis=f"y{n+2}",
+                yaxis=f"y{n + 2}",
                 line={"color": "black"},
                 showlegend=False,
             ).to_plotly_json()

@@ -7,10 +7,11 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 from dash import ALL, Input, Output, State, callback, ctx, html
 from dash.exceptions import PreventUpdate
-from eitprocessing.continuous_data import ContinuousData
-from eitprocessing.data_collection import DataCollection
-from eitprocessing.eit_data import EITData
-from eitprocessing.sequence import Sequence
+from eitprocessing.datahandling.continuousdata import ContinuousData
+from eitprocessing.datahandling.datacollection import DataCollection
+from eitprocessing.datahandling.eitdata import EITData
+from eitprocessing.datahandling.loading import load_eit_data
+from eitprocessing.datahandling.sequence import Sequence
 
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
@@ -141,16 +142,9 @@ def open_data_selector(data, cancel_load, sig, file_type, fig):
             figure = fig
         else:
             path = Path(data)
-            eit_data, continuous_data, sparse_data = EITData.from_path(
+            file_data = load_eit_data(
                 path,
                 vendor=InputFiletypes(int(file_type)).name.lower(),
-                return_non_eit_data=True,
-            )
-
-            file_data = Sequence(
-                eit_data=eit_data,
-                continuous_data=continuous_data,
-                sparse_data=sparse_data,
                 label="selected data",
             )
 
@@ -159,7 +153,7 @@ def open_data_selector(data, cancel_load, sig, file_type, fig):
             figure = create_slider_figure(
                 file_data,
                 ["raw"],
-                [continuous_datum for continuous_datum in continuous_data],
+                [continuous_datum for continuous_datum in file_data.continuous_data],
             )
 
         ok = ["raw"]

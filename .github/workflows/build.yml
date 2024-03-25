@@ -72,5 +72,7 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip poetry
           poetry install --with test
-      - name: Check linting using ruff
-        run: poetry run ruff .
+      - name: Check linting and formatting using ruff
+        run: |
+          poetry run ruff check
+          poetry run ruff format --check
