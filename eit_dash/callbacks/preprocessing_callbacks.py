@@ -15,7 +15,7 @@ from eit_dash.definitions.option_lists import PeriodsSelectMethods
 from eit_dash.utils.common import (
     create_slider_figure,
     get_signal_options,
-    mark_selected_period,
+    mark_selected_periods,
 )
 
 # ruff: noqa: D103  #TODO remove this line when finalizing this module
@@ -101,8 +101,6 @@ def get_suggested_resampling(loaded_data):
     return resampling_freq
 
 
-# this callback runs when the page is loaded (the title of the preprocessing is created)
-# and loads the data in the resampling card and in the dataset selection menu
 @callback(
     [
         Output(ids.RESAMPLING_CARD, "children"),
@@ -112,7 +110,10 @@ def get_suggested_resampling(loaded_data):
     ],
     Input(ids.PREPROCESING_TITLE, "children"),
 )
-def load_datasets(title):  # pylint: disable=unused-argument
+def load_datasets(title):
+    """this callback runs when the page is loaded (the title of the preprocessing is created)
+    and loads the data in the resampling card and in the dataset selection menu"""
+
     # loaded_data = get_loaded_data()
     # continuous_data_loaded = check_continuous_data_loaded()
     #
@@ -130,7 +131,6 @@ def load_datasets(title):  # pylint: disable=unused-argument
     return [], [], [], None
 
 
-# apply resampling
 @callback(
     [
         Output(ids.OPEN_SYNCH_BUTTON, "disabled"),
@@ -146,7 +146,10 @@ def load_datasets(title):  # pylint: disable=unused-argument
     ],
     prevent_initial_call=False,
 )
-def update_summary(start, summary):  # pylint: disable=unused-argument
+def update_summary(start, summary):
+    """When the page is loaded, it populates the summary column
+    with the info about the loaded datasets"""
+
     trigger = ctx.triggered_id
 
     if trigger is None:
@@ -156,13 +159,13 @@ def update_summary(start, summary):  # pylint: disable=unused-argument
     return False, False, False, summary
 
 
-# open/close modal dialog for data synchronization
 @callback(
     Output(ids.SYNCHRONIZATION_POPUP, "is_open"),
     [Input(ids.OPEN_SYNCH_BUTTON, "n_clicks"), Input(ids.SYNCHRONIZATION_CONFIRM_BUTTON, "n_clicks")],
     prevent_initial_call=True,
 )
 def open_synch_modal(open_click, confirm_click) -> bool:
+    """open/close modal dialog for data synchronization"""
     trigger = ctx.triggered_id
 
     if trigger == ids.OPEN_SYNCH_BUTTON:
@@ -171,13 +174,14 @@ def open_synch_modal(open_click, confirm_click) -> bool:
     return False
 
 
-# open/close modal dialog for periods selection
 @callback(
     Output(ids.PERIODS_SELECTION_POPUP, "is_open"),
     [Input(ids.OPEN_SELECT_PERIODS_BUTTON, "n_clicks"), Input(ids.PERIODS_CONFIRM_BUTTON, "n_clicks")],
     prevent_initial_call=True,
 )
 def open_periods_modal(open_click, confirm_click) -> bool:
+    """open/close modal dialog for periods selection"""
+
     trigger = ctx.triggered_id
 
     if trigger == ids.OPEN_SELECT_PERIODS_BUTTON:
@@ -186,13 +190,15 @@ def open_periods_modal(open_click, confirm_click) -> bool:
     return False
 
 
-# populate modal body according to the selected method
 @callback(
     Output(ids.PERIODS_SELECTION_SELECT_DATASET, "children"),
     Input(ids.PERIODS_METHOD_SELECTOR, "value"),
     prevent_initial_call=True,
 )
-def populate_periods_selection_datasets(method):  # pylint: disable=unused-argument
+def populate_periods_selection_datasets(method):
+    """Populate modal body according to the selected method
+    for stable periods selection"""
+
     int_value = int(method)
 
     if int_value == PeriodsSelectMethods.Manual.value:
@@ -215,13 +221,15 @@ def populate_periods_selection_datasets(method):  # pylint: disable=unused-argum
     return body
 
 
-# populate signals selection in the manual selection case
 @callback(
     Output(ids.PREPROCESING_SIGNALS_CHECKBOX_ROW, "children"),
     Input(ids.PREPROCESING_DATASET_SELECT, "value"),
     prevent_initial_call=True,
 )
-def populate_periods_selection_datasets(dataset):  # pylint: disable=unused-argument
+def populate_periods_selection_datasets(dataset):
+    """Activated when a dataset is selected.
+    Populates signals selection in the manual selection case"""
+
     if dataset:
         options = get_signal_options(
             data_object.get_sequence_at(int(dataset)), show_eit=True,
@@ -238,13 +246,13 @@ def populate_periods_selection_datasets(dataset):  # pylint: disable=unused-argu
         return body
 
 
-# make visible the div containing the graphs and the buttons
 @callback(
     Output(ids.PERIODS_SELECTION_DIV, "hidden"),
     Input(ids.PREPROCESING_SIGNALS_CHECKBOX, "value"),
     prevent_initial_call=True,
 )
-def show_selection_div(signals):  # pylint: disable=unused-argument
+def show_selection_div(signals):
+    """make visible the div containing the graphs and the buttons"""
     if signals:
         return False
 
@@ -274,12 +282,15 @@ def initialize_figure(
 
     style = styles.EMPTY_ELEMENT
 
-    figure = create_slider_figure(
+    current_figure = create_slider_figure(
             data,
             ["raw"],
             [continuous_datum for continuous_datum in data.continuous_data],
         )
-    current_figure = figure
+
+    # mark the stable periods already selected, if there are any
+    if saved_periods := data_object.get_dataset_stable_periods(int(dataset)):
+        current_figure = mark_selected_periods(current_figure, saved_periods)
 
     return current_figure, style
 
@@ -361,7 +372,7 @@ def select_period(
     data_object.add_stable_period(cut_data, int(dataset))
 
     # TODO: explore Patch https://dash.plotly.com/partial-properties
-    current_figure = mark_selected_period(current_figure, cut_data)
+    current_figure = mark_selected_periods(current_figure, [cut_data])
 
     # TODO: refactor to avoid duplications
     ok = [options[s]["label"] for s in signals]

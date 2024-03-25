@@ -90,40 +90,47 @@ def create_slider_figure(
     return figure
 
 
-def mark_selected_period(
-    original_figure: go.Figure | dict, period: Sequence,
+def mark_selected_periods(
+    original_figure: go.Figure | dict, periods: List[Sequence],
 ) -> go.Figure:
     """
     Create the figure for the selection of range.
 
     Args:
         original_figure: figure to update
-        period: Sequence object containing the selected dataset.
+        periods: list of Sequence object containing the selected dataset.
         These ranges, the signal is plotted in black
     """
-    for eit_variant in period.eit_data:
-        selected_impedance = go.Scatter(
-            x=period.eit_data[eit_variant].time,
-            y=period.eit_data[eit_variant].global_impedance,
-            name=eit_variant,
-            line={"color": "black"},
-            showlegend=False,
-        ).to_plotly_json()
+    for period in periods:
+        for eit_variant in period.eit_data:
+            selected_impedance = go.Scatter(
+                x=period.eit_data[eit_variant].time,
+                y=period.eit_data[eit_variant].global_impedance,
+                name=eit_variant,
+                line={"color": "black"},
+                showlegend=False,
+            ).to_plotly_json()
 
-        original_figure["data"].append(selected_impedance)
+            if type(original_figure) == go.Figure:
+                original_figure.add_trace(selected_impedance)
+            else:
+                original_figure["data"].append(selected_impedance)
 
-    for n, cont_signal in enumerate(period.continuous_data):
-        selected_signal = go.Scatter(
-            x=period.continuous_data[cont_signal].time,
-            y=period.continuous_data[cont_signal].values,
-            name=cont_signal,
-            opacity=0.5,
-            yaxis=f"y{n+2}",
-            line={"color": "black"},
-            showlegend=False,
-        ).to_plotly_json()
+        for n, cont_signal in enumerate(period.continuous_data):
+            selected_signal = go.Scatter(
+                x=period.continuous_data[cont_signal].time,
+                y=period.continuous_data[cont_signal].values,
+                name=cont_signal,
+                opacity=0.5,
+                yaxis=f"y{n+2}",
+                line={"color": "black"},
+                showlegend=False,
+            ).to_plotly_json()
 
-        original_figure["data"].append(selected_signal)
+            if type(original_figure) == go.Figure:
+                original_figure.add_trace(selected_signal)
+            else:
+                original_figure["data"].append(selected_signal)
 
     return original_figure
 

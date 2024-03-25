@@ -69,9 +69,31 @@ class LoadedData:
     def get_stable_periods_list_length(self):
         return len(self._stable_periods)
 
+    def get_dataset_stable_periods(self, dataset_index: int):
+        """retrieve the stable periods saved for a dataset"""
+        if not self.dataset_exists(dataset_index):
+            msg = f"Index higher than list length {self.get_list_length()}"
+            raise ValueError(msg)
+
+        periods = [period.get_data() for period in self._stable_periods if
+                   period.get_dataset_index() == dataset_index]
+
+        return periods
+
+
 @dataclass
 class Period:
     """Stable period."""
 
     _data: Sequence
     _dataset_index: int
+
+    def get_data(self):
+        return self._data
+
+    def get_dataset_index(self):
+        return self._dataset_index
+
+    def set_data(self, data: Sequence, dataset_index: int):
+        self._data = data
+        self._dataset_index = dataset_index
