@@ -39,9 +39,13 @@ def create_slider_figure(
         eit_variants = ["raw"]
 
     for eit_variant in eit_variants:
-        figure.add_trace(go.Scatter(x=dataset.eit_data[eit_variant].time,
-                                    y=dataset.eit_data[eit_variant].global_impedance,
-                                    name=eit_variant))
+        figure.add_trace(
+            go.Scatter(
+                x=dataset.eit_data[eit_variant].time,
+                y=dataset.eit_data[eit_variant].global_impedance,
+                name=eit_variant,
+            )
+        )
 
     for n, cont_signal in enumerate(continuous_data):
         figure.add_trace(
@@ -93,7 +97,8 @@ def create_slider_figure(
 
 
 def mark_selected_periods(
-    original_figure: go.Figure | dict, periods: List[Sequence],
+    original_figure: go.Figure | dict,
+    periods: List[Sequence],
 ) -> go.Figure:
     """
     Create the figure for the selection of range.
@@ -137,7 +142,9 @@ def mark_selected_periods(
     return original_figure
 
 
-def get_signal_options(dataset: Sequence, show_eit: bool = False) -> list[dict[str, int | str]]:
+def get_signal_options(
+    dataset: Sequence, show_eit: bool = False
+) -> list[dict[str, int | str]]:
     """Get the options for signal selection to be shown in the signal selection section.
 
     Args:
@@ -158,3 +165,16 @@ def get_signal_options(dataset: Sequence, show_eit: bool = False) -> list[dict[s
             options.append({"label": cont, "value": len(options)})
 
     return options
+
+
+def get_selections_slidebar(slidebar_stat: dict) -> tuple:
+    if "xaxis.range" in slidebar_stat:
+        start_sample = slidebar_stat["xaxis.range"][0]
+        stop_sample = slidebar_stat["xaxis.range"][1]
+    elif ("xaxis.range[0]" in slidebar_stat) and ("xaxis.range[1]" in slidebar_stat):
+        start_sample = slidebar_stat["xaxis.range[0]"]
+        stop_sample = slidebar_stat["xaxis.range[1]"]
+    else:
+        start_sample = stop_sample = None
+
+    return start_sample, stop_sample

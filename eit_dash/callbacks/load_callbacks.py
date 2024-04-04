@@ -16,7 +16,11 @@ from eitprocessing.datahandling.sequence import Sequence
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
 from eit_dash.definitions.option_lists import InputFiletypes
-from eit_dash.utils.common import create_slider_figure, get_signal_options
+from eit_dash.utils.common import (
+    create_slider_figure,
+    get_signal_options,
+    get_selections_slidebar,
+)
 
 file_data: Sequence | None = None
 
@@ -196,15 +200,9 @@ def show_info(
     if file_data:
         if slidebar_stat is not None:
             # TODO: the following is used also in preprocessing. Refactor to avoid duplications
-            if "xaxis.range" in slidebar_stat:
-                start_sample = slidebar_stat["xaxis.range"][0]
-                stop_sample = slidebar_stat["xaxis.range"][1]
-            elif ("xaxis.range[0]" in slidebar_stat) and (
-                "xaxis.range[1]" in slidebar_stat
-            ):
-                start_sample = slidebar_stat["xaxis.range[0]"]
-                stop_sample = slidebar_stat["xaxis.range[1]"]
-            else:
+            start_sample, stop_sample = get_selections_slidebar(slidebar_stat)
+
+            if not start_sample or not stop_sample:
                 start_sample = file_data.eit_data["raw"].time[0]
                 stop_sample = file_data.eit_data["raw"].time[-1]
         else:

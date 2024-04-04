@@ -16,6 +16,7 @@ from eit_dash.utils.common import (
     create_slider_figure,
     get_signal_options,
     mark_selected_periods,
+    get_selections_slidebar,
 )
 
 # ruff: noqa: D103  #TODO remove this line when finalizing this module
@@ -359,15 +360,9 @@ def select_period(
     data = data_object.get_sequence_at(int(dataset))
 
     if slidebar_stat is not None:
-        if "xaxis.range" in slidebar_stat:
-            start_sample = slidebar_stat["xaxis.range"][0]
-            stop_sample = slidebar_stat["xaxis.range"][1]
-        elif ("xaxis.range[0]" in slidebar_stat) and (
-            "xaxis.range[1]" in slidebar_stat
-        ):
-            start_sample = slidebar_stat["xaxis.range[0]"]
-            stop_sample = slidebar_stat["xaxis.range[1]"]
-        else:
+        start_sample, stop_sample = get_selections_slidebar(slidebar_stat)
+
+        if not start_sample or not stop_sample:
             start_sample = data.time[0]
             stop_sample = data.time[-1]
     else:
