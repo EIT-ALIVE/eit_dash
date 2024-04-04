@@ -42,7 +42,10 @@ def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
         html.H4(dataset.label, className="card-title"),
         html.H6(InputFiletypes(file_type).name, className="card-subtitle"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style={"margin-left": 10}) for data, value in info_data.items()]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style={"margin-left": 10})
+        for data, value in info_data.items()
+    ]
 
     return dbc.Card(dbc.CardBody(card_list), id="card-1")
 
@@ -191,9 +194,19 @@ def show_info(
 ):
     """Creates the preview for preselecting part of the dataset."""
     if file_data:
-        if slidebar_stat is not None and "xaxis.range" in slidebar_stat:
-            start_sample = slidebar_stat["xaxis.range"][0]
-            stop_sample = slidebar_stat["xaxis.range"][1]
+        if slidebar_stat is not None:
+            # TODO: the following is used also in preprocessing. Refactor to avoid duplications
+            if "xaxis.range" in slidebar_stat:
+                start_sample = slidebar_stat["xaxis.range"][0]
+                stop_sample = slidebar_stat["xaxis.range"][1]
+            elif ("xaxis.range[0]" in slidebar_stat) and (
+                "xaxis.range[1]" in slidebar_stat
+            ):
+                start_sample = slidebar_stat["xaxis.range[0]"]
+                stop_sample = slidebar_stat["xaxis.range[1]"]
+            else:
+                start_sample = file_data.eit_data["raw"].time[0]
+                stop_sample = file_data.eit_data["raw"].time[-1]
         else:
             start_sample = file_data.eit_data["raw"].time[0]
             stop_sample = file_data.eit_data["raw"].time[-1]
@@ -215,7 +228,9 @@ def show_info(
         for data_type in (data := file_data.continuous_data):
             # add just the selected signals
             if data_type in selected:
-                continuous_data_cut.add(data[data_type].select_by_time(start_sample, stop_sample))
+                continuous_data_cut.add(
+                    data[data_type].select_by_time(start_sample, stop_sample)
+                )
 
         # add all the cut data to the new sequence
         cut_data = Sequence(

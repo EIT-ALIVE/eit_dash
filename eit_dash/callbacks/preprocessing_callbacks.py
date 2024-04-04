@@ -72,6 +72,32 @@ def create_loaded_data_summary():
     return loaded
 
 
+def create_selected_period_card(period: Sequence, dataset: str) -> dbc.Card:
+    """Create the card with the information on the selected period
+    to be displayed in the Results section.
+
+    Args:
+        period: Sequence object containing the selected period
+        dataset: The original dataset from which the period has been selected
+    """
+    info_data = {
+        "n_frames": period.eit_data["raw"].nframes,
+        "start_time": period.time[0],
+        "end_time": period.eit_data["raw"].time[-1],
+        "dataset": dataset,
+    }
+
+    card_list = [
+        html.H4(period.label, className="card-title"),
+    ]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style={"margin-left": 10})
+        for data, value in info_data.items()
+    ]
+
+    return dbc.Card(dbc.CardBody(card_list), id="card-1")
+
+
 def get_loaded_data():
     loaded_data = data_object.get_all_sequences()
     data = []
@@ -161,7 +187,10 @@ def update_summary(start, summary):
 
 @callback(
     Output(ids.SYNCHRONIZATION_POPUP, "is_open"),
-    [Input(ids.OPEN_SYNCH_BUTTON, "n_clicks"), Input(ids.SYNCHRONIZATION_CONFIRM_BUTTON, "n_clicks")],
+    [
+        Input(ids.OPEN_SYNCH_BUTTON, "n_clicks"),
+        Input(ids.SYNCHRONIZATION_CONFIRM_BUTTON, "n_clicks"),
+    ],
     prevent_initial_call=True,
 )
 def open_synch_modal(open_click, confirm_click) -> bool:
@@ -176,7 +205,10 @@ def open_synch_modal(open_click, confirm_click) -> bool:
 
 @callback(
     Output(ids.PERIODS_SELECTION_POPUP, "is_open"),
-    [Input(ids.OPEN_SELECT_PERIODS_BUTTON, "n_clicks"), Input(ids.PERIODS_CONFIRM_BUTTON, "n_clicks")],
+    [
+        Input(ids.OPEN_SELECT_PERIODS_BUTTON, "n_clicks"),
+        Input(ids.PERIODS_CONFIRM_BUTTON, "n_clicks"),
+    ],
     prevent_initial_call=True,
 )
 def open_periods_modal(open_click, confirm_click) -> bool:
@@ -232,7 +264,8 @@ def populate_periods_selection_datasets(dataset):
 
     if dataset:
         options = get_signal_options(
-            data_object.get_sequence_at(int(dataset)), show_eit=True,
+            data_object.get_sequence_at(int(dataset)),
+            show_eit=True,
         )
         body = [
             html.H6("Select the signals to be displayed"),
@@ -283,10 +316,10 @@ def initialize_figure(
     style = styles.EMPTY_ELEMENT
 
     current_figure = create_slider_figure(
-            data,
-            ["raw"],
-            [continuous_datum for continuous_datum in data.continuous_data],
-        )
+        data,
+        ["raw"],
+        [continuous_datum for continuous_datum in data.continuous_data],
+    )
 
     # mark the stable periods already selected, if there are any
     if saved_periods := data_object.get_dataset_stable_periods(int(dataset)):
@@ -301,7 +334,6 @@ def initialize_figure(
         Output(ids.PREPROCESING_RESULTS_CONTAINER, "children"),
     ],
     [
-
         Input(ids.PREPROCESING_SELECT_BTN, "n_clicks"),
     ],
     [
@@ -330,7 +362,9 @@ def select_period(
         if "xaxis.range" in slidebar_stat:
             start_sample = slidebar_stat["xaxis.range"][0]
             stop_sample = slidebar_stat["xaxis.range"][1]
-        elif ("xaxis.range[0]" in slidebar_stat) and ("xaxis.range[1]" in slidebar_stat):
+        elif ("xaxis.range[0]" in slidebar_stat) and (
+            "xaxis.range[1]" in slidebar_stat
+        ):
             start_sample = slidebar_stat["xaxis.range[0]"]
             stop_sample = slidebar_stat["xaxis.range[1]"]
         else:
@@ -339,12 +373,6 @@ def select_period(
     else:
         start_sample = data.time[0]
         stop_sample = data.time[-1]
-
-    content = [
-        dbc.Row(
-            [html.Div(f"Selected new period from {start_sample} to {stop_sample}")],
-        ),
-    ]
 
     # TODO: refactor to avoid duplications
 
@@ -359,7 +387,9 @@ def select_period(
     for data_type in (cont := data.continuous_data):
         # add just the selected signals
         if data_type in cont:
-            continuous_data_cut.add(cont[data_type].select_by_time(start_sample, stop_sample))
+            continuous_data_cut.add(
+                cont[data_type].select_by_time(start_sample, stop_sample)
+            )
 
     cut_data = Sequence(
         label=f"stable period {data_object.get_stable_periods_list_length()}",
@@ -382,6 +412,11 @@ def select_period(
         else:
             s["visible"] = False
 
+    content = [
+        dbc.Row(
+            [create_selected_period_card(cut_data, data.label)],
+        ),
+    ]
     current_summary += content
 
     return current_figure, current_summary
@@ -426,42 +461,3 @@ def select_signals(
     style = styles.GRAPH
 
     return current_figure, style
-
-
-# Show dataset
-@callback(
-    Output(ids.SYNC_DATA_PREVIEW_CONTAINER, "children"),
-    Input(ids.DATASET_SELECTION_CHECKBOX, "value"),
-    State(ids.SYNC_DATA_PREVIEW_CONTAINER, "children"),
-    prevent_initial_call=True,
-)
-def show_data(selected_dataset, current_content):
-    x = np.linspace(-2 * np.pi, 2 * np.pi, 201)
-    sample_data = np.sin(x)
-
-    fig = go.Figure(data=[go.Scatter(y=sample_data)])
-
-    content = [
-        dcc.Graph(
-            figure=fig, id={"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": selected},
-        )
-        for selected in selected_dataset
-    ]
-
-    return content
-
-
-# mark clicked data points
-@callback(
-    Output({"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": MATCH}, "figure"),
-    Input({"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": MATCH}, "clickData"),
-    State({"type": ids.SYNC_DATA_PREVIEW_GRAPH, "index": MATCH}, "figure"),
-    prevent_initial_call=True,
-)
-def mark_selected_point(selected_point, figure):
-    fig = go.Figure(figure)
-
-    x = selected_point["points"][0]["x"]
-
-    fig.add_vline(x=x, line_width=3, line_dash="dash", line_color="green")
-    return fig

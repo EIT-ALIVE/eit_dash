@@ -50,7 +50,9 @@ summary = dbc.Col(
 actions = dbc.Col(
     [
         html.H2(
-            "Pre-processing steps", id=ids.PREPROCESING_TITLE, style=styles.COLUMN_TITLE,
+            "Pre-processing steps",
+            id=ids.PREPROCESING_TITLE,
+            style=styles.COLUMN_TITLE,
         ),
         resampling_card,
         html.P(),
@@ -86,7 +88,8 @@ modal_synchronization = html.Div(
         dbc.Modal(
             [
                 dbc.ModalHeader(
-                    dbc.ModalTitle("Data synchronization"), close_button=True,
+                    dbc.ModalTitle("Data synchronization"),
+                    close_button=True,
                 ),
                 dbc.ModalBody(
                     [
@@ -130,38 +133,42 @@ modal_selection_body = html.Div(
         html.P(),
         dbc.Row(id=ids.PREPROCESING_SIGNALS_CHECKBOX_ROW),
         html.P(),
-        html.Div(
-            [
-                dbc.Row(
-                    [
-                        dcc.Graph(
-                            id=ids.PREPROCESING_PERIODS_GRAPH,
-                            style=styles.EMPTY_ELEMENT,
-                        ),
-                    ],
-                ),
-                html.P(),
-                dbc.Row(
-                    [
-                        dbc.Col(
-                            [
-                                dbc.Button(
-                                    "Select all", id=ids.PREPROCESING_SELECT_ALL_BTN,
-                                ),
-                            ],
-                        ),
-                        dbc.Col(
-                            [
-                                dbc.Button(
-                                    "Add selection", id=ids.PREPROCESING_SELECT_BTN,
-                                ),
-                            ],
-                        ),
-                    ],
-                ),
-            ],
-            id=ids.PERIODS_SELECTION_DIV,
-            hidden=True,
+        dcc.Loading(
+            html.Div(
+                [
+                    dbc.Row(
+                        [
+                            dcc.Graph(
+                                id=ids.PREPROCESING_PERIODS_GRAPH,
+                                style=styles.EMPTY_ELEMENT,
+                            ),
+                        ],
+                    ),
+                    html.P(),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    dbc.Button(
+                                        "Select all",
+                                        id=ids.PREPROCESING_SELECT_ALL_BTN,
+                                    ),
+                                ],
+                            ),
+                            dbc.Col(
+                                [
+                                    dbc.Button(
+                                        "Add selection",
+                                        id=ids.PREPROCESING_SELECT_BTN,
+                                    ),
+                                ],
+                            ),
+                        ],
+                    ),
+                ],
+                id=ids.PERIODS_SELECTION_DIV,
+                hidden=True,
+            ),
         ),
     ],
     id=ids.PERIODS_SELECTION_BODY,
