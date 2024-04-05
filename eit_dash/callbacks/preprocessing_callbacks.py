@@ -1,7 +1,7 @@
+import json
+
 import dash_bootstrap_components as dbc
-import numpy as np
-import plotly.graph_objs as go
-from dash import MATCH, Input, Output, State, callback, ctx, dcc, html
+from dash import MATCH, ALL, Input, Output, State, callback, ctx, dcc, html
 from dash.exceptions import PreventUpdate
 from eitprocessing.datahandling.continuousdata import ContinuousData
 from eitprocessing.datahandling.datacollection import DataCollection
@@ -95,8 +95,16 @@ def create_selected_period_card(period: Sequence, dataset: str, index) -> dbc.Ca
         dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
         for data, value in info_data.items()
     ]
+    card_list += [
+        dbc.Button(
+            "Remove",
+            id={"type": ids.REMOVE_PERIOD_BUTTON, "index": str(index)},
+        ),
+    ]
 
-    return dbc.Card(dbc.CardBody(card_list), id=f"card-period-{index}")
+    return dbc.Card(
+        dbc.CardBody(card_list), id={"type": ids.PERIOD_CARD, "index": str(index)}
+    )
 
 
 def get_loaded_data():
@@ -190,7 +198,7 @@ def update_summary(start, summary):
         for p in data_object.get_all_stable_periods():
             data = p.get_data()
             results.append(
-                [create_selected_period_card(data, data.label, p.get_period_index())]
+                create_selected_period_card(data, data.label, p.get_period_index())
             )
 
     return False, False, False, summary, results
@@ -461,3 +469,30 @@ def select_signals(
     style = styles.GRAPH
 
     return current_figure, style
+
+
+@callback(
+    Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
+    [
+        Input({"type": ids.REMOVE_PERIOD_BUTTON, "index": ALL}, "n_clicks"),
+    ],
+    [
+        State(ids.PREPROCESING_RESULTS_CONTAINER, "children"),
+    ],
+    prevent_initial_call=True,
+)
+def remove_period(n_clicks, container):
+    """React to clicking the remove button of a period.
+    Removes the card from the results and the period from the saved selections.
+    """
+
+    if all(element is None for element in n_clicks):
+        raise PreventUpdate
+
+    input_id = ctx.triggered_id["index"]
+
+    data_object.remove_stable_period(int(input_id))
+
+    results = [card for card in container if f"'index': '{input_id}'" not in str(card)]
+
+    return results
