@@ -164,6 +164,7 @@ def load_datasets(title):
         Output(ids.OPEN_SELECT_PERIODS_BUTTON, "disabled"),
         Output(ids.OPEN_FILTER_DATA_BUTTON, "disabled"),
         Output(ids.SUMMARY_COLUMN, "children"),
+        Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
     ],
     [
         Input(ids.PREPROCESING_TITLE, "children"),
@@ -171,19 +172,30 @@ def load_datasets(title):
     [
         State(ids.SUMMARY_COLUMN, "children"),
     ],
-    prevent_initial_call=False,
+    # this allows duplicate outputs with initial call
+    prevent_initial_call="initial_duplicate",
 )
 def update_summary(start, summary):
     """When the page is loaded, it populates the summary column
-    with the info about the loaded datasets"""
+    with the info about the loaded datasets. It also checks if periods
+    have been already saved and populates the results accordingly."""
 
     trigger = ctx.triggered_id
+
+    results = []
 
     if trigger is None:
         data = create_loaded_data_summary()
         summary += data
+        for p in data_object.get_all_stable_periods():
+            data = p.get_data()
+            results.append(
+                dbc.Row(
+                    [create_selected_period_card(data, data.label)],
+                ),
+            )
 
-    return False, False, False, summary
+    return False, False, False, summary, results
 
 
 @callback(
@@ -332,7 +344,7 @@ def initialize_figure(
 @callback(
     [
         Output(ids.PREPROCESING_PERIODS_GRAPH, "figure", allow_duplicate=True),
-        Output(ids.PREPROCESING_RESULTS_CONTAINER, "children"),
+        Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
     ],
     [
         Input(ids.PREPROCESING_SELECT_BTN, "n_clicks"),
@@ -370,10 +382,7 @@ def select_period(
         start_sample = data.time[0]
         stop_sample = data.time[-1]
 
-    # TODO: refactor to avoid duplications
-
     # cut the eit data and the continuous data and add them to a new DataCollections
-
     eit_data_cut = DataCollection(data_type=EITData)
     continuous_data_cut = DataCollection(data_type=ContinuousData)
 

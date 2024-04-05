@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from threading import Lock
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from eitprocessing.sequence import Sequence
@@ -69,14 +69,24 @@ class LoadedData:
     def get_stable_periods_list_length(self):
         return len(self._stable_periods)
 
-    def get_dataset_stable_periods(self, dataset_index: int):
+    def get_dataset_stable_periods(self, dataset_index: int) -> List[Sequence]:
         """retrieve the stable periods saved for a dataset"""
         if not self.dataset_exists(dataset_index):
             msg = f"Index higher than list length {self.get_list_length()}"
             raise ValueError(msg)
 
-        periods = [period.get_data() for period in self._stable_periods if
-                   period.get_dataset_index() == dataset_index]
+        periods = [
+            period.get_data()
+            for period in self._stable_periods
+            if period.get_dataset_index() == dataset_index
+        ]
+
+        return periods
+
+    def get_all_stable_periods(self) -> List[Period]:
+        """retrieve all the saved stable periods"""
+
+        periods = [period for period in self._stable_periods]
 
         return periods
 
