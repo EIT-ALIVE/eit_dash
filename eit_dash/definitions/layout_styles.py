@@ -5,6 +5,7 @@ COLUMN_TITLE = {"textAlign": "center"}
 EMPTY_ELEMENT = {"display": "none"}
 FILE_BROWSER = {"height": 500, "overflow": "scroll"}
 GRAPH = {}
+INFO_CARD = {"margin-left": 10}
 LOAD_RESULTS = {"textAlign": "center"}
 SUMMARY_ELEMENT = {"textAlign": "center"}
 SECTION_TITLE = {"margin-top": "50px"}

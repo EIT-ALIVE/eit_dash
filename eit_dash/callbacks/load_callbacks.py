@@ -16,6 +16,7 @@ from eitprocessing.datahandling.sequence import Sequence
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
 from eit_dash.definitions.option_lists import InputFiletypes
+from eit_dash.definitions import layout_styles as styles
 from eit_dash.utils.common import (
     create_slider_figure,
     get_signal_options,
@@ -47,7 +48,7 @@ def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
         html.H6(InputFiletypes(file_type).name, className="card-subtitle"),
     ]
     card_list += [
-        dbc.Row(f"{data}: {value}", style={"margin-left": 10})
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
         for data, value in info_data.items()
     ]
 

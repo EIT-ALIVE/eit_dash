@@ -52,12 +52,23 @@ class LoadedData:
     def dataset_exists(self, index) -> bool:
         return index <= self.get_list_length()
 
-    def add_stable_period(self, data: Sequence, dataset_index: int):
+    def add_stable_period(
+        self, data: Sequence, dataset_index: int, period_index: int | None = None
+    ):
         if not self.dataset_exists(dataset_index):
             msg = f"Index higher than list length {self.get_list_length()}"
             raise ValueError(msg)
 
-        self._stable_periods.append(Period(data, dataset_index))
+        if not period_index:
+            period_index = self.get_stable_periods_list_length()
+
+        # check that the index doesn't exist
+        for period in self._stable_periods:
+            if period.get_period_index() == period_index:
+                msg = f"Index {period_index} exist already"
+                raise ValueError(msg)
+
+        self._stable_periods.append(Period(data, dataset_index, period_index))
 
     def remove_stable_period(self, index: int):
         if index > (length := len(self._stable_periods)):
@@ -86,9 +97,7 @@ class LoadedData:
     def get_all_stable_periods(self) -> List[Period]:
         """retrieve all the saved stable periods"""
 
-        periods = [period for period in self._stable_periods]
-
-        return periods
+        return self._stable_periods
 
 
 @dataclass
@@ -97,6 +106,7 @@ class Period:
 
     _data: Sequence
     _dataset_index: int
+    _period_index: int
 
     def get_data(self):
         return self._data
@@ -104,6 +114,10 @@ class Period:
     def get_dataset_index(self):
         return self._dataset_index
 
-    def set_data(self, data: Sequence, dataset_index: int):
+    def get_period_index(self):
+        return self._period_index
+
+    def set_data(self, data: Sequence, dataset_index: int, period_index: int):
         self._data = data
         self._dataset_index = dataset_index
+        self._period_index = period_index

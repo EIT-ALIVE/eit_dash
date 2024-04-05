@@ -73,7 +73,7 @@ def create_loaded_data_summary():
     return loaded
 
 
-def create_selected_period_card(period: Sequence, dataset: str) -> dbc.Card:
+def create_selected_period_card(period: Sequence, dataset: str, index) -> dbc.Card:
     """Create the card with the information on the selected period
     to be displayed in the Results section.
 
@@ -92,11 +92,11 @@ def create_selected_period_card(period: Sequence, dataset: str) -> dbc.Card:
         html.H4(period.label, className="card-title"),
     ]
     card_list += [
-        dbc.Row(f"{data}: {value}", style={"margin-left": 10})
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
         for data, value in info_data.items()
     ]
 
-    return dbc.Card(dbc.CardBody(card_list), id="card-1")
+    return dbc.Card(dbc.CardBody(card_list), id=f"card-period-{index}")
 
 
 def get_loaded_data():
@@ -190,9 +190,7 @@ def update_summary(start, summary):
         for p in data_object.get_all_stable_periods():
             data = p.get_data()
             results.append(
-                dbc.Row(
-                    [create_selected_period_card(data, data.label)],
-                ),
+                [create_selected_period_card(data, data.label, p.get_period_index())]
             )
 
     return False, False, False, summary, results
@@ -396,8 +394,9 @@ def select_period(
                 cont[data_type].select_by_time(start_sample, stop_sample)
             )
 
+    period_index = data_object.get_stable_periods_list_length()
     cut_data = Sequence(
-        label=f"stable period {data_object.get_stable_periods_list_length()}",
+        label=f"stable period {period_index}",
         eit_data=eit_data_cut,
         continuous_data=continuous_data_cut,
     )
@@ -417,11 +416,7 @@ def select_period(
         else:
             s["visible"] = False
 
-    content = [
-        dbc.Row(
-            [create_selected_period_card(cut_data, data.label)],
-        ),
-    ]
+    content = [create_selected_period_card(cut_data, data.label, period_index)]
     current_summary += content
 
     return current_figure, current_summary

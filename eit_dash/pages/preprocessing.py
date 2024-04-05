@@ -78,8 +78,10 @@ actions = dbc.Col(
 )
 
 results = dbc.Col(
-    [html.H2("Results", style=styles.COLUMN_TITLE)],
-    id=ids.PREPROCESING_RESULTS_CONTAINER,
+    [
+        html.H2("Results", style=styles.COLUMN_TITLE),
+        html.Div(id=ids.PREPROCESING_RESULTS_CONTAINER, style=styles.LOAD_RESULTS),
+    ]
 )
 
 # popup for data synchronization
@@ -110,7 +112,7 @@ modal_synchronization = html.Div(
                 ),
                 dbc.ModalFooter(
                     dbc.Button(
-                        "Confirm",
+                        "Close",
                         id=ids.SYNCHRONIZATION_CONFIRM_BUTTON,
                         className="ms-auto",
                         n_clicks=0,
@@ -147,23 +149,12 @@ modal_selection_body = html.Div(
                     html.P(),
                     dbc.Row(
                         [
-                            dbc.Col(
-                                [
-                                    dbc.Button(
-                                        "Select all",
-                                        id=ids.PREPROCESING_SELECT_ALL_BTN,
-                                    ),
-                                ],
-                            ),
-                            dbc.Col(
-                                [
-                                    dbc.Button(
-                                        "Add selection",
-                                        id=ids.PREPROCESING_SELECT_BTN,
-                                    ),
-                                ],
+                            dbc.Button(
+                                "Add selection",
+                                id=ids.PREPROCESING_SELECT_BTN,
                             ),
                         ],
+                        style=styles.BUTTONS_ROW,
                     ),
                 ],
                 id=ids.PERIODS_SELECTION_DIV,
@@ -194,7 +185,7 @@ modal_selection = html.Div(
                 ),
                 dbc.ModalFooter(
                     dbc.Button(
-                        "Confirm",
+                        "Close",
                         id=ids.PERIODS_CONFIRM_BUTTON,
                         className="ms-auto",
                         n_clicks=0,
