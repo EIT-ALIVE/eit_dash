@@ -161,6 +161,7 @@ def open_data_selector(data, cancel_load, sig, file_type, fig):
                 file_data,
                 ["raw"],
                 [continuous_datum for continuous_datum in file_data.continuous_data],
+                True,
             )
 
         ok = ["raw"]
@@ -198,12 +199,13 @@ def show_info(
 ):
     """Creates the preview for preselecting part of the dataset."""
     if file_data:
+        # get the first and last sample selected in the slidebar
         if slidebar_stat is not None:
-            # TODO: the following is used also in preprocessing. Refactor to avoid duplications
             start_sample, stop_sample = get_selections_slidebar(slidebar_stat)
 
-            if not start_sample or not stop_sample:
+            if not start_sample:
                 start_sample = file_data.eit_data["raw"].time[0]
+            if not stop_sample:
                 stop_sample = file_data.eit_data["raw"].time[-1]
         else:
             start_sample = file_data.eit_data["raw"].time[0]

@@ -358,12 +358,13 @@ def select_period(
 ):
     """Mark the selected period in the graph and save it."""
     data = data_object.get_sequence_at(int(dataset))
-
+    # get the first and last sample selected in the slidebar
     if slidebar_stat is not None:
         start_sample, stop_sample = get_selections_slidebar(slidebar_stat)
 
-        if not start_sample or not stop_sample:
+        if not start_sample:
             start_sample = data.time[0]
+        if not stop_sample:
             stop_sample = data.time[-1]
     else:
         start_sample = data.time[0]

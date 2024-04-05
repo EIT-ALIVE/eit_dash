@@ -21,6 +21,7 @@ def create_slider_figure(
     dataset: Sequence,
     eit_variants: list[str] | None = None,
     continuous_data: list[str] | None = None,
+    clickable_legend: bool = False,
 ) -> go.Figure:
     """Create the figure for the selection of range.
 
@@ -28,6 +29,7 @@ def create_slider_figure(
         dataset: Sequence object containing the selected dataset
         eit_variants: list of the eit variants to be plotted
         continuous_data: list of the continuous data signals to be plotted
+        clickable_legend: if True, the user can hide a signal by clicking on the legend
     """
     figure = go.Figure()
     params = dict()
@@ -89,9 +91,13 @@ def create_slider_figure(
     figure.update_layout(
         xaxis={"rangeslider": {"visible": True}},
         margin={"t": 0, "l": 0, "b": 0, "r": 0},
-        legend={"itemclick": False, "itemdoubleclick": False},
         **params,
     )
+
+    # itemclick is a toggable element, so it can only be deactivated, and it is not possible
+    # to set it to True
+    if not clickable_legend:
+        figure.update_layout(legend={"itemclick": False, "itemdoubleclick": False})
 
     return figure
 
@@ -168,6 +174,16 @@ def get_signal_options(
 
 
 def get_selections_slidebar(slidebar_stat: dict) -> tuple:
+    """Given the layout data of a graph slidebar, it returns the first
+    and the last sample selected.
+
+    Args:
+        slidebar_stat: Layout data of a graph slidebar.
+    Returns:
+        A tuple where the first value is the starting sample and the second value is the
+        end sample. If a sample cannot be determined, None is returned.
+    """
+
     if "xaxis.range" in slidebar_stat:
         start_sample = slidebar_stat["xaxis.range"][0]
         stop_sample = slidebar_stat["xaxis.range"][1]
