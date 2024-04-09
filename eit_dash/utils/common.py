@@ -103,8 +103,7 @@ def create_slider_figure(
 
 
 def mark_selected_periods(
-    original_figure: go.Figure | dict,
-    periods: List[Sequence],
+    original_figure: go.Figure | dict, periods: List[Sequence], period_index: int
 ) -> go.Figure:
     """
     Create the figure for the selection of range.
@@ -113,6 +112,7 @@ def mark_selected_periods(
         original_figure: figure to update
         periods: list of Sequence object containing the selected dataset.
         These ranges, the signal is plotted in black
+        period_index: index of the selected period
     """
     for period in periods:
         for eit_variant in period.eit_data:
@@ -120,7 +120,7 @@ def mark_selected_periods(
                 x=period.eit_data[eit_variant].time,
                 y=period.eit_data[eit_variant].global_impedance,
                 name=eit_variant,
-                meta={"uid": period.label},
+                meta={"uid": period_index},
                 line={"color": "black"},
                 showlegend=False,
             ).to_plotly_json()
@@ -135,7 +135,7 @@ def mark_selected_periods(
                 x=period.continuous_data[cont_signal].time,
                 y=period.continuous_data[cont_signal].values,
                 name=cont_signal,
-                meta={"uid": period.label},
+                meta={"uid": period_index},
                 opacity=0.5,
                 yaxis=f"y{n + 2}",
                 line={"color": "black"},

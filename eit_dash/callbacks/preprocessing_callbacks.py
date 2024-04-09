@@ -391,13 +391,13 @@ def select_period(
     period_index = data_object.get_stable_periods_list_length()
 
     cut_data = data.select_by_time(
-        start_time=start_sample, end_time=stop_sample, label=str(period_index)
+        start_time=start_sample, end_time=stop_sample, label=f"Period {period_index}"
     )
 
     data_object.add_stable_period(cut_data, int(dataset))
 
     # TODO: explore Patch https://dash.plotly.com/partial-properties
-    current_figure = mark_selected_periods(current_figure, [cut_data])
+    current_figure = mark_selected_periods(current_figure, [cut_data], period_index)
 
     # TODO: refactor to avoid duplications
     ok = [options[s]["label"] for s in signals]
@@ -471,7 +471,7 @@ def remove_period(n_clicks, container, figure):
     Removes the card from the results and the period from the saved selections.
     """
 
-    # at the element creation time, the update should avoided
+    # at the element creation time, the update should be avoided
     if all(element is None for element in n_clicks):
         raise PreventUpdate
 
@@ -484,7 +484,7 @@ def remove_period(n_clicks, container, figure):
     figure["data"] = [
         trace
         for trace in figure["data"]
-        if "meta" not in trace or trace["meta"]["uid"] != input_id
+        if "meta" not in trace or trace["meta"]["uid"] != int(input_id)
     ]
 
     results = [card for card in container if f"'index': '{input_id}'" not in str(card)]
