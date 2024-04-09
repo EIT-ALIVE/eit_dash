@@ -71,11 +71,13 @@ class LoadedData:
         self._stable_periods.append(Period(data, dataset_index, period_index))
 
     def remove_stable_period(self, index: int):
-        if index > (length := len(self._stable_periods)):
-            msg = f"Index higher than list length {length}"
-            raise ValueError(msg)
+        for period in self._stable_periods:
+            if period.get_period_index() == index:
+                self._stable_periods.remove(period)
+                return
 
-        self._stable_periods.pop(index)
+        msg = f"Period with index {index}not found"
+        raise ValueError(msg)
 
     def get_stable_periods_list_length(self):
         return len(self._stable_periods)

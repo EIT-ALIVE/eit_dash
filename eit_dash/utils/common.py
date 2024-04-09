@@ -120,6 +120,7 @@ def mark_selected_periods(
                 x=period.eit_data[eit_variant].time,
                 y=period.eit_data[eit_variant].global_impedance,
                 name=eit_variant,
+                meta={"uid": period.label},
                 line={"color": "black"},
                 showlegend=False,
             ).to_plotly_json()
@@ -134,6 +135,7 @@ def mark_selected_periods(
                 x=period.continuous_data[cont_signal].time,
                 y=period.continuous_data[cont_signal].values,
                 name=cont_signal,
+                meta={"uid": period.label},
                 opacity=0.5,
                 yaxis=f"y{n + 2}",
                 line={"color": "black"},

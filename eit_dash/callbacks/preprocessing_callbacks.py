@@ -388,28 +388,11 @@ def select_period(
         start_sample = data.time[0]
         stop_sample = data.time[-1]
 
-    # cut the eit data and the continuous data and add them to a new DataCollections
-    eit_data_cut = DataCollection(data_type=EITData)
-    continuous_data_cut = DataCollection(data_type=ContinuousData)
-
-    for data_type in (eit := data.eit_data):
-        eit_data_cut.add(eit[data_type].select_by_time(start_sample, stop_sample))
-
-    for data_type in (cont := data.continuous_data):
-        # add just the selected signals
-        if data_type in cont:
-            continuous_data_cut.add(
-                cont[data_type].select_by_time(start_sample, stop_sample)
-            )
-
     period_index = data_object.get_stable_periods_list_length()
-    cut_data = Sequence(
-        label=f"stable period {period_index}",
-        eit_data=eit_data_cut,
-        continuous_data=continuous_data_cut,
+
+    cut_data = data.select_by_time(
+        start_time=start_sample, end_time=stop_sample, label=str(period_index)
     )
-    # TODO: use the following when bug https://github.com/EIT-ALIVE/eitprocessing/issues/161 is fixed
-    # cut_data = data.select_by_time(start_time=start_sample, end_time=stop_sample)
 
     data_object.add_stable_period(cut_data, int(dataset))
 
@@ -473,26 +456,37 @@ def select_signals(
 
 @callback(
     Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
+    Output(ids.PREPROCESING_PERIODS_GRAPH, "figure", allow_duplicate=True),
     [
         Input({"type": ids.REMOVE_PERIOD_BUTTON, "index": ALL}, "n_clicks"),
     ],
     [
         State(ids.PREPROCESING_RESULTS_CONTAINER, "children"),
+        State(ids.PREPROCESING_PERIODS_GRAPH, "figure"),
     ],
     prevent_initial_call=True,
 )
-def remove_period(n_clicks, container):
+def remove_period(n_clicks, container, figure):
     """React to clicking the remove button of a period.
     Removes the card from the results and the period from the saved selections.
     """
 
+    # at the element creation time, the update should avoided
     if all(element is None for element in n_clicks):
         raise PreventUpdate
 
     input_id = ctx.triggered_id["index"]
 
+    # remove from the singleton
     data_object.remove_stable_period(int(input_id))
+
+    # remove from the figure
+    figure["data"] = [
+        trace
+        for trace in figure["data"]
+        if "meta" not in trace or trace["meta"]["uid"] != input_id
+    ]
 
     results = [card for card in container if f"'index': '{input_id}'" not in str(card)]
 
-    return results
+    return results, figure
