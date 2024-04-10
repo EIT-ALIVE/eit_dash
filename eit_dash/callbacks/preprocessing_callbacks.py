@@ -140,13 +140,14 @@ def get_suggested_resampling(loaded_data):
     ],
     Input(ids.PREPROCESING_TITLE, "children"),
 )
-def load_datasets(title):  # ruff: noqa: ERA001
+def load_datasets(title):
     """
 
     This callback runs when the page is loaded (the title of the preprocessing is created) and loads.
 
      the data in the resampling card and in the dataset selection menu.
     """
+    # ruff: noqa: ERA001
     # loaded_data = get_loaded_data()
     # continuous_data_loaded = check_continuous_data_loaded()
     #
