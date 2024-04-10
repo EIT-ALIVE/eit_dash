@@ -1,11 +1,6 @@
-import json
-
 import dash_bootstrap_components as dbc
-from dash import MATCH, ALL, Input, Output, State, callback, ctx, dcc, html
+from dash import ALL, Input, Output, State, callback, ctx, dcc, html
 from dash.exceptions import PreventUpdate
-from eitprocessing.datahandling.continuousdata import ContinuousData
-from eitprocessing.datahandling.datacollection import DataCollection
-from eitprocessing.datahandling.eitdata import EITData
 from eitprocessing.datahandling.sequence import Sequence
 
 import eit_dash.definitions.element_ids as ids
@@ -14,9 +9,9 @@ from eit_dash.app import data_object
 from eit_dash.definitions.option_lists import PeriodsSelectMethods
 from eit_dash.utils.common import (
     create_slider_figure,
+    get_selections_slidebar,
     get_signal_options,
     mark_selected_periods,
-    get_selections_slidebar,
 )
 
 # ruff: noqa: D103  #TODO remove this line when finalizing this module
@@ -61,25 +56,22 @@ def create_resampling_card(loaded_data):
 
 
 def create_loaded_data_summary():
-    loaded = []
-
     loaded_data = data_object.get_all_sequences()
 
-    for dataset in loaded_data:
-        loaded.append(
-            dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})]),
-        )
-
-    return loaded
+    return [
+        dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})])
+        for dataset in loaded_data
+    ]
 
 
-def create_selected_period_card(period: Sequence, dataset: str, index) -> dbc.Card:
-    """Create the card with the information on the selected period
-    to be displayed in the Results section.
+def create_selected_period_card(period: Sequence, dataset: str, index: int) -> dbc.Card:
+    """
+    Create the card with the information on the selected period to be displayed in the Results section.
 
     Args:
         period: Sequence object containing the selected period
         dataset: The original dataset from which the period has been selected
+        index: of the period
     """
     info_data = {
         "n_frames": period.eit_data["raw"].nframes,
@@ -103,7 +95,8 @@ def create_selected_period_card(period: Sequence, dataset: str, index) -> dbc.Ca
     ]
 
     return dbc.Card(
-        dbc.CardBody(card_list), id={"type": ids.PERIOD_CARD, "index": str(index)}
+        dbc.CardBody(card_list),
+        id={"type": ids.PERIOD_CARD, "index": str(index)},
     )
 
 
@@ -113,8 +106,10 @@ def get_loaded_data():
     for dataset in loaded_data:
         name = dataset.label
         if dataset.continuous_data:
-            for channel in dataset.continuous_data:
-                data.append({"Name": name, "Data type": channel})
+            data += [
+                {"Name": name, "Data type": channel}
+                for channel in dataset.continuous_data
+            ]
         if dataset.eit_data:
             data.append(
                 {
@@ -145,10 +140,13 @@ def get_suggested_resampling(loaded_data):
     ],
     Input(ids.PREPROCESING_TITLE, "children"),
 )
-def load_datasets(title):
-    """this callback runs when the page is loaded (the title of the preprocessing is created)
-    and loads the data in the resampling card and in the dataset selection menu"""
+def load_datasets(title):  # ruff: noqa: ERA001
+    """
 
+    This callback runs when the page is loaded (the title of the preprocessing is created) and loads.
+
+     the data in the resampling card and in the dataset selection menu.
+    """
     # loaded_data = get_loaded_data()
     # continuous_data_loaded = check_continuous_data_loaded()
     #
@@ -184,10 +182,12 @@ def load_datasets(title):
     prevent_initial_call="initial_duplicate",
 )
 def update_summary(start, summary):
-    """When the page is loaded, it populates the summary column
-    with the info about the loaded datasets. It also checks if periods
-    have been already saved and populates the results accordingly."""
+    """Updates summary.
 
+    When the page is loaded, it populates the summary column
+    with the info about the loaded datasets. It also checks if periods
+    have been already saved and populates the results accordingly.
+    """
     trigger = ctx.triggered_id
 
     results = []
@@ -198,7 +198,7 @@ def update_summary(start, summary):
         for p in data_object.get_all_stable_periods():
             data = p.get_data()
             results.append(
-                create_selected_period_card(data, data.label, p.get_period_index())
+                create_selected_period_card(data, data.label, p.get_period_index()),
             )
 
     return False, False, False, summary, results
@@ -213,7 +213,7 @@ def update_summary(start, summary):
     prevent_initial_call=True,
 )
 def open_synch_modal(open_click, confirm_click) -> bool:
-    """open/close modal dialog for data synchronization"""
+    """open/close modal dialog for data synchronization."""
     trigger = ctx.triggered_id
 
     if trigger == ids.OPEN_SYNCH_BUTTON:
@@ -231,8 +231,7 @@ def open_synch_modal(open_click, confirm_click) -> bool:
     prevent_initial_call=True,
 )
 def open_periods_modal(open_click, confirm_click) -> bool:
-    """open/close modal dialog for periods selection"""
-
+    """open/close modal dialog for periods selection."""
     trigger = ctx.triggered_id
 
     if trigger == ids.OPEN_SELECT_PERIODS_BUTTON:
@@ -246,10 +245,8 @@ def open_periods_modal(open_click, confirm_click) -> bool:
     Input(ids.PERIODS_METHOD_SELECTOR, "value"),
     prevent_initial_call=True,
 )
-def populate_periods_selection_datasets(method):
-    """Populate modal body according to the selected method
-    for stable periods selection"""
-
+def populate_periods_selection_modal(method):
+    """Populate modal body according to the selected method for stable periods selection."""
     int_value = int(method)
 
     if int_value == PeriodsSelectMethods.Manual.value:
@@ -278,15 +275,13 @@ def populate_periods_selection_datasets(method):
     prevent_initial_call=True,
 )
 def populate_periods_selection_datasets(dataset):
-    """Activated when a dataset is selected.
-    Populates signals selection in the manual selection case"""
-
+    """Activated when a dataset is selected. Populates signals selection in the manual selection case."""
     if dataset:
         options = get_signal_options(
             data_object.get_sequence_at(int(dataset)),
             show_eit=True,
         )
-        body = [
+        return [
             html.H6("Select the signals to be displayed"),
             dcc.Checklist(
                 id=ids.PREPROCESING_SIGNALS_CHECKBOX,
@@ -295,7 +290,7 @@ def populate_periods_selection_datasets(dataset):
             ),
         ]
 
-        return body
+    return []
 
 
 @callback(
@@ -304,7 +299,7 @@ def populate_periods_selection_datasets(dataset):
     prevent_initial_call=True,
 )
 def show_selection_div(signals):
-    """make visible the div containing the graphs and the buttons"""
+    """Make visible the div containing the graphs and the buttons."""
     if signals:
         return False
 
@@ -337,7 +332,7 @@ def initialize_figure(
     current_figure = create_slider_figure(
         data,
         ["raw"],
-        [continuous_datum for continuous_datum in data.continuous_data],
+        list(data.continuous_data),
     )
 
     # mark the stable periods already selected, if there are any
@@ -391,7 +386,9 @@ def select_period(
     period_index = data_object.get_stable_periods_list_length()
 
     cut_data = data.select_by_time(
-        start_time=start_sample, end_time=stop_sample, label=f"Period {period_index}"
+        start_time=start_sample,
+        end_time=stop_sample,
+        label=f"Period {period_index}",
     )
 
     data_object.add_stable_period(cut_data, int(dataset))
@@ -432,8 +429,9 @@ def select_signals(
     options,
     current_figure,
 ):
-    """React to ticking a signal. The function updates the figure by showing the ticked signals
-    and hiding the unticked ones.
+    """React to ticking a signal.
+
+    The function updates the figure by showing the ticked signals and hiding the unticked ones.
     """
     # the callback is run also when populating the signals options (no figure created).
     # In this case we don't want to run it
@@ -468,9 +466,9 @@ def select_signals(
 )
 def remove_period(n_clicks, container, figure):
     """React to clicking the remove button of a period.
+
     Removes the card from the results and the period from the saved selections.
     """
-
     # at the element creation time, the update should be avoided
     if all(element is None for element in n_clicks):
         raise PreventUpdate

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING
 
 import plotly.graph_objects as go
 
@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 
 def blank_fig():
+    """Create an empty figure."""
     fig = go.Figure(go.Scatter(x=[], y=[]))
     fig.update_layout(template=None)
     fig.update_xaxes(showgrid=False, showticklabels=False, zeroline=False)
@@ -32,7 +33,7 @@ def create_slider_figure(
         clickable_legend: if True, the user can hide a signal by clicking on the legend
     """
     figure = go.Figure()
-    params = dict()
+    params = {}
     y_position = 0
 
     if continuous_data is None:
@@ -46,7 +47,7 @@ def create_slider_figure(
                 x=dataset.eit_data[eit_variant].time,
                 y=dataset.eit_data[eit_variant].global_impedance,
                 name=eit_variant,
-            )
+            ),
         )
 
     for n, cont_signal in enumerate(continuous_data):
@@ -60,19 +61,16 @@ def create_slider_figure(
             ),
         )
         # decide whether to put the axis left or right
-        if (n % 2) == 0:
-            side = "right"
-        else:
-            side = "left"
+        side = "right" if n % 2 == 0 else "left"
 
         y_position += 0.1
-        new_y = dict(
-            title=cont_signal,
-            anchor="free",
-            overlaying="y",
-            side=side,
-            autoshift=True,
-        )
+        new_y = {
+            "title": cont_signal,
+            "anchor": "free",
+            "overlaying": "y",
+            "side": side,
+            "autoshift": True,
+        }
 
         # layout parameters for multiple y axis
         param_name = f"yaxis{n + 2}"
@@ -103,7 +101,9 @@ def create_slider_figure(
 
 
 def mark_selected_periods(
-    original_figure: go.Figure | dict, periods: List[Sequence], period_index: int
+    original_figure: go.Figure | dict,
+    periods: list[Sequence],
+    period_index: int,
 ) -> go.Figure:
     """
     Create the figure for the selection of range.
@@ -151,7 +151,8 @@ def mark_selected_periods(
 
 
 def get_signal_options(
-    dataset: Sequence, show_eit: bool = False
+    dataset: Sequence,
+    show_eit: bool = False,
 ) -> list[dict[str, int | str]]:
     """Get the options for signal selection to be shown in the signal selection section.
 
@@ -176,16 +177,15 @@ def get_signal_options(
 
 
 def get_selections_slidebar(slidebar_stat: dict) -> tuple:
-    """Given the layout data of a graph slidebar, it returns the first
-    and the last sample selected.
+    """Given the layout data of a graph slidebar, it returns the first and the last sample selected.
 
     Args:
         slidebar_stat: Layout data of a graph slidebar.
+
     Returns:
         A tuple where the first value is the starting sample and the second value is the
         end sample. If a sample cannot be determined, None is returned.
     """
-
     if "xaxis.range" in slidebar_stat:
         start_sample = slidebar_stat["xaxis.range"][0]
         stop_sample = slidebar_stat["xaxis.range"][1]

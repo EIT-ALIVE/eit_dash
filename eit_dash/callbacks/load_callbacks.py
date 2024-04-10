@@ -15,12 +15,12 @@ from eitprocessing.datahandling.sequence import Sequence
 
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
-from eit_dash.definitions.option_lists import InputFiletypes
 from eit_dash.definitions import layout_styles as styles
+from eit_dash.definitions.option_lists import InputFiletypes
 from eit_dash.utils.common import (
     create_slider_figure,
-    get_signal_options,
     get_selections_slidebar,
+    get_signal_options,
 )
 
 file_data: Sequence | None = None
@@ -161,7 +161,7 @@ def open_data_selector(data, cancel_load, sig, file_type, fig):
             figure = create_slider_figure(
                 file_data,
                 ["raw"],
-                [continuous_datum for continuous_datum in file_data.continuous_data],
+                list(file_data.continuous_data),
                 True,
             )
 
@@ -230,7 +230,7 @@ def show_info(
             # add just the selected signals
             if data_type in selected:
                 continuous_data_cut.add(
-                    data[data_type].select_by_time(start_sample, stop_sample)
+                    data[data_type].select_by_time(start_sample, stop_sample),
                 )
 
         # add all the cut data to the new sequence

@@ -4,7 +4,6 @@ from dash import dcc, html, register_page
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 from eit_dash.definitions.option_lists import PeriodsSelectMethods, SynchMethods
-from eit_dash.utils.common import blank_fig
 
 register_page(__name__, path="/preprocessing")
 
@@ -81,7 +80,7 @@ results = dbc.Col(
     [
         html.H2("Results", style=styles.COLUMN_TITLE),
         html.Div(id=ids.PREPROCESING_RESULTS_CONTAINER, style=styles.LOAD_RESULTS),
-    ]
+    ],
 )
 
 # popup for data synchronization
