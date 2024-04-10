@@ -47,10 +47,7 @@ def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
         html.H4(dataset.label, className="card-title"),
         html.H6(InputFiletypes(file_type).name, className="card-subtitle"),
     ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
-        for data, value in info_data.items()
-    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
 
     return dbc.Card(dbc.CardBody(card_list), id="card-1")
 

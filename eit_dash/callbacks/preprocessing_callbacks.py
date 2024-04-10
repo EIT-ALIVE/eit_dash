@@ -47,10 +47,7 @@ def create_resampling_card(loaded_data):
         for data in loaded_data
     ]
 
-    options = [
-        {"label": f'{data["Name"]}', "value": str(i)}
-        for i, data in enumerate(loaded_data)
-    ]
+    options = [{"label": f'{data["Name"]}', "value": str(i)} for i, data in enumerate(loaded_data)]
 
     return row, options
 
@@ -58,10 +55,7 @@ def create_resampling_card(loaded_data):
 def create_loaded_data_summary():
     loaded_data = data_object.get_all_sequences()
 
-    return [
-        dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})])
-        for dataset in loaded_data
-    ]
+    return [dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})]) for dataset in loaded_data]
 
 
 def create_selected_period_card(period: Sequence, dataset: str, index: int) -> dbc.Card:
@@ -83,10 +77,7 @@ def create_selected_period_card(period: Sequence, dataset: str, index: int) -> d
     card_list = [
         html.H4(period.label, className="card-title"),
     ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
-        for data, value in info_data.items()
-    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
     card_list += [
         dbc.Button(
             "Remove",
@@ -106,10 +97,7 @@ def get_loaded_data():
     for dataset in loaded_data:
         name = dataset.label
         if dataset.continuous_data:
-            data += [
-                {"Name": name, "Data type": channel}
-                for channel in dataset.continuous_data
-            ]
+            data += [{"Name": name, "Data type": channel} for channel in dataset.continuous_data]
         if dataset.eit_data:
             data.append(
                 {
@@ -252,10 +240,7 @@ def populate_periods_selection_modal(method):
 
     if int_value == PeriodsSelectMethods.Manual.value:
         signals = data_object.get_all_sequences()
-        options = [
-            {"label": sequence.label, "value": index}
-            for index, sequence in enumerate(signals)
-        ]
+        options = [{"label": sequence.label, "value": index} for index, sequence in enumerate(signals)]
 
         body = [
             html.H6("Select one dataset"),
@@ -480,11 +465,7 @@ def remove_period(n_clicks, container, figure):
     data_object.remove_stable_period(int(input_id))
 
     # remove from the figure
-    figure["data"] = [
-        trace
-        for trace in figure["data"]
-        if "meta" not in trace or trace["meta"]["uid"] != int(input_id)
-    ]
+    figure["data"] = [trace for trace in figure["data"] if "meta" not in trace or trace["meta"]["uid"] != int(input_id)]
 
     results = [card for card in container if f"'index': '{input_id}'" not in str(card)]
 
