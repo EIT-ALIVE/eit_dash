@@ -3,7 +3,11 @@ from dash import dcc, html, register_page
 
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
-from eit_dash.definitions.option_lists import PeriodsSelectMethods, SynchMethods
+from eit_dash.definitions.option_lists import (
+    FilterTypes,
+    PeriodsSelectMethods,
+    SynchMethods,
+)
 
 register_page(__name__, path="/preprocessing")
 
@@ -71,7 +75,7 @@ actions = dbc.Col(
         ),
         html.P(),
         dbc.Row(
-            dbc.Button("Filter data", id=ids.OPEN_FILTER_DATA_BUTTON, disabled=False),
+            dbc.Button("Filter data", id=ids.OPEN_FILTER_DATA_BUTTON, disabled=True),
         ),
     ],
 )
@@ -96,7 +100,10 @@ modal_synchronization = html.Div(
                     [
                         dbc.Select(
                             id=ids.SYNC_METHOD_SELECTOR,
-                            options=[{"label": method.name, "value": method.value} for method in SynchMethods],
+                            options=[
+                                {"label": method.name, "value": method.value}
+                                for method in SynchMethods
+                            ],
                             value=str(SynchMethods.manual.value),
                         ),
                         html.P(),
@@ -171,7 +178,10 @@ modal_selection = html.Div(
                         html.H6("Periods selection method"),
                         dbc.Select(
                             id=ids.PERIODS_METHOD_SELECTOR,
-                            options=[{"label": method.name, "value": method.value} for method in PeriodsSelectMethods],
+                            options=[
+                                {"label": method.name, "value": method.value}
+                                for method in PeriodsSelectMethods
+                            ],
                         ),
                         modal_selection_body,
                     ],
@@ -195,6 +205,92 @@ modal_selection = html.Div(
     ],
 )
 
+
+filter_params = html.Div(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.P("Filter Order"),
+                        dbc.Input(id=ids.FILTER_ORDER, type="number", min=0),
+                    ],
+                ),
+                dbc.Col(
+                    [
+                        html.P("Cut off frequency low"),
+                        dbc.Input(id=ids.FILTER_CUTOFF_LOW, type="number", min=0),
+                    ],
+                ),
+                dbc.Col(
+                    [
+                        html.P("Cut off frequency high"),
+                        dbc.Input(id=ids.FILTER_CUTOFF_HIGH, type="number", min=0),
+                    ],
+                ),
+            ],
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        dbc.Button(
+                            "Apply",
+                            id=ids.FILTER_APPLY,
+                            disabled=True,
+                        ),
+                    ],
+                ),
+            ],
+            style=styles.BUTTONS_ROW,
+        ),
+        dbc.Row(
+            [dcc.Graph(id=ids.FILTERING_RESULTS_GRAPH)],
+            style=styles.BUTTONS_ROW,
+        ),
+    ],
+    id=ids.FILTER_PARAMS,
+    hidden=True,
+)
+
+modal_filtering = html.Div(
+    [
+        dbc.Modal(
+            [
+                dbc.ModalHeader(dbc.ModalTitle("Filter"), close_button=True),
+                dbc.ModalBody(
+                    [
+                        html.H6("Select a filter"),
+                        dbc.Select(
+                            id=ids.FILTER_SELECTOR,
+                            options=[
+                                {"label": filt.name, "value": filt.value}
+                                for filt in FilterTypes
+                            ],
+                        ),
+                        html.P(),
+                        filter_params,
+                    ],
+                ),
+                dbc.ModalFooter(
+                    dbc.Button(
+                        "Close",
+                        id=ids.FILTERING_CONFIRM_BUTTON,
+                        className="ms-auto",
+                        n_clicks=0,
+                    ),
+                ),
+            ],
+            id=ids.FILTERING_SELECTION_POPUP,
+            centered=True,
+            is_open=False,
+            backdrop=False,
+            scrollable=True,
+            size="xl",
+        ),
+    ],
+)
+
 layout = dbc.Row(
     [
         html.H1("PRE-PROCESSING", style=styles.COLUMN_TITLE),
@@ -203,5 +299,6 @@ layout = dbc.Row(
         results,
         modal_synchronization,
         modal_selection,
+        modal_filtering,
     ],
 )

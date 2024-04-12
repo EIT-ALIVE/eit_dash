@@ -1,5 +1,7 @@
 from enum import Enum
 
+from eitprocessing.filters.butterworth_filters import FILTER_TYPES
+
 
 class InputFiletypes(Enum):
     """One hot encoding of input file types (EIT vendors)."""
@@ -9,6 +11,12 @@ class InputFiletypes(Enum):
     Sentec = 2
     Biopac = 3
     Poly5 = 4
+
+
+# create the filters enum, according to what has been defined in the filters module
+filters = {value: idx for idx, value in enumerate(FILTER_TYPES) if FILTER_TYPES[value].available_in_gui}
+
+FilterTypes = Enum("FilterTypes", filters)
 
 
 class SignalSelections(Enum):
