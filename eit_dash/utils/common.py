@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from eit_dash.utils.data_singleton import Period
+
 import plotly.graph_objects as go
 
 if TYPE_CHECKING:
@@ -101,9 +103,7 @@ def create_slider_figure(
 
 
 def mark_selected_periods(
-    original_figure: go.Figure | dict,
-    periods: list[Sequence],
-    period_index: int,
+    original_figure: go.Figure | dict, periods: list[Period]
 ) -> go.Figure:
     """
     Create the figure for the selection of range.
@@ -115,12 +115,13 @@ def mark_selected_periods(
         period_index: index of the selected period
     """
     for period in periods:
-        for eit_variant in period.eit_data:
+        seq = period.get_data()
+        for eit_variant in seq.eit_data:
             selected_impedance = go.Scatter(
-                x=period.eit_data[eit_variant].time,
-                y=period.eit_data[eit_variant].global_impedance,
+                x=seq.eit_data[eit_variant].time,
+                y=seq.eit_data[eit_variant].global_impedance,
                 name=eit_variant,
-                meta={"uid": period_index},
+                meta={"uid": period.get_period_index()},
                 line={"color": "black"},
                 showlegend=False,
             ).to_plotly_json()
@@ -130,12 +131,12 @@ def mark_selected_periods(
             else:
                 original_figure["data"].append(selected_impedance)
 
-        for n, cont_signal in enumerate(period.continuous_data):
+        for n, cont_signal in enumerate(seq.continuous_data):
             selected_signal = go.Scatter(
-                x=period.continuous_data[cont_signal].time,
-                y=period.continuous_data[cont_signal].values,
+                x=seq.continuous_data[cont_signal].time,
+                y=seq.continuous_data[cont_signal].values,
                 name=cont_signal,
-                meta={"uid": period_index},
+                meta={"uid": period.get_period_index()},
                 opacity=0.5,
                 yaxis=f"y{n + 2}",
                 line={"color": "black"},

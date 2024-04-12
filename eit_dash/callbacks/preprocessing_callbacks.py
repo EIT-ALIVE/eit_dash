@@ -1,5 +1,8 @@
+import time
+
 import dash_bootstrap_components as dbc
 from dash import ALL, Input, Output, State, callback, ctx, dcc, html
+from eitprocessing.datahandling.continuousdata import ContinuousData
 from dash.exceptions import PreventUpdate
 from eitprocessing.datahandling.sequence import Sequence
 from eitprocessing.filters.butterworth_filters import ButterworthFilter, FILTER_TYPES
@@ -16,6 +19,9 @@ from eit_dash.utils.common import (
 )
 
 import plotly.graph_objects as go
+
+from eit_dash.utils.data_singleton import Period
+
 
 # ruff: noqa: D103  #TODO remove this line when finalizing this module
 
@@ -360,6 +366,9 @@ def initialize_figure(
     if saved_periods := data_object.get_dataset_stable_periods(int(dataset)):
         current_figure = mark_selected_periods(current_figure, saved_periods)
 
+    # THIS IS A TEMPORARY PATCH
+    time.sleep(2)
+
     return current_figure, style
 
 
@@ -415,7 +424,9 @@ def select_period(
     data_object.add_stable_period(cut_data, int(dataset))
 
     # TODO: explore Patch https://dash.plotly.com/partial-properties
-    current_figure = mark_selected_periods(current_figure, [cut_data], period_index)
+    current_figure = mark_selected_periods(
+        current_figure, [data_object.get_stable_period(period_index)]
+    )
 
     # TODO: refactor to avoid duplications
     ok = [options[s]["label"] for s in signals]
@@ -573,6 +584,12 @@ def enable_apply_button(
         or (
             int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0
         )
+        or (
+            int(filter_selected)
+            in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
+            and co_low > 0
+            and co_low > 0
+        )
     ) and order:
         return False
 
@@ -583,6 +600,7 @@ def enable_apply_button(
     [
         Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
         Output(ids.FILTERING_RESULTS_GRAPH, "figure"),
+        Output(ids.FILTERING_RESULTS_GRAPH, "style"),
     ],
     [
         Input(ids.FILTER_APPLY, "n_clicks"),
@@ -596,9 +614,33 @@ def enable_apply_button(
     ],
     prevent_initial_call=True,
 )
-def enable_apply_button(_, co_low, co_high, order, filter_selected, results):
+def apply_filter(_, co_low, co_high, order, filter_selected, results):
     """Apply the filter."""
 
+    # build filter params
+    filter_params = get_selected_parameters(co_high, co_low, order, filter_selected)
+
+    # filter all the periods
+    for period in data_object.get_all_stable_periods():
+        filtered_data = filter_data(period.get_data(), filter_params)
+        period.update_data(filtered_data)
+
+    # TODO: update the results view
+
+    return results, go.Figure(), styles.GRAPH
+
+
+def get_selected_parameters(co_high, co_low, order, filter_selected) -> dict:
+    """Build the parameters dictionary for the filter.
+
+    Args:
+        co_high: cut off upper limit
+        co_low: cut off lower limit
+        order: filter order
+        filter_selected: vlue coming from the filter selection dropbox
+
+    Returns: dictionary containing parameters for the filter
+    """
     if co_high is None:
         cutoff_frequency = co_low
     elif co_low is None:
@@ -606,16 +648,41 @@ def enable_apply_button(_, co_low, co_high, order, filter_selected, results):
     else:
         cutoff_frequency = [co_low, co_high]
 
-    for period in data_object.get_all_stable_periods():
-        filt = ButterworthFilter(
-            filter_type=FilterTypes(int(filter_selected)).name,
-            cutoff_frequency=cutoff_frequency,
-            order=order,
-            sample_frequency=period.get_data().eit_data.data["raw"].framerate,
+    return dict(
+        filter_type=FilterTypes(int(filter_selected)).name,
+        cutoff_frequency=cutoff_frequency,
+        order=order,
+    )
+
+
+def filter_data(data: Sequence, filter_params: dict) -> Sequence | None:
+    """Filter the impedance data in a period.
+
+    Args:
+        data: sequence containing the data
+        filter_params: parameters for the filter
+
+    Returns: the data with the filtered version added
+    """
+
+    filter_params["sample_frequency"] = data.eit_data.data["raw"].framerate
+
+    filt = ButterworthFilter(**filter_params)
+
+    try:
+        data.continuous_data.add(
+            ContinuousData(
+                "global_impedance_filtered",
+                "global_impedance filtered with " f"{filter_params['filter_type']}",
+                "a.u.",
+                "impedance",
+                parameters=filter_params,
+                time=data.eit_data.data["raw"].time,
+                values=filt.apply_filter(data.eit_data.data["raw"].global_impedance),
+            ),
         )
+    except Exception as e:
+        print(f"Error{e}")
+        return None
 
-        res = filt.apply_filter(period.get_data().eit_data.data["raw"].global_impedance)
-
-    # TODO: update the results view
-
-    return results, go.Figure(go.Scatter(y=res))
+    return data

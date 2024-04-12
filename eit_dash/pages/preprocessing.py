@@ -188,7 +188,7 @@ modal_selection = html.Div(
                 ),
                 dbc.ModalFooter(
                     dbc.Button(
-                        "Close",
+                        "Confirm",
                         id=ids.PERIODS_CONFIRM_BUTTON,
                         className="ms-auto",
                         n_clicks=0,
@@ -245,7 +245,7 @@ filter_params = html.Div(
             style=styles.BUTTONS_ROW,
         ),
         dbc.Row(
-            [dcc.Graph(id=ids.FILTERING_RESULTS_GRAPH)],
+            [dcc.Graph(id=ids.FILTERING_RESULTS_GRAPH, style=styles.EMPTY_ELEMENT)],
             style=styles.BUTTONS_ROW,
         ),
     ],

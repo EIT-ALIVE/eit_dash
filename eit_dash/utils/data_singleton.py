@@ -111,7 +111,7 @@ class LoadedData:
                 self._stable_periods.remove(period)
                 return
 
-        msg = f"Period with index {index}not found"
+        msg = f"Period with index {index} not found"
         raise ValueError(msg)
 
     def get_stable_periods_list_length(self):
@@ -129,7 +129,11 @@ class LoadedData:
             msg = f"Index higher than list length {self.get_sequence_list_length()}"
             raise ValueError(msg)
 
-        return [period.get_data() for period in self._stable_periods if period.get_dataset_index() == dataset_index]
+        return [
+            period
+            for period in self._stable_periods
+            if period.get_dataset_index() == dataset_index
+        ]
 
     def get_all_stable_periods(self) -> list[Period]:
         """Retrieve all the saved stable periods.
@@ -137,6 +141,19 @@ class LoadedData:
         Returns: A list of Sequences containing the stable periods.
         """
         return self._stable_periods
+
+    def get_stable_period(self, index: int):
+        """Get a stable period from the singleton, using its index.
+
+        Args:
+            index: index of the sable period to be retrieved.
+        """
+        for period in self._stable_periods:
+            if period.get_period_index() == index:
+                return period
+
+        msg = f"Period with index {index} not found"
+        raise ValueError(msg)
 
 
 @dataclass
@@ -179,3 +196,12 @@ class Period:
         self._data = data
         self._dataset_index = dataset_index
         self._period_index = period_index
+
+    def update_data(self, data: Sequence) -> Sequence:
+        """Update the data of a period.
+
+        Args:
+            data: The sequence with the updated period data
+        """
+
+        self._data = data
