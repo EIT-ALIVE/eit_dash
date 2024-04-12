@@ -205,9 +205,18 @@ modal_selection = html.Div(
     ],
 )
 
+alert_filter = dbc.Alert(
+    [],
+    id=ids.ALERT_FILTER,
+    color="danger",
+    dismissable=True,
+    is_open=False,
+    duration=3000,
+)
 
 filter_params = html.Div(
     [
+        dbc.Row(alert_filter),
         dbc.Row(
             [
                 dbc.Col(

@@ -19,6 +19,7 @@ STORED_CWD = "stored-cwd"
 SELECT_CONFIRM_BUTTON = "select-confirm-button"
 
 # preprocessing page
+ALERT_FILTER = "alert-filter"
 CONFIRM_RESAMPLING_BUTTON = "confirm-resampling-button"
 CONFIRM_SYNCH_BUTTON = "confirm-synch-button"
 DATASET_SELECTION_CHECKBOX = "dataset-selection-checkbox"

@@ -601,6 +601,8 @@ def enable_apply_button(
         Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
         Output(ids.FILTERING_RESULTS_DIV, "hidden"),
         Output(ids.FILTERING_SELCET_PERIOD_VIEW, "options"),
+        Output(ids.ALERT_FILTER, "is_open"),
+        Output(ids.ALERT_FILTER, "children"),
     ],
     [
         Input(ids.FILTER_APPLY, "n_clicks"),
@@ -616,6 +618,13 @@ def enable_apply_button(
 )
 def apply_filter(_, co_low, co_high, order, filter_selected, results):
     """Apply the filter."""
+    # flag for the alert message
+    show_alert = False
+    # alert message
+    alert_msg = ""
+
+    # flag for showing graphs
+    hidden_div = False
 
     # build filter params
     filter_params = get_selected_parameters(co_high, co_low, order, filter_selected)
@@ -635,9 +644,12 @@ def apply_filter(_, co_low, co_high, order, filter_selected, results):
                 }
             )
         except Exception as e:
-            print(f"Error{e}")
+            show_alert = True
+            alert_msg = f"{e}"
+            hidden_div = True
+            break
 
-    return results, False, options
+    return results, hidden_div, options, show_alert, alert_msg
 
 
 @callback(
