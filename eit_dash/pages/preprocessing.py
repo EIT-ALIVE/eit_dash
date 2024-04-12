@@ -245,7 +245,19 @@ filter_params = html.Div(
             style=styles.BUTTONS_ROW,
         ),
         dbc.Row(
-            [dcc.Graph(id=ids.FILTERING_RESULTS_GRAPH, style=styles.EMPTY_ELEMENT)],
+            [
+                html.Div(
+                    [
+                        html.H6("Select a period to view"),
+                        dbc.Select(id=ids.FILTERING_SELCET_PERIOD_VIEW),
+                        dcc.Graph(
+                            id=ids.FILTERING_RESULTS_GRAPH, style=styles.EMPTY_ELEMENT
+                        ),
+                    ],
+                    id=ids.FILTERING_RESULTS_DIV,
+                    hidden=True,
+                )
+            ],
             style=styles.BUTTONS_ROW,
         ),
     ],

@@ -599,8 +599,8 @@ def enable_apply_button(
 @callback(
     [
         Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
-        Output(ids.FILTERING_RESULTS_GRAPH, "figure"),
-        Output(ids.FILTERING_RESULTS_GRAPH, "style"),
+        Output(ids.FILTERING_RESULTS_DIV, "hidden"),
+        Output(ids.FILTERING_SELCET_PERIOD_VIEW, "options"),
     ],
     [
         Input(ids.FILTER_APPLY, "n_clicks"),
@@ -620,14 +620,61 @@ def apply_filter(_, co_low, co_high, order, filter_selected, results):
     # build filter params
     filter_params = get_selected_parameters(co_high, co_low, order, filter_selected)
 
+    options = []
+
     # filter all the periods
     for period in data_object.get_all_stable_periods():
-        filtered_data = filter_data(period.get_data(), filter_params)
-        period.update_data(filtered_data)
+        try:
+            filtered_data = filter_data(period.get_data(), filter_params)
+            period.update_data(filtered_data)
 
-    # TODO: update the results view
+            options.append(
+                {
+                    "label": f"Period {period.get_period_index()}",
+                    "value": period.get_period_index(),
+                }
+            )
+        except Exception as e:
+            print(f"Error{e}")
 
-    return results, go.Figure(), styles.GRAPH
+    return results, False, options
+
+
+@callback(
+    [
+        Output(ids.FILTERING_RESULTS_GRAPH, "figure"),
+        Output(ids.FILTERING_RESULTS_GRAPH, "style"),
+    ],
+    Input(ids.FILTERING_SELCET_PERIOD_VIEW, "value"),
+    Input(ids.FILTER_APPLY, "n_clicks"),
+    prevent_initial_call=True,
+)
+def show_filtered_results(selected, _):
+    """When selecting a period, shows the original and the filtered signal."""
+    if not selected:
+        raise PreventUpdate
+
+    fig = go.Figure()
+
+    data = data_object.get_stable_period(int(selected)).get_data()
+
+    fig.add_trace(
+        go.Scatter(
+            x=data.eit_data.data["raw"].time,
+            y=data.eit_data.data["raw"].global_impedance,
+            name="Original signal",
+        )
+    )
+
+    fig.add_trace(
+        go.Scatter(
+            x=data.continuous_data.data["global_impedance_filtered"].time,
+            y=data.continuous_data.data["global_impedance_filtered"].values,
+            name="Filtered signal",
+        )
+    )
+
+    return fig, styles.GRAPH
 
 
 def get_selected_parameters(co_high, co_low, order, filter_selected) -> dict:
@@ -669,20 +716,16 @@ def filter_data(data: Sequence, filter_params: dict) -> Sequence | None:
 
     filt = ButterworthFilter(**filter_params)
 
-    try:
-        data.continuous_data.add(
-            ContinuousData(
-                "global_impedance_filtered",
-                "global_impedance filtered with " f"{filter_params['filter_type']}",
-                "a.u.",
-                "impedance",
-                parameters=filter_params,
-                time=data.eit_data.data["raw"].time,
-                values=filt.apply_filter(data.eit_data.data["raw"].global_impedance),
-            ),
-        )
-    except Exception as e:
-        print(f"Error{e}")
-        return None
+    data.continuous_data.add(
+        ContinuousData(
+            "global_impedance_filtered",
+            "global_impedance filtered with " f"{filter_params['filter_type']}",
+            "a.u.",
+            "impedance",
+            parameters=filter_params,
+            time=data.eit_data.data["raw"].time,
+            values=filt.apply_filter(data.eit_data.data["raw"].global_impedance),
+        ),
+    )
 
     return data
