@@ -61,7 +61,10 @@ def create_resampling_card(loaded_data):
         for data in loaded_data
     ]
 
-    options = [{"label": f'{data["Name"]}', "value": str(i)} for i, data in enumerate(loaded_data)]
+    options = [
+        {"label": f'{data["Name"]}', "value": str(i)}
+        for i, data in enumerate(loaded_data)
+    ]
 
     return row, options
 
@@ -69,7 +72,10 @@ def create_resampling_card(loaded_data):
 def create_loaded_data_summary():
     loaded_data = data_object.get_all_sequences()
 
-    return [dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})]) for dataset in loaded_data]
+    return [
+        dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})])
+        for dataset in loaded_data
+    ]
 
 
 def create_selected_period_card(period: Sequence, dataset: str, index: int) -> dbc.Card:
@@ -91,7 +97,10 @@ def create_selected_period_card(period: Sequence, dataset: str, index: int) -> d
     card_list = [
         html.H4(period.label, className="card-title"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in info_data.items()
+    ]
     card_list += [
         dbc.Button(
             "Remove",
@@ -115,7 +124,10 @@ def create_filter_results_card(parameters: dict) -> dbc.Card:
     card_list = [
         html.H4("Data filtered", className="card-title"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in parameters.items()]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in parameters.items()
+    ]
 
     return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
 
@@ -126,7 +138,10 @@ def get_loaded_data():
     for dataset in loaded_data:
         name = dataset.label
         if dataset.continuous_data:
-            data += [{"Name": name, "Data type": channel} for channel in dataset.continuous_data]
+            data += [
+                {"Name": name, "Data type": channel}
+                for channel in dataset.continuous_data
+            ]
         if dataset.eit_data:
             data.append(
                 {
@@ -186,7 +201,7 @@ def load_datasets(title):
     [
         Output(ids.OPEN_SYNCH_BUTTON, "disabled"),
         Output(ids.OPEN_SELECT_PERIODS_BUTTON, "disabled"),
-        Output(ids.SUMMARY_COLUMN, "children"),
+        Output(ids.SUMMARY_COLUMN, "children", allow_duplicate=True),
         Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
     ],
     [
@@ -286,7 +301,10 @@ def populate_periods_selection_modal(method):
 
     if int_value == PeriodsSelectMethods.Manual.value:
         signals = data_object.get_all_sequences()
-        options = [{"label": sequence.label, "value": index} for index, sequence in enumerate(signals)]
+        options = [
+            {"label": sequence.label, "value": index}
+            for index, sequence in enumerate(signals)
+        ]
 
         body = [
             html.H6("Select one dataset"),
@@ -608,9 +626,12 @@ def enable_apply_button(
     """Enable the apply button."""
     if (
         (int(filter_selected) == FilterTypes.lowpass.value and co_high and co_high > 0)
-        or (int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0)
         or (
-            int(filter_selected) in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
+            int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0
+        )
+        or (
+            int(filter_selected)
+            in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
             and co_low > 0
             and co_low > 0
         )
@@ -745,7 +766,9 @@ def save_filtered_signal(confirm, results: list):
         data.update_data(tmp_data)
 
         if not params:
-            params = tmp_data.continuous_data.data["global_impedance_filtered"].parameters
+            params = tmp_data.continuous_data.data[
+                "global_impedance_filtered"
+            ].parameters
 
     # show info card
     for element in results:

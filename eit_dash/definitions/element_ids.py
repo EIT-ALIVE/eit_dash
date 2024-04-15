@@ -66,3 +66,6 @@ RESAMPLING_CARD = "resampling-card"
 RESAMPLING_CARD_BODY = "resampling-card-body"
 RESAMPLING_FREQUENCY_INPUT = "resampling-frequency-input"
 SUMMARY_COLUMN = "summary-column"
+
+# analyze
+ANALYZE_RESULTS_TITLE = "analyze-reults-title"
