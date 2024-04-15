@@ -129,11 +129,7 @@ class LoadedData:
             msg = f"Index higher than list length {self.get_sequence_list_length()}"
             raise ValueError(msg)
 
-        return [
-            period
-            for period in self._stable_periods
-            if period.get_dataset_index() == dataset_index
-        ]
+        return [period for period in self._stable_periods if period.get_dataset_index() == dataset_index]
 
     def get_all_stable_periods(self) -> list[Period]:
         """Retrieve all the saved stable periods.
@@ -203,5 +199,4 @@ class Period:
         Args:
             data: The sequence with the updated period data
         """
-
         self._data = data

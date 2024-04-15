@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from eit_dash.utils.data_singleton import Period
-
 import plotly.graph_objects as go
 
 if TYPE_CHECKING:
     from eitprocessing.sequence import Sequence
+
+    from eit_dash.utils.data_singleton import Period
 
 
 def blank_fig():
@@ -103,7 +103,8 @@ def create_slider_figure(
 
 
 def mark_selected_periods(
-    original_figure: go.Figure | dict, periods: list[Period]
+    original_figure: go.Figure | dict,
+    periods: list[Period],
 ) -> go.Figure:
     """
     Create the figure for the selection of range.

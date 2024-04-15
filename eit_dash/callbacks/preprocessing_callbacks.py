@@ -1,11 +1,15 @@
+from __future__ import annotations
+
+import contextlib
 import time
+from typing import TYPE_CHECKING
 
 import dash_bootstrap_components as dbc
+import plotly.graph_objects as go
 from dash import ALL, Input, Output, State, callback, ctx, dcc, html
-from eitprocessing.datahandling.continuousdata import ContinuousData
 from dash.exceptions import PreventUpdate
-from eitprocessing.datahandling.sequence import Sequence
-from eitprocessing.filters.butterworth_filters import ButterworthFilter, FILTER_TYPES
+from eitprocessing.datahandling.continuousdata import ContinuousData
+from eitprocessing.filters.butterworth_filters import ButterworthFilter
 
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
@@ -17,11 +21,12 @@ from eit_dash.utils.common import (
     get_signal_options,
     mark_selected_periods,
 )
+from eit_dash.utils.data_singleton import LoadedData
 
-import plotly.graph_objects as go
+if TYPE_CHECKING:
+    from eitprocessing.datahandling.sequence import Sequence
 
-from eit_dash.utils.data_singleton import Period
-
+tmp_results: LoadedData = LoadedData()
 
 # ruff: noqa: D103  #TODO remove this line when finalizing this module
 
@@ -56,10 +61,7 @@ def create_resampling_card(loaded_data):
         for data in loaded_data
     ]
 
-    options = [
-        {"label": f'{data["Name"]}', "value": str(i)}
-        for i, data in enumerate(loaded_data)
-    ]
+    options = [{"label": f'{data["Name"]}', "value": str(i)} for i, data in enumerate(loaded_data)]
 
     return row, options
 
@@ -67,10 +69,7 @@ def create_resampling_card(loaded_data):
 def create_loaded_data_summary():
     loaded_data = data_object.get_all_sequences()
 
-    return [
-        dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})])
-        for dataset in loaded_data
-    ]
+    return [dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})]) for dataset in loaded_data]
 
 
 def create_selected_period_card(period: Sequence, dataset: str, index: int) -> dbc.Card:
@@ -92,10 +91,7 @@ def create_selected_period_card(period: Sequence, dataset: str, index: int) -> d
     card_list = [
         html.H4(period.label, className="card-title"),
     ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
-        for data, value in info_data.items()
-    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
     card_list += [
         dbc.Button(
             "Remove",
@@ -109,16 +105,30 @@ def create_selected_period_card(period: Sequence, dataset: str, index: int) -> d
     )
 
 
+def create_filter_results_card(parameters: dict) -> dbc.Card:
+    """
+    Create the card with the information on the parameters used for filtering the data.
+
+    Args:
+        parameters: dictionary containing the filter information
+    """
+    card_list = [
+        html.H4("Data filtered", className="card-title"),
+    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in parameters.items()]
+
+    return dbc.Card(
+        dbc.CardBody(card_list),
+    )
+
+
 def get_loaded_data():
     loaded_data = data_object.get_all_sequences()
     data = []
     for dataset in loaded_data:
         name = dataset.label
         if dataset.continuous_data:
-            data += [
-                {"Name": name, "Data type": channel}
-                for channel in dataset.continuous_data
-            ]
+            data += [{"Name": name, "Data type": channel} for channel in dataset.continuous_data]
         if dataset.eit_data:
             data.append(
                 {
@@ -253,7 +263,7 @@ def open_periods_modal(open_click, confirm_click) -> bool:
     Output(ids.FILTERING_SELECTION_POPUP, "is_open"),
     [
         Input(ids.OPEN_FILTER_DATA_BUTTON, "n_clicks"),
-        Input(ids.FILTERING_CONFIRM_BUTTON, "n_clicks"),
+        Input(ids.FILTERING_CLOSE_BUTTON, "n_clicks"),
     ],
     prevent_initial_call=True,
 )
@@ -278,10 +288,7 @@ def populate_periods_selection_modal(method):
 
     if int_value == PeriodsSelectMethods.Manual.value:
         signals = data_object.get_all_sequences()
-        options = [
-            {"label": sequence.label, "value": index}
-            for index, sequence in enumerate(signals)
-        ]
+        options = [{"label": sequence.label, "value": index} for index, sequence in enumerate(signals)]
 
         body = [
             html.H6("Select one dataset"),
@@ -425,7 +432,8 @@ def select_period(
 
     # TODO: explore Patch https://dash.plotly.com/partial-properties
     current_figure = mark_selected_periods(
-        current_figure, [data_object.get_stable_period(period_index)]
+        current_figure,
+        [data_object.get_stable_period(period_index)],
     )
 
     # TODO: refactor to avoid duplications
@@ -510,12 +518,14 @@ def remove_period(n_clicks, container, figure):
     # remove from the singleton
     data_object.remove_stable_period(int(input_id))
 
-    # remove from the figure
-    figure["data"] = [
-        trace
-        for trace in figure["data"]
-        if "meta" not in trace or trace["meta"]["uid"] != int(input_id)
-    ]
+    # remove from the figure (if the figure exists)
+
+    try:
+        figure["data"] = [
+            trace for trace in figure["data"] if "meta" not in trace or trace["meta"]["uid"] != int(input_id)
+        ]
+    except TypeError:
+        contextlib.suppress(Exception)
 
     results = [card for card in container if f"'index': '{input_id}'" not in str(card)]
 
@@ -576,17 +586,20 @@ def show_filters_params(selected):
     prevent_initial_call=True,
 )
 def enable_apply_button(
-    co_low_in, co_high_in, order_in, co_low, co_high, order, filter_selected
+    co_low_in,
+    co_high_in,
+    order_in,
+    co_low,
+    co_high,
+    order,
+    filter_selected,
 ):
     """Enable the apply button."""
     if (
         (int(filter_selected) == FilterTypes.lowpass.value and co_high and co_high > 0)
+        or (int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0)
         or (
-            int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0
-        )
-        or (
-            int(filter_selected)
-            in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
+            int(filter_selected) in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
             and co_low > 0
             and co_low > 0
         )
@@ -600,6 +613,7 @@ def enable_apply_button(
     [
         Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
         Output(ids.FILTERING_RESULTS_DIV, "hidden"),
+        Output(ids.FILTERING_CONFIRM_DIV, "hidden"),
         Output(ids.FILTERING_SELCET_PERIOD_VIEW, "options"),
         Output(ids.ALERT_FILTER, "is_open"),
         Output(ids.ALERT_FILTER, "children"),
@@ -618,12 +632,13 @@ def enable_apply_button(
 )
 def apply_filter(_, co_low, co_high, order, filter_selected, results):
     """Apply the filter."""
+    global tmp_results  # noqa: PLW0602
     # flag for the alert message
     show_alert = False
     # alert message
     alert_msg = ""
 
-    # flag for showing graphs
+    # flag for showing graphs and confirm button
     hidden_div = False
 
     # build filter params
@@ -631,25 +646,32 @@ def apply_filter(_, co_low, co_high, order, filter_selected, results):
 
     options = []
 
+    tmp_results.clear_data()
+
     # filter all the periods
-    for period in data_object.get_all_stable_periods():
-        try:
+    try:
+        for period in data_object.get_all_stable_periods():
             filtered_data = filter_data(period.get_data(), filter_params)
-            period.update_data(filtered_data)
+            data = period.get_data()
+            data.continuous_data.add(filtered_data)
+            tmp_results.add_stable_period(
+                data,
+                0,
+                period.get_period_index(),
+            )
 
             options.append(
                 {
                     "label": f"Period {period.get_period_index()}",
                     "value": period.get_period_index(),
-                }
+                },
             )
-        except Exception as e:
-            show_alert = True
-            alert_msg = f"{e}"
-            hidden_div = True
-            break
+    except ValueError as e:
+        show_alert = True
+        alert_msg = f"{e}"
+        hidden_div = True
 
-    return results, hidden_div, options, show_alert, alert_msg
+    return results, hidden_div, hidden_div, options, show_alert, alert_msg
 
 
 @callback(
@@ -675,18 +697,49 @@ def show_filtered_results(selected, _):
             x=data.eit_data.data["raw"].time,
             y=data.eit_data.data["raw"].global_impedance,
             name="Original signal",
-        )
+        ),
     )
+
+    filtered_data = tmp_results.get_stable_period(int(selected)).get_data()
 
     fig.add_trace(
         go.Scatter(
-            x=data.continuous_data.data["global_impedance_filtered"].time,
-            y=data.continuous_data.data["global_impedance_filtered"].values,
+            x=filtered_data.continuous_data.data["global_impedance_filtered"].time,
+            y=filtered_data.continuous_data.data["global_impedance_filtered"].values,
             name="Filtered signal",
-        )
+        ),
     )
 
     return fig, styles.GRAPH
+
+
+@callback(
+    [
+        Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
+        Output(ids.ALERT_SAVED_RESULTS, "is_open"),
+        Output(ids.ALERT_SAVED_RESULTS, "children"),
+    ],
+    Input(ids.FILTERING_CONFIRM_BUTTON, "n_clicks"),
+    State(ids.PREPROCESING_RESULTS_CONTAINER, "children"),
+    prevent_initial_call=True,
+)
+def save_filtered_signal(confirm, results):
+    """When clocking the confirm button, store the results in the singleton."""
+    params = {}
+
+    # save the filtered data
+    for res in tmp_results.get_all_stable_periods():
+        data = data_object.get_stable_period(res.get_period_index())
+        tmp_data = res.get_data()
+        data.update_data(tmp_data)
+
+        if not params:
+            params = tmp_data.continuous_data.data["global_impedance_filtered"].parameters
+
+    # show info card
+    results += [create_filter_results_card(params)]
+
+    return results, True, "Results have been saved"
 
 
 def get_selected_parameters(co_high, co_low, order, filter_selected) -> dict:
@@ -696,7 +749,7 @@ def get_selected_parameters(co_high, co_low, order, filter_selected) -> dict:
         co_high: cut off upper limit
         co_low: cut off lower limit
         order: filter order
-        filter_selected: vlue coming from the filter selection dropbox
+        filter_selected: value coming from the filter selection dropbox
 
     Returns: dictionary containing parameters for the filter
     """
@@ -707,14 +760,14 @@ def get_selected_parameters(co_high, co_low, order, filter_selected) -> dict:
     else:
         cutoff_frequency = [co_low, co_high]
 
-    return dict(
-        filter_type=FilterTypes(int(filter_selected)).name,
-        cutoff_frequency=cutoff_frequency,
-        order=order,
-    )
+    return {
+        "filter_type": FilterTypes(int(filter_selected)).name,
+        "cutoff_frequency": cutoff_frequency,
+        "order": order,
+    }
 
 
-def filter_data(data: Sequence, filter_params: dict) -> Sequence | None:
+def filter_data(data: Sequence, filter_params: dict) -> ContinuousData | None:
     """Filter the impedance data in a period.
 
     Args:
@@ -723,21 +776,16 @@ def filter_data(data: Sequence, filter_params: dict) -> Sequence | None:
 
     Returns: the data with the filtered version added
     """
-
     filter_params["sample_frequency"] = data.eit_data.data["raw"].framerate
 
     filt = ButterworthFilter(**filter_params)
 
-    data.continuous_data.add(
-        ContinuousData(
-            "global_impedance_filtered",
-            "global_impedance filtered with " f"{filter_params['filter_type']}",
-            "a.u.",
-            "impedance",
-            parameters=filter_params,
-            time=data.eit_data.data["raw"].time,
-            values=filt.apply_filter(data.eit_data.data["raw"].global_impedance),
-        ),
+    return ContinuousData(
+        "global_impedance_filtered",
+        f"global_impedance filtered with {filter_params['filter_type']}",
+        "a.u.",
+        "impedance",
+        parameters=filter_params,
+        time=data.eit_data.data["raw"].time,
+        values=filt.apply_filter(data.eit_data.data["raw"].global_impedance),
     )
-
-    return data

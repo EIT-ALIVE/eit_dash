@@ -100,10 +100,7 @@ modal_synchronization = html.Div(
                     [
                         dbc.Select(
                             id=ids.SYNC_METHOD_SELECTOR,
-                            options=[
-                                {"label": method.name, "value": method.value}
-                                for method in SynchMethods
-                            ],
+                            options=[{"label": method.name, "value": method.value} for method in SynchMethods],
                             value=str(SynchMethods.manual.value),
                         ),
                         html.P(),
@@ -178,10 +175,7 @@ modal_selection = html.Div(
                         html.H6("Periods selection method"),
                         dbc.Select(
                             id=ids.PERIODS_METHOD_SELECTOR,
-                            options=[
-                                {"label": method.name, "value": method.value}
-                                for method in PeriodsSelectMethods
-                            ],
+                            options=[{"label": method.name, "value": method.value} for method in PeriodsSelectMethods],
                         ),
                         modal_selection_body,
                     ],
@@ -209,6 +203,15 @@ alert_filter = dbc.Alert(
     [],
     id=ids.ALERT_FILTER,
     color="danger",
+    dismissable=True,
+    is_open=False,
+    duration=3000,
+)
+
+alert_saved_results = dbc.Alert(
+    [],
+    id=ids.ALERT_SAVED_RESULTS,
+    color="success",
     dismissable=True,
     is_open=False,
     duration=3000,
@@ -257,15 +260,28 @@ filter_params = html.Div(
             [
                 html.Div(
                     [
-                        html.H6("Select a period to view"),
+                        html.H6("Select a period to view the results"),
                         dbc.Select(id=ids.FILTERING_SELCET_PERIOD_VIEW),
                         dcc.Graph(
-                            id=ids.FILTERING_RESULTS_GRAPH, style=styles.EMPTY_ELEMENT
+                            id=ids.FILTERING_RESULTS_GRAPH,
+                            style=styles.EMPTY_ELEMENT,
                         ),
                     ],
                     id=ids.FILTERING_RESULTS_DIV,
                     hidden=True,
-                )
+                ),
+            ],
+            style=styles.BUTTONS_ROW,
+        ),
+        dbc.Row(
+            [
+                html.Div(
+                    [
+                        dbc.Button("Confirm", id=ids.FILTERING_CONFIRM_BUTTON),
+                    ],
+                    id=ids.FILTERING_CONFIRM_DIV,
+                    hidden=True,
+                ),
             ],
             style=styles.BUTTONS_ROW,
         ),
@@ -281,13 +297,11 @@ modal_filtering = html.Div(
                 dbc.ModalHeader(dbc.ModalTitle("Filter"), close_button=True),
                 dbc.ModalBody(
                     [
+                        alert_saved_results,
                         html.H6("Select a filter"),
                         dbc.Select(
                             id=ids.FILTER_SELECTOR,
-                            options=[
-                                {"label": filt.name, "value": filt.value}
-                                for filt in FilterTypes
-                            ],
+                            options=[{"label": filt.name, "value": filt.value} for filt in FilterTypes],
                         ),
                         html.P(),
                         filter_params,
@@ -296,7 +310,7 @@ modal_filtering = html.Div(
                 dbc.ModalFooter(
                     dbc.Button(
                         "Close",
-                        id=ids.FILTERING_CONFIRM_BUTTON,
+                        id=ids.FILTERING_CLOSE_BUTTON,
                         className="ms-auto",
                         n_clicks=0,
                     ),
