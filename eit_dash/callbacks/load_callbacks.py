@@ -15,8 +15,13 @@ from eitprocessing.datahandling.sequence import Sequence
 
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
+from eit_dash.definitions import layout_styles as styles
 from eit_dash.definitions.option_lists import InputFiletypes
-from eit_dash.utils.common import create_slider_figure, get_signal_options
+from eit_dash.utils.common import (
+    create_slider_figure,
+    get_selections_slidebar,
+    get_signal_options,
+)
 
 file_data: Sequence | None = None
 
@@ -42,7 +47,7 @@ def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
         html.H4(dataset.label, className="card-title"),
         html.H6(InputFiletypes(file_type).name, className="card-subtitle"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style={"margin-left": 10}) for data, value in info_data.items()]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
 
     return dbc.Card(dbc.CardBody(card_list), id="card-1")
 
@@ -115,10 +120,12 @@ def load_selected_data(
     Output(ids.FILE_LENGTH_SLIDER, "figure"),
     Input(ids.NFILES_PLACEHOLDER, "children"),
     Input(ids.LOAD_CANCEL_BUTTON, "n_clicks"),
+    Input(ids.CHECKBOX_SIGNALS, "value"),
     State(ids.INPUT_TYPE_SELECTOR, "value"),
+    State(ids.FILE_LENGTH_SLIDER, "figure"),
     prevent_initial_call=True,
 )
-def open_data_selector(data, cancel_load, file_type):
+def open_data_selector(data, cancel_load, sig, file_type, fig):
     """Read the file selected in the file selector."""
     global file_data
 
@@ -134,16 +141,36 @@ def open_data_selector(data, cancel_load, file_type):
         figure = go.Figure()
         return True, [], figure
 
-    path = Path(data)
-    file_data = load_eit_data(
-        path,
-        vendor=InputFiletypes(int(file_type)).name.lower(),
-        label="selected data",
-    )
+    if trigger in [ids.NFILES_PLACEHOLDER, ids.CHECKBOX_SIGNALS]:
+        if trigger == ids.CHECKBOX_SIGNALS:
+            options = get_signal_options(file_data)
+            figure = fig
+        else:
+            path = Path(data)
+            file_data = load_eit_data(
+                path,
+                vendor=InputFiletypes(int(file_type)).name.lower(),
+                label="selected data",
+            )
 
-    options = get_signal_options(file_data)
+            options = get_signal_options(file_data)
 
-    figure = create_slider_figure(file_data)
+            figure = create_slider_figure(
+                file_data,
+                ["raw"],
+                list(file_data.continuous_data),
+                True,
+            )
+
+        ok = ["raw"]
+        if sig:
+            ok += [options[s]["label"] for s in sig]
+
+        for s in figure["data"]:
+            if s["name"] in ok:
+                s["visible"] = True
+            else:
+                s["visible"] = False
 
     return False, options, figure
 
@@ -170,14 +197,19 @@ def show_info(
 ):
     """Creates the preview for preselecting part of the dataset."""
     if file_data:
-        if slidebar_stat is not None and "xaxis.range" in slidebar_stat:
-            start_sample = slidebar_stat["xaxis.range"][0]
-            stop_sample = slidebar_stat["xaxis.range"][1]
+        # get the first and last sample selected in the slidebar
+        if slidebar_stat is not None:
+            start_sample, stop_sample = get_selections_slidebar(slidebar_stat)
+
+            if not start_sample:
+                start_sample = file_data.eit_data["raw"].time[0]
+            if not stop_sample:
+                stop_sample = file_data.eit_data["raw"].time[-1]
         else:
             start_sample = file_data.eit_data["raw"].time[0]
             stop_sample = file_data.eit_data["raw"].time[-1]
 
-        dataset_name = f"Dataset {data_object.get_list_length()}"
+        dataset_name = f"Dataset {data_object.get_sequence_list_length()}"
 
         selected_signals = selected_signals or []
         # get the name of the selected continuous signals
@@ -194,7 +226,9 @@ def show_info(
         for data_type in (data := file_data.continuous_data):
             # add just the selected signals
             if data_type in selected:
-                continuous_data_cut.add(data[data_type].select_by_time(start_sample, stop_sample))
+                continuous_data_cut.add(
+                    data[data_type].select_by_time(start_sample, stop_sample),
+                )
 
         # add all the cut data to the new sequence
         cut_data = Sequence(
