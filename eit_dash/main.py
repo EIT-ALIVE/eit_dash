@@ -3,15 +3,15 @@ from dash import html, page_container
 
 from eit_dash.app import app
 from eit_dash.callbacks import (
+    analyze_callbacks,
     load_callbacks,
     preprocessing_callbacks,
-    analyze_callbacks,
-)  # noqa: F401
+)
 
 app.layout = html.Div(
     [
         html.H1(
-            id="test-id", children="EIT-ALIVE dashboard", style={"textAlign": "center"}
+            id="test-id", children="EIT-ALIVE dashboard", style={"textAlign": "center"},
         ),
         dbc.Row(
             [
