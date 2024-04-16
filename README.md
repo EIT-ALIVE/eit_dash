@@ -1,6 +1,11 @@
 ## EIT Dashboard
 
-Dashboard for code-free interaction with [eitprocessing](https://github.com/EIT-ALIVE/eitprocessing) software
+Visualize and manipulate EIT in a code free way using the open source
+[eitprocessing](https://github.com/EIT-ALIVE/eitprocessing) software.
+
+**Important:** While the software code is open source, your data may not be. Once the dashboard is downloaded (and/or
+updated) on your local machine, no online interaction is needed. Your data remains local and is not shared or uploaded by
+this software.
 
 | Badges             |                                                                                                                                                                                                                                                |
 | :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
