@@ -1,13 +1,17 @@
 # User manual for EIT dashboard
 
-Note 1: While the dashboard is rendered in a browser window, you are not working online. All data that you load into the
+Note 1: If you have not installed the dashboard yet, please refer to our [README](../README.md) on instructions how to do
+that.
+
+Note 2: While the dashboard is rendered in a browser window, you are not working online. All data that you load into the
 dashboard remains local on your machine.
-Note 2: The Dashboard, this manual, and the (back end) software it is built around are works in progress. The images and
+
+Note 3: The Dashboard, this manual, and the (back end) software it is built around are works in progress. The images and
 interaction procedures may be slightly off. Please bear with us.
 
 ## LOAD page
 
-The dashboard should open on the **Load** page, but in case this does not happen, navigate there by clicking **Load** at
+The dashboard should open on the **LOAD** page, but in case this does not happen, navigate there by clicking **LOAD** at
 the top of the page. You should see something like this:
 
 <kbd>
