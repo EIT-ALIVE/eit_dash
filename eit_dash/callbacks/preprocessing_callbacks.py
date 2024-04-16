@@ -15,7 +15,9 @@ import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 from eit_dash.app import data_object
 from eit_dash.definitions.option_lists import FilterTypes, PeriodsSelectMethods
+from eit_dash.definitions.constants import RAW_EIT_LABEL
 from eit_dash.utils.common import (
+    create_loaded_data_summary,
     create_slider_figure,
     get_selections_slidebar,
     get_signal_options,
@@ -69,15 +71,6 @@ def create_resampling_card(loaded_data):
     return row, options
 
 
-def create_loaded_data_summary():
-    loaded_data = data_object.get_all_sequences()
-
-    return [
-        dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})])
-        for dataset in loaded_data
-    ]
-
-
 def create_selected_period_card(period: Sequence, dataset: str, index: int) -> dbc.Card:
     """
     Create the card with the information on the selected period to be displayed in the Results section.
@@ -89,7 +82,7 @@ def create_selected_period_card(period: Sequence, dataset: str, index: int) -> d
     """
     info_data = {
         "n_frames": period.eit_data["raw"].nframes,
-        "start_time": period.time[0],
+        "start_time": period.eit_data["raw"].time[0],
         "end_time": period.eit_data["raw"].time[-1],
         "dataset": dataset,
     }
@@ -383,7 +376,6 @@ def initialize_figure(
 
     current_figure = create_slider_figure(
         data,
-        ["raw"],
         list(data.continuous_data),
     )
 
@@ -717,8 +709,8 @@ def show_filtered_results(selected, _):
 
     fig.add_trace(
         go.Scatter(
-            x=data.eit_data.data["raw"].time,
-            y=data.eit_data.data["raw"].global_impedance,
+            x=data.continuous_data[RAW_EIT_LABEL].time,
+            y=data.continuous_data[RAW_EIT_LABEL].values,
             name="Original signal",
         ),
     )
@@ -811,6 +803,6 @@ def filter_data(data: Sequence, filter_params: dict) -> ContinuousData | None:
         "a.u.",
         "impedance",
         parameters=filter_params,
-        time=data.eit_data.data["raw"].time,
-        values=filt.apply_filter(data.eit_data.data["raw"].global_impedance),
+        time=data.continuous_data[RAW_EIT_LABEL].time,
+        values=filt.apply_filter(data.continuous_data[RAW_EIT_LABEL].values),
     )
