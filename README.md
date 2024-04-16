@@ -61,6 +61,8 @@ git pull
 poetry install
 ```
 
+Please see our [user manual](docs/user_manual.md) for instructions on how to use the dashboard.
+
 ##### Run dashboard
 
 Run the command below and and click (or ctrl/cmd+click) on the link shown.
