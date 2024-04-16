@@ -90,7 +90,7 @@ class LoadedData:
             raise ValueError(msg)
 
         if not period_index:
-            period_index = self.get_stable_periods_list_length()
+            period_index = self.get_next_period_index()
 
         # check that the index doesn't exist
         for period in self._stable_periods:
@@ -150,6 +150,16 @@ class LoadedData:
 
         msg = f"Period with index {index} not found"
         raise ValueError(msg)
+
+    def get_stable_periods_indexes(self) -> list[int]:
+        """Get a list of the indexes of the stable periods currently available."""
+        return [period.get_period_index() for period in self._stable_periods]
+
+    def get_next_period_index(self):
+        """Determines the index to be assigned to the next stable period."""
+        available_indexes = self.get_stable_periods_indexes()
+
+        return max(available_indexes) + 1 if available_indexes else 0
 
 
 @dataclass

@@ -418,7 +418,7 @@ def select_period(
         start_sample = data.time[0]
         stop_sample = data.time[-1]
 
-    period_index = data_object.get_stable_periods_list_length()
+    period_index = data_object.get_next_period_index()
 
     cut_data = data.select_by_time(
         start_time=start_sample,
