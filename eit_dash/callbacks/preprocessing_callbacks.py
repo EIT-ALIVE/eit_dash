@@ -14,8 +14,8 @@ from eitprocessing.filters.butterworth_filters import ButterworthFilter
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 from eit_dash.app import data_object
-from eit_dash.definitions.option_lists import FilterTypes, PeriodsSelectMethods
 from eit_dash.definitions.constants import RAW_EIT_LABEL
+from eit_dash.definitions.option_lists import FilterTypes, PeriodsSelectMethods
 from eit_dash.utils.common import (
     create_loaded_data_summary,
     create_slider_figure,

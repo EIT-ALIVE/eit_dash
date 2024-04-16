@@ -127,20 +127,6 @@ def mark_selected_periods(
     """
     for period in periods:
         seq = period.get_data()
-        # for eit_variant in seq.eit_data:
-        #     selected_impedance = go.Scatter(
-        #         x=seq.eit_data[eit_variant].time,
-        #         y=seq.eit_data[eit_variant].global_impedance,
-        #         name=eit_variant,
-        #         meta={"uid": period.get_period_index()},
-        #         line={"color": "black"},
-        #         showlegend=False,
-        #     ).to_plotly_json()
-        #
-        #     if type(original_figure) == go.Figure:
-        #         original_figure.add_trace(selected_impedance)
-        #     else:
-        #         original_figure["data"].append(selected_impedance)
 
         for n, cont_signal in enumerate(seq.continuous_data):
             params = {
@@ -156,7 +142,7 @@ def mark_selected_periods(
                     {
                         "opacity": 0.5,
                         "yaxis": f"y{n + 2}",
-                    }
+                    },
                 )
             selected_signal = go.Scatter(**params).to_plotly_json()
 
@@ -181,10 +167,6 @@ def get_signal_options(
         A list of label - value options for populating the options list
     """
     options = []
-    # if show_eit:
-    #     # iterate over eit data
-    #     for eit in dataset.eit_data:
-    #         options.append({"label": eit, "value": len(options)})
 
     if dataset.continuous_data:
         # iterate over continuous data
