@@ -61,7 +61,10 @@ def create_resampling_card(loaded_data):
         for data in loaded_data
     ]
 
-    options = [{"label": f'{data["Name"]}', "value": str(i)} for i, data in enumerate(loaded_data)]
+    options = [
+        {"label": f'{data["Name"]}', "value": str(i)}
+        for i, data in enumerate(loaded_data)
+    ]
 
     return row, options
 
@@ -69,7 +72,10 @@ def create_resampling_card(loaded_data):
 def create_loaded_data_summary():
     loaded_data = data_object.get_all_sequences()
 
-    return [dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})]) for dataset in loaded_data]
+    return [
+        dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})])
+        for dataset in loaded_data
+    ]
 
 
 def create_selected_period_card(period: Sequence, dataset: str, index: int) -> dbc.Card:
@@ -91,7 +97,10 @@ def create_selected_period_card(period: Sequence, dataset: str, index: int) -> d
     card_list = [
         html.H4(period.label, className="card-title"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in info_data.items()
+    ]
     card_list += [
         dbc.Button(
             "Remove",
@@ -115,11 +124,12 @@ def create_filter_results_card(parameters: dict) -> dbc.Card:
     card_list = [
         html.H4("Data filtered", className="card-title"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in parameters.items()]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in parameters.items()
+    ]
 
-    return dbc.Card(
-        dbc.CardBody(card_list),
-    )
+    return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
 
 
 def get_loaded_data():
@@ -128,7 +138,10 @@ def get_loaded_data():
     for dataset in loaded_data:
         name = dataset.label
         if dataset.continuous_data:
-            data += [{"Name": name, "Data type": channel} for channel in dataset.continuous_data]
+            data += [
+                {"Name": name, "Data type": channel}
+                for channel in dataset.continuous_data
+            ]
         if dataset.eit_data:
             data.append(
                 {
@@ -288,7 +301,10 @@ def populate_periods_selection_modal(method):
 
     if int_value == PeriodsSelectMethods.Manual.value:
         signals = data_object.get_all_sequences()
-        options = [{"label": sequence.label, "value": index} for index, sequence in enumerate(signals)]
+        options = [
+            {"label": sequence.label, "value": index}
+            for index, sequence in enumerate(signals)
+        ]
 
         body = [
             html.H6("Select one dataset"),
@@ -513,16 +529,21 @@ def remove_period(n_clicks, container, figure):
     if all(element is None for element in n_clicks):
         raise PreventUpdate
 
-    input_id = ctx.triggered_id["index"]
+    input_id = int(ctx.triggered_id["index"])
 
     # remove from the singleton
-    data_object.remove_stable_period(int(input_id))
+    data_object.remove_stable_period(input_id)
+
+    # remove from the temp data, if present
+    if tmp_results and tmp_results.get_stable_period(input_id):
+        tmp_results.remove_stable_period(input_id)
 
     # remove from the figure (if the figure exists)
-
     try:
         figure["data"] = [
-            trace for trace in figure["data"] if "meta" not in trace or trace["meta"]["uid"] != int(input_id)
+            trace
+            for trace in figure["data"]
+            if "meta" not in trace or trace["meta"]["uid"] != input_id
         ]
     except TypeError:
         contextlib.suppress(Exception)
@@ -550,24 +571,33 @@ def enable_filter_button(results):
         Output(ids.FILTER_PARAMS, "hidden"),
         Output(ids.FILTER_CUTOFF_LOW, "disabled"),
         Output(ids.FILTER_CUTOFF_HIGH, "disabled"),
+        Output(ids.FILTER_CUTOFF_LOW, "value"),
+        Output(ids.FILTER_CUTOFF_HIGH, "value"),
     ],
     Input(ids.FILTER_SELECTOR, "value"),
     prevent_initial_call=True,
 )
 def show_filters_params(selected):
     """Make visible the div containing the filters params."""
-    cutoff_low = cutoff_high = filter_params = False
+    cutoff_low_enabled = cutoff_high_enabled = filter_params = False
+    cutoff_low_val = cutoff_high_val = None
 
     # if no filter has been selected, hide the params
     if not selected:
         filter_params = True
 
     if int(selected) == FilterTypes.lowpass.value:
-        cutoff_low = True
+        cutoff_low_enabled = True
     elif int(selected) == FilterTypes.highpass.value:
-        cutoff_high = True
+        cutoff_high_enabled = True
 
-    return filter_params, cutoff_low, cutoff_high
+    return (
+        filter_params,
+        cutoff_low_enabled,
+        cutoff_high_enabled,
+        cutoff_low_val,
+        cutoff_high_val,
+    )
 
 
 @callback(
@@ -597,9 +627,12 @@ def enable_apply_button(
     """Enable the apply button."""
     if (
         (int(filter_selected) == FilterTypes.lowpass.value and co_high and co_high > 0)
-        or (int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0)
         or (
-            int(filter_selected) in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
+            int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0
+        )
+        or (
+            int(filter_selected)
+            in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
             and co_low > 0
             and co_low > 0
         )
@@ -723,7 +756,7 @@ def show_filtered_results(selected, _):
     State(ids.PREPROCESING_RESULTS_CONTAINER, "children"),
     prevent_initial_call=True,
 )
-def save_filtered_signal(confirm, results):
+def save_filtered_signal(confirm, results: dict):
     """When clocking the confirm button, store the results in the singleton."""
     params = {}
 
@@ -734,9 +767,14 @@ def save_filtered_signal(confirm, results):
         data.update_data(tmp_data)
 
         if not params:
-            params = tmp_data.continuous_data.data["global_impedance_filtered"].parameters
+            params = tmp_data.continuous_data.data[
+                "global_impedance_filtered"
+            ].parameters
 
     # show info card
+    for element in results:
+        if element["props"]["id"] == ids.FILTERING_SAVED_CARD:
+            results.remove(element)
     results += [create_filter_results_card(params)]
 
     return results, True, "Results have been saved"
