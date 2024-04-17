@@ -30,13 +30,19 @@ In Linux (and WSL) or macOS
 curl -sSL https://install.python-poetry.org | python3 -
 ```
 
+Alternatively, you can use Homebrew in macOS:
+
+```console
+brew install poetry
+```
+
 In Windows (using PowerShell)
 
 ```console
 (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
 ```
 
-Alternatively, poetry can also be installed [using pip](https://pypi.org/project/poetry/) in a virtual environment of choice.
+Alternatively, poetry can also be installed [using pip](https://pypi.org/project/poetry/) or conda in a virtual environment of choice.
 
 ##### Install EIT Dashboard
 
@@ -65,13 +71,12 @@ Please see our [user manual](docs/user_manual.md) for instructions on how to use
 
 ##### Run dashboard
 
-Run the command below and and click (or ctrl/cmd+click) on the link shown.
+Run the command below and and open the resulting link in a browser (often something like `http://127.0.0.1:8050/`).
+Note that the dashboard has only been tested on Chrome and Firefox.
 
 ```console
 poetry run python eit_dash/main.py
 ```
-
-Note that the dashboard has only been tested on Chrome and Firefox.
 
 ## Documentation
 
