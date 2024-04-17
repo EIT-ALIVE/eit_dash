@@ -11,7 +11,9 @@ from eit_dash.callbacks import (
 app.layout = html.Div(
     [
         html.H1(
-            id="test-id", children="EIT-ALIVE dashboard", style={"textAlign": "center"},
+            id="test-id",
+            children="EIT-ALIVE dashboard",
+            style={"textAlign": "center"},
         ),
         dbc.Row(
             [

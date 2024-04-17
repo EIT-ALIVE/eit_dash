@@ -7,6 +7,8 @@ import plotly.graph_objects as go
 from dash import html
 
 from eit_dash.app import data_object
+from eit_dash.definitions import element_ids as ids
+from eit_dash.definitions import layout_styles as styles
 from eit_dash.definitions.constants import RAW_EIT_LABEL
 
 if TYPE_CHECKING:
@@ -25,6 +27,24 @@ def blank_fig():
     return fig
 
 
+def create_filter_results_card(parameters: dict) -> dbc.Card:
+    """
+    Create the card with the information on the parameters used for filtering the data.
+
+    Args:
+        parameters: dictionary containing the filter information
+    """
+    card_list = [
+        html.H4("Data filtered", className="card-title"),
+    ]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in parameters.items()
+    ]
+
+    return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
+
+
 def create_loaded_data_summary():
     loaded_data = data_object.get_all_sequences()
 
@@ -32,6 +52,46 @@ def create_loaded_data_summary():
         dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})])
         for dataset in loaded_data
     ]
+
+
+def create_selected_period_card(
+    period: Sequence, dataset: str, index: int, remove_button: bool = True
+) -> dbc.Card:
+    """
+    Create the card with the information on the selected period to be displayed in the Results section.
+
+    Args:
+        period: Sequence object containing the selected period
+        dataset: The original dataset from which the period has been selected
+        index: of the period
+        remove_button: add the remove button if set to True
+    """
+    info_data = {
+        "n_frames": period.eit_data["raw"].nframes,
+        "start_time": period.eit_data["raw"].time[0],
+        "end_time": period.eit_data["raw"].time[-1],
+        "dataset": dataset,
+    }
+
+    card_list = [
+        html.H4(period.label, className="card-title"),
+    ]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in info_data.items()
+    ]
+    if remove_button:
+        card_list += [
+            dbc.Button(
+                "Remove",
+                id={"type": ids.REMOVE_PERIOD_BUTTON, "index": str(index)},
+            ),
+        ]
+
+    return dbc.Card(
+        dbc.CardBody(card_list),
+        id={"type": ids.PERIOD_CARD, "index": str(index)},
+    )
 
 
 def create_slider_figure(

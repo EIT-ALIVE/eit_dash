@@ -17,7 +17,9 @@ from eit_dash.app import data_object
 from eit_dash.definitions.constants import RAW_EIT_LABEL
 from eit_dash.definitions.option_lists import FilterTypes, PeriodsSelectMethods
 from eit_dash.utils.common import (
+    create_filter_results_card,
     create_loaded_data_summary,
+    create_selected_period_card,
     create_slider_figure,
     get_selections_slidebar,
     get_signal_options,
@@ -69,60 +71,6 @@ def create_resampling_card(loaded_data):
     ]
 
     return row, options
-
-
-def create_selected_period_card(period: Sequence, dataset: str, index: int) -> dbc.Card:
-    """
-    Create the card with the information on the selected period to be displayed in the Results section.
-
-    Args:
-        period: Sequence object containing the selected period
-        dataset: The original dataset from which the period has been selected
-        index: of the period
-    """
-    info_data = {
-        "n_frames": period.eit_data["raw"].nframes,
-        "start_time": period.eit_data["raw"].time[0],
-        "end_time": period.eit_data["raw"].time[-1],
-        "dataset": dataset,
-    }
-
-    card_list = [
-        html.H4(period.label, className="card-title"),
-    ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
-        for data, value in info_data.items()
-    ]
-    card_list += [
-        dbc.Button(
-            "Remove",
-            id={"type": ids.REMOVE_PERIOD_BUTTON, "index": str(index)},
-        ),
-    ]
-
-    return dbc.Card(
-        dbc.CardBody(card_list),
-        id={"type": ids.PERIOD_CARD, "index": str(index)},
-    )
-
-
-def create_filter_results_card(parameters: dict) -> dbc.Card:
-    """
-    Create the card with the information on the parameters used for filtering the data.
-
-    Args:
-        parameters: dictionary containing the filter information
-    """
-    card_list = [
-        html.H4("Data filtered", className="card-title"),
-    ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
-        for data, value in parameters.items()
-    ]
-
-    return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
 
 
 def get_loaded_data():
@@ -517,7 +465,11 @@ def remove_period(n_clicks, container, figure):
 
     # remove from the figure (if the figure exists)
     try:
-        figure["data"] = [trace for trace in figure["data"] if "meta" not in trace or trace["meta"]["uid"] != input_id]
+        figure["data"] = [
+            trace
+            for trace in figure["data"]
+            if "meta" not in trace or trace["meta"]["uid"] != input_id
+        ]
     except TypeError:
         contextlib.suppress(Exception)
 
