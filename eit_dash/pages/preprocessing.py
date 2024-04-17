@@ -100,10 +100,7 @@ modal_synchronization = html.Div(
                     [
                         dbc.Select(
                             id=ids.SYNC_METHOD_SELECTOR,
-                            options=[
-                                {"label": method.name, "value": method.value}
-                                for method in SynchMethods
-                            ],
+                            options=[{"label": method.name, "value": method.value} for method in SynchMethods],
                             value=str(SynchMethods.manual.value),
                         ),
                         html.P(),
@@ -178,10 +175,7 @@ modal_selection = html.Div(
                         html.H6("Periods selection method"),
                         dbc.Select(
                             id=ids.PERIODS_METHOD_SELECTOR,
-                            options=[
-                                {"label": method.name, "value": method.value}
-                                for method in PeriodsSelectMethods
-                            ],
+                            options=[{"label": method.name, "value": method.value} for method in PeriodsSelectMethods],
                         ),
                         modal_selection_body,
                     ],
@@ -307,10 +301,7 @@ modal_filtering = html.Div(
                         html.H6("Select a filter"),
                         dbc.Select(
                             id=ids.FILTER_SELECTOR,
-                            options=[
-                                {"label": filt.name, "value": filt.value}
-                                for filt in FilterTypes
-                            ],
+                            options=[{"label": filt.name, "value": filt.value} for filt in FilterTypes],
                         ),
                         html.P(),
                         filter_params,
