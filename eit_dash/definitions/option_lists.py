@@ -24,8 +24,6 @@ class PeriodsSelectMethods(Enum):
     """One hot encoding of period selection methods."""
 
     Manual = 0
-    AutomatedStablePeriods = 1
-    AutomatedPEEP = 2
 
 
 class SynchMethods(Enum):
