@@ -33,6 +33,12 @@ actions = dbc.Col(
             ),
             hidden=False,
         ),
+        html.Div(
+            dbc.Row(
+                dcc.Graph(id=ids.EELI_RESULTS_GRAPH),
+            ),
+            hidden=True,
+        ),
         html.P(),
     ],
 )
