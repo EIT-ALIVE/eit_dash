@@ -47,7 +47,10 @@ def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
         html.H4(dataset.label, className="card-title"),
         html.H6(InputFiletypes(file_type).name, className="card-subtitle"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in info_data.items()
+    ]
 
     return dbc.Card(dbc.CardBody(card_list), id="card-1")
 
@@ -281,21 +284,26 @@ def list_cwd_files(cwd):
             full_path = Path(cwd) / filepath
 
             is_dir = Path(full_path).is_dir()
-            link = html.A(
-                [
-                    html.Span(
-                        file,
-                        id={"type": "listed_file", "index": i},
-                        title=str(full_path),
-                        style={"fontWeight": "bold"} if is_dir else {},
-                    ),
-                ],
-                href="#",
+            extension = (
+                filepath.suffix if not filepath.name.startswith(".") else filepath.name
             )
-            prepend = "" if not is_dir else "📂"
-            cwd_files.append(prepend)
-            cwd_files.append(link)
-            cwd_files.append(html.Br())
+
+            if is_dir or extension in [".bin", ".txt", ".zri"]:
+                link = html.A(
+                    [
+                        html.Span(
+                            file,
+                            id={"type": "listed_file", "index": i},
+                            title=str(full_path),
+                            style={"fontWeight": "bold"} if is_dir else {},
+                        ),
+                    ],
+                    href="#",
+                )
+                prepend = "🖹" if not is_dir else "📂"
+                cwd_files.append(prepend)
+                cwd_files.append(link)
+                cwd_files.append(html.Br())
     return cwd_files
 
 
@@ -309,4 +317,6 @@ def store_clicked_file(n_clicks, title):
     if not n_clicks or set(n_clicks) == {None}:
         raise PreventUpdate
     index = ctx.triggered_id["index"]
-    return title[index]
+    for state in ctx.states_list[0]:
+        if state["id"]["index"] == index:
+            return state["value"]
