@@ -72,9 +72,7 @@ def apply_eeli(_):
     eeli = []
     for period in periods:
         sequence = period.get_data()
-        eeli_result_filtered = EELI().compute_parameter(
-            sequence, FILTERED_EIT_LABEL
-        )
+        eeli_result_filtered = EELI().compute_parameter(sequence, FILTERED_EIT_LABEL)
 
         eeli.append(eeli_result_filtered)
 

@@ -756,9 +756,7 @@ def save_filtered_signal(confirm, results: list):
         data.update_data(tmp_data)
 
         if not params:
-            params = tmp_data.continuous_data.data[
-                FILTERED_EIT_LABEL
-            ].parameters
+            params = tmp_data.continuous_data.data[FILTERED_EIT_LABEL].parameters
 
     # show info card
     for element in results:
