@@ -61,7 +61,10 @@ def create_resampling_card(loaded_data):
         for data in loaded_data
     ]
 
-    options = [{"label": f'{data["Name"]}', "value": str(i)} for i, data in enumerate(loaded_data)]
+    options = [
+        {"label": f'{data["Name"]}', "value": str(i)}
+        for i, data in enumerate(loaded_data)
+    ]
 
     return row, options
 
@@ -69,7 +72,10 @@ def create_resampling_card(loaded_data):
 def create_loaded_data_summary():
     loaded_data = data_object.get_all_sequences()
 
-    return [dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})]) for dataset in loaded_data]
+    return [
+        dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})])
+        for dataset in loaded_data
+    ]
 
 
 def create_selected_period_card(period: Sequence, dataset: str, index: int) -> dbc.Card:
@@ -91,7 +97,10 @@ def create_selected_period_card(period: Sequence, dataset: str, index: int) -> d
     card_list = [
         html.H4(period.label, className="card-title"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in info_data.items()
+    ]
     card_list += [
         dbc.Button(
             "Remove",
@@ -115,7 +124,10 @@ def create_filter_results_card(parameters: dict) -> dbc.Card:
     card_list = [
         html.H4("Data filtered", className="card-title"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in parameters.items()]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in parameters.items()
+    ]
 
     return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
 
@@ -126,7 +138,10 @@ def get_loaded_data():
     for dataset in loaded_data:
         name = dataset.label
         if dataset.continuous_data:
-            data += [{"Name": name, "Data type": channel} for channel in dataset.continuous_data]
+            data += [
+                {"Name": name, "Data type": channel}
+                for channel in dataset.continuous_data
+            ]
         if dataset.eit_data:
             data.append(
                 {
@@ -258,24 +273,6 @@ def open_periods_modal(open_click, confirm_click) -> bool:
 
 
 @callback(
-    Output(ids.FILTERING_SELECTION_POPUP, "is_open"),
-    [
-        Input(ids.OPEN_FILTER_DATA_BUTTON, "n_clicks"),
-        Input(ids.FILTERING_CLOSE_BUTTON, "n_clicks"),
-    ],
-    prevent_initial_call=True,
-)
-def open_filtering_modal(open_click, confirm_click) -> bool:
-    """open/close modal dialog for filtering data."""
-    trigger = ctx.triggered_id
-
-    if trigger == ids.OPEN_FILTER_DATA_BUTTON:
-        return True
-
-    return False
-
-
-@callback(
     Output(ids.PERIODS_SELECTION_SELECT_DATASET, "children"),
     Input(ids.PERIODS_METHOD_SELECTOR, "value"),
     prevent_initial_call=True,
@@ -286,7 +283,10 @@ def populate_periods_selection_modal(method):
 
     if int_value == PeriodsSelectMethods.Manual.value:
         signals = data_object.get_all_sequences()
-        options = [{"label": sequence.label, "value": index} for index, sequence in enumerate(signals)]
+        options = [
+            {"label": sequence.label, "value": index}
+            for index, sequence in enumerate(signals)
+        ]
 
         body = [
             html.H6("Select one dataset"),
@@ -525,7 +525,11 @@ def remove_period(n_clicks, container, figure):
 
     # remove from the figure (if the figure exists)
     try:
-        figure["data"] = [trace for trace in figure["data"] if "meta" not in trace or trace["meta"]["uid"] != input_id]
+        figure["data"] = [
+            trace
+            for trace in figure["data"]
+            if "meta" not in trace or trace["meta"]["uid"] != input_id
+        ]
     except TypeError:
         contextlib.suppress(Exception)
 
@@ -549,6 +553,27 @@ def enable_filter_button(results):
 
 @callback(
     [
+        Output(ids.FILTERING_SELECTION_POPUP, "is_open"),
+        Output(ids.FILTER_SELECTOR, "value"),
+    ],
+    [
+        Input(ids.OPEN_FILTER_DATA_BUTTON, "n_clicks"),
+        Input(ids.FILTERING_CLOSE_BUTTON, "n_clicks"),
+    ],
+    prevent_initial_call=True,
+)
+def open_filtering_modal(open_click, confirm_click) -> bool:
+    """open/close modal dialog for filtering data."""
+    trigger = ctx.triggered_id
+
+    if trigger == ids.OPEN_FILTER_DATA_BUTTON:
+        return True, None
+
+    return False, None
+
+
+@callback(
+    [
         Output(ids.FILTER_PARAMS, "hidden"),
         Output(ids.FILTER_CUTOFF_LOW, "disabled"),
         Output(ids.FILTER_CUTOFF_HIGH, "disabled"),
@@ -566,11 +591,11 @@ def show_filters_params(selected):
     # if no filter has been selected, hide the params
     if not selected:
         filter_params = True
-
-    if int(selected) == FilterTypes.lowpass.value:
-        cutoff_low_enabled = True
-    elif int(selected) == FilterTypes.highpass.value:
-        cutoff_high_enabled = True
+    else:
+        if int(selected) == FilterTypes.lowpass.value:
+            cutoff_low_enabled = True
+        elif int(selected) == FilterTypes.highpass.value:
+            cutoff_high_enabled = True
 
     return (
         filter_params,
@@ -606,11 +631,17 @@ def enable_apply_button(
     filter_selected,
 ):
     """Enable the apply button."""
+    if not filter_selected:
+        return True
+
     if (
         (int(filter_selected) == FilterTypes.lowpass.value and co_high and co_high > 0)
-        or (int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0)
         or (
-            int(filter_selected) in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
+            int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0
+        )
+        or (
+            int(filter_selected)
+            in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
             and co_low > 0
             and co_low > 0
         )
@@ -622,10 +653,34 @@ def enable_apply_button(
 
 @callback(
     [
+        Output(ids.FILTERING_RESULTS_DIV, "hidden", allow_duplicate=True),
+        Output(ids.FILTERING_CONFIRM_DIV, "hidden", allow_duplicate=True),
+        Output(ids.FILTERING_SELECT_PERIOD_VIEW, "options", allow_duplicate=True),
+    ],
+    [
+        Input(ids.FILTER_APPLY, "disabled"),
+    ],
+    prevent_initial_call=True,
+)
+def apply_filter(disabled):
+    """Apply the filter."""
+    # flag for showing graphs and confirm button
+    if not disabled:
+        raise PreventUpdate
+
+    hidden_div = True
+
+    options = []
+
+    return hidden_div, hidden_div, options
+
+
+@callback(
+    [
         Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
-        Output(ids.FILTERING_RESULTS_DIV, "hidden"),
-        Output(ids.FILTERING_CONFIRM_DIV, "hidden"),
-        Output(ids.FILTERING_SELCET_PERIOD_VIEW, "options"),
+        Output(ids.FILTERING_RESULTS_DIV, "hidden", allow_duplicate=True),
+        Output(ids.FILTERING_CONFIRM_DIV, "hidden", allow_duplicate=True),
+        Output(ids.FILTERING_SELECT_PERIOD_VIEW, "options", allow_duplicate=True),
         Output(ids.ALERT_FILTER, "is_open"),
         Output(ids.ALERT_FILTER, "children"),
     ],
@@ -690,13 +745,13 @@ def apply_filter(_, co_low, co_high, order, filter_selected, results):
         Output(ids.FILTERING_RESULTS_GRAPH, "figure"),
         Output(ids.FILTERING_RESULTS_GRAPH, "style"),
     ],
-    Input(ids.FILTERING_SELCET_PERIOD_VIEW, "value"),
+    Input(ids.FILTERING_SELECT_PERIOD_VIEW, "value"),
     Input(ids.FILTER_APPLY, "n_clicks"),
     prevent_initial_call=True,
 )
 def show_filtered_results(selected, _):
     """When selecting a period, shows the original and the filtered signal."""
-    if not selected:
+    if not selected or tmp_results.get_stable_periods_list_length() == 0:
         raise PreventUpdate
 
     fig = go.Figure()
@@ -745,7 +800,9 @@ def save_filtered_signal(confirm, results: list):
         data.update_data(tmp_data)
 
         if not params:
-            params = tmp_data.continuous_data.data["global_impedance_filtered"].parameters
+            params = tmp_data.continuous_data.data[
+                "global_impedance_filtered"
+            ].parameters
 
     # show info card
     for element in results:
