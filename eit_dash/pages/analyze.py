@@ -13,7 +13,7 @@ summary = dbc.Col(
     [
         html.H2("Summary", style=styles.COLUMN_TITLE),
         html.Div([], id=ids.SUMMARY_COLUMN_ANALYZE, style=styles.LOAD_RESULTS),
-    ]
+    ],
 )
 
 results = dbc.Col(

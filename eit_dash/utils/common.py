@@ -37,25 +37,47 @@ def create_filter_results_card(parameters: dict) -> dbc.Card:
     card_list = [
         html.H4("Data filtered", className="card-title"),
     ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
-        for data, value in parameters.items()
-    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in parameters.items()]
 
     return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
+
+
+def create_info_card(dataset: Sequence) -> dbc.Card:
+    """Create the card with the information on the loaded dataset to be displayed in the Results section.
+
+    Args:
+        dataset: Sequence object containing the selected dataset
+    """
+    info_data = {
+        "Name": dataset.eit_data["raw"].path.name,
+        "n_frames": dataset.eit_data["raw"].nframes,
+        "start_time": dataset.eit_data["raw"].time[0],
+        "end_time": dataset.eit_data["raw"].time[-1],
+        "vendor": dataset.eit_data["raw"].vendor,
+        "continuous signals": str(list(dataset.continuous_data)),
+        "path": str(dataset.eit_data["raw"].path),
+    }
+
+    card_list = [
+        html.H4(dataset.label, className="card-title"),
+        html.H6(dataset.eit_data["raw"].vendor, className="card-subtitle"),
+    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
+
+    return dbc.Card(dbc.CardBody(card_list), id="card-1")
 
 
 def create_loaded_data_summary():
     loaded_data = data_object.get_all_sequences()
 
-    return [
-        dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})])
-        for dataset in loaded_data
-    ]
+    return [dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})]) for dataset in loaded_data]
 
 
 def create_selected_period_card(
-    period: Sequence, dataset: str, index: int, remove_button: bool = True
+    period: Sequence,
+    dataset: str,
+    index: int,
+    remove_button: bool = True,
 ) -> dbc.Card:
     """
     Create the card with the information on the selected period to be displayed in the Results section.
@@ -76,10 +98,7 @@ def create_selected_period_card(
     card_list = [
         html.H4(period.label, className="card-title"),
     ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
-        for data, value in info_data.items()
-    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
     if remove_button:
         card_list += [
             dbc.Button(

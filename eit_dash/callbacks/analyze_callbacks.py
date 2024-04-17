@@ -1,19 +1,17 @@
+import plotly.graph_objects as go
 from dash import Input, Output, State, callback, ctx
-from matplotlib import pyplot as plt
-
 from eitprocessing.parameters.eeli import EELI
 
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
-from eit_dash.definitions.constants import FILTERED_EIT_LABEL
 from eit_dash.app import data_object
+from eit_dash.definitions.constants import FILTERED_EIT_LABEL
 from eit_dash.utils.common import (
     create_filter_results_card,
+    create_info_card,
     create_loaded_data_summary,
     create_selected_period_card,
 )
-
-import plotly.graph_objects as go
 
 eeli = []
 
@@ -41,18 +39,15 @@ def page_setup(_, summary):
     options = []
 
     if trigger is None:
-        loaded_data = create_loaded_data_summary()
-        summary += loaded_data
+        for d in data_object.get_all_sequences():
+            card = create_info_card(d)
+            summary += [card]
 
         filter_params = {}
 
         for period in data_object.get_all_stable_periods():
             if not filter_params:
-                filter_params = (
-                    period.get_data()
-                    .continuous_data.data["global_impedance_filtered"]
-                    .parameters
-                )
+                filter_params = period.get_data().continuous_data.data["global_impedance_filtered"].parameters
 
             summary += [
                 create_selected_period_card(
@@ -60,7 +55,7 @@ def page_setup(_, summary):
                     period.get_dataset_index(),
                     period.get_period_index(),
                     False,
-                )
+                ),
             ]
 
             # populate period selection
@@ -68,7 +63,7 @@ def page_setup(_, summary):
                 {
                     "label": f"Period {period.get_period_index()}",
                     "value": period.get_period_index(),
-                }
+                },
             )
 
         summary += [create_filter_results_card(filter_params)]
@@ -82,8 +77,7 @@ def page_setup(_, summary):
     prevent_initial_call=True,
 )
 def apply_eeli(_):
-    """Apply EELI and store results"""
-
+    """Apply EELI and store results."""
     global eeli
 
     eeli.clear()
@@ -111,9 +105,7 @@ def apply_eeli(_):
     prevent_initial_call=True,
 )
 def show_eeli(selected):
-    """
-    Show the results of the EELI for the selected period.
-    """
+    """Show the results of the EELI for the selected period."""
     figure = go.Figure()
 
     sequence = data_object.get_stable_period(int(selected)).get_data()
@@ -126,7 +118,7 @@ def show_eeli(selected):
             x=sequence.continuous_data[FILTERED_EIT_LABEL].time,
             y=sequence.continuous_data[FILTERED_EIT_LABEL].values,
             name=FILTERED_EIT_LABEL,
-        )
+        ),
     )
 
     figure.add_hline(y=result["mean"], line_color="red", name="Mean")
@@ -151,7 +143,7 @@ def show_eeli(selected):
             mode="lines",
             line_color="rgba(0,0,255,0)",  # Set to transparent blue
             name="Standard deviation",
-        )
+        ),
     )
 
     # Add the lower bound line
@@ -163,7 +155,7 @@ def show_eeli(selected):
             mode="lines",
             line_color="rgba(0,0,255,0.3)",  # Set to semi-transparent blue
             name="Standard deviation",
-        )
+        ),
     )
 
     return figure, styles.GRAPH

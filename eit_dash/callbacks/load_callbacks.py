@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 from dash import ALL, Input, Output, State, callback, ctx, html
 from dash.exceptions import PreventUpdate
@@ -15,42 +14,16 @@ from eitprocessing.datahandling.sequence import Sequence
 
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
-from eit_dash.definitions import layout_styles as styles
 from eit_dash.definitions.constants import RAW_EIT_LABEL
 from eit_dash.definitions.option_lists import InputFiletypes
 from eit_dash.utils.common import (
+    create_info_card,
     create_slider_figure,
     get_selections_slidebar,
     get_signal_options,
 )
 
 file_data: Sequence | None = None
-
-
-def create_info_card(dataset: Sequence, file_type: int) -> dbc.Card:
-    """Create the card with the information on the loaded dataset to be displayed in the Results section.
-
-    Args:
-        dataset: Sequence object containing the selected dataset
-        file_type: Index of the selected type of selected
-    """
-    info_data = {
-        "Name": dataset.eit_data["raw"].path.name,
-        "n_frames": dataset.eit_data["raw"].nframes,
-        "start_time": dataset.eit_data["raw"].time[0],
-        "end_time": dataset.eit_data["raw"].time[-1],
-        "vendor": dataset.eit_data["raw"].vendor,
-        "continuous signals": str(list(dataset.continuous_data)),
-        "path": str(dataset.eit_data["raw"].path),
-    }
-
-    card_list = [
-        html.H4(dataset.label, className="card-title"),
-        html.H6(InputFiletypes(file_type).name, className="card-subtitle"),
-    ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
-
-    return dbc.Card(dbc.CardBody(card_list), id="card-1")
 
 
 # managing the file selection. Confirm button clicked
@@ -241,7 +214,7 @@ def show_info(
         data_object.add_sequence(cut_data)
 
         # create the info summary card
-        card = create_info_card(cut_data, int(filetype))
+        card = create_info_card(cut_data)
 
         # add the card to the current results
         if container_state:
