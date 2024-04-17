@@ -1,13 +1,17 @@
-import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, ctx
 
+from eitprocessing.parameters.eeli import EELI
+
 import eit_dash.definitions.element_ids as ids
+from eit_dash.definitions.constants import FILTERED_EIT_LABEL
 from eit_dash.app import data_object
 from eit_dash.utils.common import (
     create_filter_results_card,
     create_loaded_data_summary,
     create_selected_period_card,
 )
+
+import plotly.graph_objects as go
 
 
 @callback(
@@ -55,3 +59,24 @@ def update_summary(_, summary):
         summary += [create_filter_results_card(filter_params)]
 
     return summary
+
+
+@callback(
+    Output(ids.EELI_RESULTS_GRAPH, "figure"),
+    Output(ids.EELI_RESULTS_GRAPH_DIV, "hidden"),
+    Input(ids.EELI_APPLY, "n_clicks"),
+    prevent_initial_call=True,
+)
+def apply_eeli(_):
+    periods = data_object.get_all_stable_periods()
+    eeli = []
+    for period in periods:
+        sequence = period.get_data()
+        eeli_result_filtered = EELI().compute_parameter(
+            sequence, FILTERED_EIT_LABEL
+        )
+
+        eeli.append(eeli_result_filtered)
+
+    fig = go.Figure()
+    return fig, False

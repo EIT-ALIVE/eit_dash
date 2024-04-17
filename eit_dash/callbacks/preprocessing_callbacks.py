@@ -14,7 +14,7 @@ from eitprocessing.filters.butterworth_filters import ButterworthFilter
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 from eit_dash.app import data_object
-from eit_dash.definitions.constants import RAW_EIT_LABEL
+from eit_dash.definitions.constants import RAW_EIT_LABEL, FILTERED_EIT_LABEL
 from eit_dash.definitions.option_lists import FilterTypes, PeriodsSelectMethods
 from eit_dash.utils.common import (
     create_filter_results_card,
@@ -726,8 +726,8 @@ def show_filtered_results(_, update, selected):
 
     fig.add_trace(
         go.Scatter(
-            x=filtered_data.continuous_data.data["global_impedance_filtered"].time,
-            y=filtered_data.continuous_data.data["global_impedance_filtered"].values,
+            x=filtered_data.continuous_data.data[FILTERED_EIT_LABEL].time,
+            y=filtered_data.continuous_data.data[FILTERED_EIT_LABEL].values,
             name="Filtered signal",
         ),
     )
@@ -757,7 +757,7 @@ def save_filtered_signal(confirm, results: list):
 
         if not params:
             params = tmp_data.continuous_data.data[
-                "global_impedance_filtered"
+                FILTERED_EIT_LABEL
             ].parameters
 
     # show info card
@@ -807,11 +807,14 @@ def filter_data(data: Sequence, filter_params: dict) -> ContinuousData | None:
 
     filt = ButterworthFilter(**filter_params)
 
+    gi = data.continuous_data[RAW_EIT_LABEL]
+
     return ContinuousData(
-        "global_impedance_filtered",
+        FILTERED_EIT_LABEL,
         f"global_impedance filtered with {filter_params['filter_type']}",
         "a.u.",
         "impedance",
+        derived_from=[*gi.derived_from, gi],
         parameters=filter_params,
         time=data.continuous_data[RAW_EIT_LABEL].time,
         values=filt.apply_filter(data.continuous_data[RAW_EIT_LABEL].values),

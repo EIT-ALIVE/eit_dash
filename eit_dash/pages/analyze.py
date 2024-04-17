@@ -37,6 +37,7 @@ actions = dbc.Col(
             dbc.Row(
                 dcc.Graph(id=ids.EELI_RESULTS_GRAPH),
             ),
+            id=ids.EELI_RESULTS_GRAPH_DIV,
             hidden=True,
         ),
         html.P(),
