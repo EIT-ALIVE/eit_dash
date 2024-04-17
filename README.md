@@ -72,7 +72,8 @@ Please see our [user manual](docs/user_manual.md) for instructions on how to use
 ##### Run dashboard
 
 Run the command below and and open the resulting link in a browser (often something like `http://127.0.0.1:8050/`).
-Note that the dashboard has only been tested on Chrome and Firefox.
+Note that while the dashboard should work on any browser, if you are experiencing issues we recommend switching to
+Chrome or Firefox, as these are the browser where we do most of the testing.
 
 ```console
 poetry run python eit_dash/main.py
