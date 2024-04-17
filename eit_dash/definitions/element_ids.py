@@ -68,4 +68,7 @@ RESAMPLING_FREQUENCY_INPUT = "resampling-frequency-input"
 SUMMARY_COLUMN = "summary-column"
 
 # analyze
-ANALYZE_RESULTS_TITLE = "analyze-reults-title"
+ANALYZE_RESULTS_TITLE = "analyze-results-title"
+ANALYZE_TITLE = "analyze-title"
+EELI_APPLY = "eeli-apply"
+SUMMARY_COLUMN_ANALYZE = "summary-column-analyze"
