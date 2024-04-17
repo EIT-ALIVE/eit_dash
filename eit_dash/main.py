@@ -6,10 +6,12 @@ from eit_dash.callbacks import load_callbacks, preprocessing_callbacks  # noqa: 
 
 app.layout = html.Div(
     [
-        html.H1(id="test-id", children="EIT-ALIVE dashboard", style={"textAlign": "center"}),
+        html.H1(
+            id="test-id", children="EIT-ALIVE dashboard", style={"textAlign": "center"}
+        ),
         dbc.Row(
             [
-                dbc.Col(dbc.NavLink("Load", href="/load")),
+                dbc.Col(dbc.NavLink("Load", href="/")),
                 dbc.Col(dbc.NavLink("Pre-processing", href="/preprocessing")),
                 dbc.Col(dbc.NavLink("Analyze", href="/dummy")),
             ],

@@ -7,7 +7,7 @@ import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 from eit_dash.definitions.option_lists import InputFiletypes
 
-register_page(__name__, path="/load")
+register_page(__name__, path="/")
 
 summary = dbc.Col([html.H2("Summary", style=styles.COLUMN_TITLE)])
 
@@ -22,7 +22,10 @@ input_type_selector = html.Div(
     [
         dbc.Select(
             id=ids.INPUT_TYPE_SELECTOR,
-            options=[{"label": filetype.name, "value": filetype.value} for filetype in InputFiletypes],
+            options=[
+                {"label": filetype.name, "value": filetype.value}
+                for filetype in InputFiletypes
+            ],
             value=str(InputFiletypes.Sentec.value),
         ),
         html.P(),
@@ -40,7 +43,9 @@ add_data_selector = dcc.Loading(
             html.P(),
             html.H5("Signal selections", style=styles.SECTION_TITLE),
             dbc.Row(
-                dcc.Checklist(id=ids.CHECKBOX_SIGNALS, inputStyle=styles.CHECKBOX_INPUT),
+                dcc.Checklist(
+                    id=ids.CHECKBOX_SIGNALS, inputStyle=styles.CHECKBOX_INPUT
+                ),
             ),
             html.H5("Pre selection", style=styles.SECTION_TITLE),
             dcc.Graph(id=ids.FILE_LENGTH_SLIDER),
