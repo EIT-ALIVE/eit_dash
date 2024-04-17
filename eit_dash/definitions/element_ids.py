@@ -69,6 +69,7 @@ SUMMARY_COLUMN = "summary-column"
 
 # analyze
 ANALYZE_RESULTS_TITLE = "analyze-results-title"
+ANALYZE_SELECT_PERIOD_VIEW = "analyze-select-period-view"
 ANALYZE_TITLE = "analyze-title"
 EELI_APPLY = "eeli-apply"
 EELI_RESULTS_GRAPH = "eeli-results-graph"

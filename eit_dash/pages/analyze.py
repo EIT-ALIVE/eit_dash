@@ -33,10 +33,14 @@ actions = dbc.Col(
             ),
             hidden=False,
         ),
+        html.P(),
         html.Div(
-            dbc.Row(
-                dcc.Graph(id=ids.EELI_RESULTS_GRAPH),
-            ),
+            [
+                dbc.Row(dbc.Select(id=ids.ANALYZE_SELECT_PERIOD_VIEW)),
+                dbc.Row(
+                    dcc.Graph(id=ids.EELI_RESULTS_GRAPH, style=styles.EMPTY_ELEMENT),
+                ),
+            ],
             id=ids.EELI_RESULTS_GRAPH_DIV,
             hidden=True,
         ),
