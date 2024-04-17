@@ -3,7 +3,11 @@ from dash import dcc, html, register_page
 
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
-from eit_dash.definitions.option_lists import PeriodsSelectMethods, SynchMethods
+from eit_dash.definitions.option_lists import (
+    FilterTypes,
+    PeriodsSelectMethods,
+    SynchMethods,
+)
 
 register_page(__name__, path="/preprocessing")
 
@@ -71,7 +75,7 @@ actions = dbc.Col(
         ),
         html.P(),
         dbc.Row(
-            dbc.Button("Filter data", id=ids.OPEN_FILTER_DATA_BUTTON, disabled=False),
+            dbc.Button("Filter data", id=ids.OPEN_FILTER_DATA_BUTTON, disabled=True),
         ),
     ],
 )
@@ -178,7 +182,7 @@ modal_selection = html.Div(
                 ),
                 dbc.ModalFooter(
                     dbc.Button(
-                        "Close",
+                        "Confirm",
                         id=ids.PERIODS_CONFIRM_BUTTON,
                         className="ms-auto",
                         n_clicks=0,
@@ -186,6 +190,134 @@ modal_selection = html.Div(
                 ),
             ],
             id=ids.PERIODS_SELECTION_POPUP,
+            centered=True,
+            is_open=False,
+            backdrop=False,
+            scrollable=True,
+            size="xl",
+        ),
+    ],
+)
+
+alert_filter = dbc.Alert(
+    [],
+    id=ids.ALERT_FILTER,
+    color="danger",
+    dismissable=True,
+    is_open=False,
+    duration=3000,
+)
+
+alert_saved_results = dbc.Alert(
+    [],
+    id=ids.ALERT_SAVED_RESULTS,
+    color="success",
+    dismissable=True,
+    is_open=False,
+    duration=3000,
+)
+
+filter_params = html.Div(
+    [
+        dbc.Row(alert_filter),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.P("Filter Order"),
+                        dbc.Input(id=ids.FILTER_ORDER, type="number", min=0),
+                    ],
+                ),
+                dbc.Col(
+                    [
+                        html.P("Cut off frequency low"),
+                        dbc.Input(id=ids.FILTER_CUTOFF_LOW, type="number", min=0),
+                    ],
+                ),
+                dbc.Col(
+                    [
+                        html.P("Cut off frequency high"),
+                        dbc.Input(id=ids.FILTER_CUTOFF_HIGH, type="number", min=0),
+                    ],
+                ),
+            ],
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        dbc.Button(
+                            "Apply",
+                            id=ids.FILTER_APPLY,
+                            disabled=True,
+                        ),
+                    ],
+                ),
+            ],
+            style=styles.BUTTONS_ROW,
+        ),
+        dbc.Row(
+            [
+                html.Div(
+                    [
+                        html.H6("Select a period to view the results"),
+                        dbc.Select(id=ids.FILTERING_SELECT_PERIOD_VIEW),
+                        dcc.Graph(
+                            id=ids.FILTERING_RESULTS_GRAPH,
+                            style=styles.EMPTY_ELEMENT,
+                        ),
+                    ],
+                    id=ids.FILTERING_RESULTS_DIV,
+                    hidden=True,
+                ),
+            ],
+            style=styles.BUTTONS_ROW,
+        ),
+        dbc.Row(
+            [
+                html.Div(
+                    [
+                        dbc.Button("Confirm", id=ids.FILTERING_CONFIRM_BUTTON),
+                    ],
+                    id=ids.FILTERING_CONFIRM_DIV,
+                    hidden=True,
+                ),
+            ],
+            style=styles.BUTTONS_ROW,
+        ),
+    ],
+    id=ids.FILTER_PARAMS,
+    hidden=True,
+)
+
+modal_filtering = html.Div(
+    [
+        dbc.Modal(
+            [
+                dbc.ModalHeader(dbc.ModalTitle("Filter"), close_button=True),
+                dbc.ModalBody(
+                    [
+                        alert_saved_results,
+                        html.H6("Select a filter"),
+                        dbc.Select(
+                            id=ids.FILTER_SELECTOR,
+                            options=[{"label": filt.name, "value": filt.value} for filt in FilterTypes],
+                        ),
+                        html.P(),
+                        filter_params,
+                    ],
+                ),
+                dbc.ModalFooter(
+                    dbc.Button(
+                        "Close",
+                        id=ids.FILTERING_CLOSE_BUTTON,
+                        className="ms-auto",
+                        n_clicks=0,
+                    ),
+                ),
+                html.Div(id="update-filter-results", hidden=True),
+            ],
+            id=ids.FILTERING_SELECTION_POPUP,
             centered=True,
             is_open=False,
             backdrop=False,
@@ -203,5 +335,6 @@ layout = dbc.Row(
         results,
         modal_synchronization,
         modal_selection,
+        modal_filtering,
     ],
 )
