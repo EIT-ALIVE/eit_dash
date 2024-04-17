@@ -1,64 +1,83 @@
-## Badges
+## EIT Dashboard
 
-(Customize these badges with your own links, and check https://shields.io/ or https://badgen.net/ to see which other badges are available.)
+Visualize and manipulate EIT in a code free way using the open source
+[eitprocessing](https://github.com/EIT-ALIVE/eitprocessing) software.
 
-| fair-software.eu recommendations | |
-| :-- | :--  |
-| (1/5) code repository              | [![github repo badge](https://img.shields.io/badge/github-repo-000.svg?logo=github&labelColor=gray&color=blue)](git@github.com:EIT-ALIVE/eit_dash) |
-| (2/5) license                      | [![github license badge](https://img.shields.io/github/license/EIT-ALIVE/eit_dash)](git@github.com:EIT-ALIVE/eit_dash) |
-| (3/5) community registry           | [![RSD](https://img.shields.io/badge/rsd-eit_dash-00a3e3.svg)](https://www.research-software.nl/software/eit_dash) [![workflow pypi badge](https://img.shields.io/pypi/v/eit_dash.svg?colorB=blue)](https://pypi.python.org/project/eit_dash/) |
-| (4/5) citation                     | [![DOI](https://zenodo.org/badge/DOI/<replace-with-created-DOI>.svg)](https://doi.org/<replace-with-created-DOI>) |
-| (5/5) checklist                    | [![workflow cii badge](https://bestpractices.coreinfrastructure.org/projects/<replace-with-created-project-identifier>/badge)](https://bestpractices.coreinfrastructure.org/projects/<replace-with-created-project-identifier>) |
-| howfairis                          | [![fair-software badge](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu) |
-| Documentation                      | [![Documentation Status](https://readthedocs.org/projects/eit_dash/badge/?version=latest)](https://eit_dash.readthedocs.io/en/latest/?badge=latest) |
+**Important:** While the software code is open source, your data may not be. Once the dashboard is downloaded (and/or
+updated) on your local machine, no online interaction is needed. Your data remains local and is not shared or uploaded by
+this software.
 
-
-## Mockup
-
-[mockup](https://github.com/EIT-ALIVE/eitprocessing/files/11480259/Proposal.GUI.mockup.pptx)
-
-## How to use eit_dash
-
-GUI to load and analyze image data from electrical impedance tomography (EIT)
-
-The project setup is documented in [project_setup.md](project_setup.md). Feel free to remove this document (and/or the link to this document) if you don't need it.
+| Badges             |                                                                                                                                                                                                                                                |
+| :----------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| code repository    | [![github repo badge](https://img.shields.io/badge/github-repo-000.svg?logo=github&labelColor=gray&color=blue)](git@github.com:EIT-ALIVE/eit_dash)                                                                                             |
+| license            | [![github license badge](https://img.shields.io/github/license/EIT-ALIVE/eit_dash)](git@github.com:EIT-ALIVE/eit_dash)                                                                                                                         |
+| community registry | [![RSD](https://img.shields.io/badge/rsd-eit_dash-00a3e3.svg)](https://www.research-software.nl/software/eit_dash) [![workflow pypi badge](https://img.shields.io/pypi/v/eit_dash.svg?colorB=blue)](https://pypi.python.org/project/eit_dash/) |
+| howfairis          | [![fair-software badge](https://img.shields.io/badge/fair--software.eu-%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8F%20%20%E2%97%8B-yellow)](https://fair-software.eu)                                                                |
+| Documentation      | [![Documentation Status](https://readthedocs.org/projects/eit_dash/badge/?version=latest)](https://eit_dash.readthedocs.io/en/latest/?badge=latest)                                                                                            |
 
 ## Getting started
 
-### Installing Poetry
+### 1. Installation
 
-EIT Dashboard makes use of [poetry](https://python-poetry.org/) to easily manage the needed packages. 
-`Poetry` can be installed both at system level following the [installation instructions](https://python-poetry.org/docs/#installation):
+##### Install Poetry
 
-In Linux, macOS, Windows (WSL)
+EIT Dashboard uses of [poetry](https://python-poetry.org/) to easily manage the needed packages.
+Poetry can be installed as follows. Please refer to the [official installation instructions](https://python-poetry.org/docs/#installation) if problems arise:
+
+In Linux (and WSL) or macOS
+
 ```console
 curl -sSL https://install.python-poetry.org | python3 -
 ```
 
-In Windows (PowerShell)
+Alternatively, you can use Homebrew in macOS:
+
+```console
+brew install poetry
+```
+
+In Windows (using PowerShell)
+
 ```console
 (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
 ```
 
-Alternatively, Poetry can also be installed [using pip](https://pypi.org/project/poetry/). 
+Alternatively, poetry can also be installed [using pip](https://pypi.org/project/poetry/) or [conda](https://anaconda.org/conda-forge/poetry) in a virtual environment of choice.
 
-### Creating the virtual environment 
+##### Install EIT Dashboard
 
-The first time that the dashboard is used, the repository needs to be cloned and the needed dependencies have to be installed by running:
+The first time that the dashboard is used, the repository needs to be cloned and the needed dependencies have to be
+installed by navigating to the path where it should be installed and running:
 
 ```console
 git clone git@github.com:EIT-ALIVE/eit_dash.git
+cd eit_dash
 poetry install
 ```
 
-### Running the dashboard
+### 2. Running EIT Dashboard
 
-Once the environment has been created, the dashboard can be run through:
+##### Stay up to date
+
+To ensure you are using the newest version, including any updates since you last used it, navigate to the folder where
+the dashboard is installed and run:
+
+```console
+git pull
+poetry install
+```
+
+Please see our [user manual](docs/user_manual.md) for instructions on how to use the dashboard.
+
+##### Run dashboard
+
+Run the command below and and open the resulting link in a browser (often something like `http://127.0.0.1:8050/`).
+Note that while the dashboard should work on any browser, if you are experiencing issues we recommend switching to
+Chrome or Firefox, as these are the browser where we do most of the testing.
 
 ```console
 poetry run python eit_dash/main.py
 ```
-
 
 ## Documentation
 
@@ -72,3 +91,7 @@ have a look at the [contribution guidelines](CONTRIBUTING.md).
 ## Credits
 
 This package was created with [Cookiecutter](https://github.com/audreyr/cookiecutter) and the [NLeSC/python-template](https://github.com/NLeSC/python-template).
+
+## License
+
+This source code is licensed using a standard [Apache 2.0 License](LICENSE)
