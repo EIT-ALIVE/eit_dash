@@ -21,6 +21,12 @@ the top of the page. You should see something like this:
 Click on the dropdown menu to select the format of data to load, then click on the `Select Files` button. From here you
 can navigate to the data and select it. Hit `Confirm` to pre-load and pre-view the selected data.
 
+Note that supported files currently are:
+
+- Dräger: `*.bin` files exported from the PV500 software
+- Timpel: `*.txt` files exported from ???
+- Sentec: `*.zri` files
+
 It could look something like this:
 
 <kbd>
@@ -40,7 +46,7 @@ When all pre-selections are made, Click **`PRE-PROCESSING`** at the top of the p
 ## PRE-PROCESSING page
 
 Currently the only pre-processing steps available are period selection and filtering. We plan to add other
-pre-processing steps in the future, includeing ROI selection, resampling, etc.
+pre-processing steps in the future, including ROI selection, resampling, etc.
 
 #### Select data range(s).
 
