@@ -24,7 +24,7 @@ can navigate to the data and select it. Hit `Confirm` to pre-load and pre-view t
 Note that supported files currently are:
 
 - Dräger: `*.bin` files exported from the PV500 software
-- Timpel: `*.txt` files exported from ???
+- Timpel: `*.txt` files exported using the Timpel File Converter
 - Sentec: `*.zri` files
 
 It could look something like this:
