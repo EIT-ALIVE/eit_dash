@@ -8,26 +8,28 @@ from eit_dash.definitions import layout_styles as styles
 app.layout = html.Div(
     [
         html.H1(
-            id="test-id", children="EIT-ALIVE dashboard", style={"textAlign": "center"}
+            id="test-id",
+            children="EIT-ALIVE dashboard",
+            style={"textAlign": "center"},
         ),
         dbc.Row(
             [
                 dbc.Col(
-                    html.H2(dbc.NavLink("Load", href="/", style=styles.PAGES_LINK))
+                    html.H2(dbc.NavLink("LOAD", href="/", style=styles.PAGES_LINK)),
                 ),
                 dbc.Col(
                     html.H2(
                         dbc.NavLink(
-                            "Pre-processing",
+                            "PRE-PROCESSING",
                             href="/preprocessing",
                             style=styles.PAGES_LINK,
-                        )
-                    )
+                        ),
+                    ),
                 ),
                 dbc.Col(
                     html.H2(
-                        dbc.NavLink("Analyze", href="/dummy", style=styles.PAGES_LINK)
-                    )
+                        dbc.NavLink("ANALYZE", href="/dummy", style=styles.PAGES_LINK),
+                    ),
                 ),
             ],
             style={"textAlign": "center"},
