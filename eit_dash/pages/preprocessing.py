@@ -315,6 +315,7 @@ modal_filtering = html.Div(
                         n_clicks=0,
                     ),
                 ),
+                html.Div(id="update-filter-results", hidden=True),
             ],
             id=ids.FILTERING_SELECTION_POPUP,
             centered=True,

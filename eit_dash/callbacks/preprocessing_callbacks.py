@@ -657,6 +657,7 @@ def disable_results(disabled):
         Output(ids.FILTERING_SELECT_PERIOD_VIEW, "options", allow_duplicate=True),
         Output(ids.ALERT_FILTER, "is_open"),
         Output(ids.ALERT_FILTER, "children"),
+        Output("update-filter-results", "children"),
     ],
     [
         Input(ids.FILTER_APPLY, "n_clicks"),
@@ -677,6 +678,9 @@ def apply_filter(_, co_low, co_high, order, filter_selected, results):
     show_alert = False
     # alert message
     alert_msg = ""
+
+    # placeholder to allow results update
+    placeholder_div = "updated"
 
     # flag for showing graphs and confirm button
     hidden_div = False
@@ -710,8 +714,17 @@ def apply_filter(_, co_low, co_high, order, filter_selected, results):
         show_alert = True
         alert_msg = f"{e}"
         hidden_div = True
+        placeholder_div = None
 
-    return results, hidden_div, hidden_div, options, show_alert, alert_msg
+    return (
+        results,
+        hidden_div,
+        hidden_div,
+        options,
+        show_alert,
+        alert_msg,
+        placeholder_div,
+    )
 
 
 @callback(
@@ -720,15 +733,21 @@ def apply_filter(_, co_low, co_high, order, filter_selected, results):
         Output(ids.FILTERING_RESULTS_GRAPH, "style"),
     ],
     Input(ids.FILTERING_SELECT_PERIOD_VIEW, "value"),
-    Input(ids.FILTER_APPLY, "n_clicks"),
+    Input("update-filter-results", "children"),
+    State(ids.FILTERING_SELECT_PERIOD_VIEW, "value"),
     prevent_initial_call=True,
 )
-def show_filtered_results(selected, _):
+def show_filtered_results(_, update, selected):
     """When selecting a period, shows the original and the filtered signal."""
-    if not selected or tmp_results.get_stable_periods_list_length() == 0:
+    if not selected or not update:
         raise PreventUpdate
 
     fig = go.Figure()
+
+    try:
+        filtered_data = tmp_results.get_stable_period(int(selected)).get_data()
+    except Exception:
+        return fig, styles.EMPTY_ELEMENT
 
     data = data_object.get_stable_period(int(selected)).get_data()
 
@@ -739,8 +758,6 @@ def show_filtered_results(selected, _):
             name="Original signal",
         ),
     )
-
-    filtered_data = tmp_results.get_stable_period(int(selected)).get_data()
 
     fig.add_trace(
         go.Scatter(
