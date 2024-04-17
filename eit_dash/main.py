@@ -3,6 +3,7 @@ from dash import html, page_container
 
 from eit_dash.app import app
 from eit_dash.callbacks import load_callbacks, preprocessing_callbacks  # noqa: F401
+from eit_dash.definitions import layout_styles as styles
 
 app.layout = html.Div(
     [
@@ -11,9 +12,23 @@ app.layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(dbc.NavLink("Load", href="/")),
-                dbc.Col(dbc.NavLink("Pre-processing", href="/preprocessing")),
-                dbc.Col(dbc.NavLink("Analyze", href="/dummy")),
+                dbc.Col(
+                    html.H2(dbc.NavLink("Load", href="/", style=styles.PAGES_LINK))
+                ),
+                dbc.Col(
+                    html.H2(
+                        dbc.NavLink(
+                            "Pre-processing",
+                            href="/preprocessing",
+                            style=styles.PAGES_LINK,
+                        )
+                    )
+                ),
+                dbc.Col(
+                    html.H2(
+                        dbc.NavLink("Analyze", href="/dummy", style=styles.PAGES_LINK)
+                    )
+                ),
             ],
             style={"textAlign": "center"},
         ),

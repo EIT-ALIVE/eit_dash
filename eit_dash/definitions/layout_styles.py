@@ -7,5 +7,6 @@ FILE_BROWSER = {"height": 500, "overflow": "scroll"}
 GRAPH = {}
 INFO_CARD = {"margin-left": 10}
 LOAD_RESULTS = {"textAlign": "center"}
+PAGES_LINK = {"fontWeight": "bold", "color": "blue"}
 SUMMARY_ELEMENT = {"textAlign": "center"}
 SECTION_TITLE = {"margin-top": "50px"}
