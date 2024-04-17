@@ -12,7 +12,6 @@ app.layout = html.Div(
                 dbc.Col(dbc.NavLink("Load", href="/load")),
                 dbc.Col(dbc.NavLink("Pre-processing", href="/preprocessing")),
                 dbc.Col(dbc.NavLink("Analyze", href="/dummy")),
-                dbc.Col(dbc.NavLink("Summarize", href="/dummy")),
             ],
             style={"textAlign": "center"},
         ),
