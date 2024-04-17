@@ -42,7 +42,7 @@ In Windows (using PowerShell)
 (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
 ```
 
-Alternatively, poetry can also be installed [using pip](https://pypi.org/project/poetry/) or conda in a virtual environment of choice.
+Alternatively, poetry can also be installed [using pip](https://pypi.org/project/poetry/) or [conda](https://anaconda.org/conda-forge/poetry) in a virtual environment of choice.
 
 ##### Install EIT Dashboard
 
