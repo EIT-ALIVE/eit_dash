@@ -57,36 +57,26 @@ poetry install
 
 ### 2. Running EIT Dashboard
 
-##### Latest version
-
 To run the most up top date version of the dashboard (including any updates since you last used it), navigate to the
-folder where the dashboard is installed and run `bash RUN`. Next, open the link shown in a browser (often something like
-`http://127.0.0.1:8050/`).
+folder where the dashboard is installed and run `bash RUN`. To run the dashboard without first updating to the lastest,
+instead run `poetry run python eit_dash/main.py`. Next, open the link shown in a browser (generally something like `http://127.0.0.1:8050/`).
+
 Note that while the dashboard should work on any browser, if you are experiencing issues we recommend switching to
 Chrome or Firefox, as these are the browsers where we do most of the testing.
 
-##### Existing version
-
-If you want to run the dashboard without first updating to the lastest, follow instructions above using this command
-instead: `poetry run python eit_dash/main.py`
-
-### 2. Using EIT Dashboard
+### 3. Using EIT Dashboard
 
 Please see our [user manual](docs/user_manual.md) for instructions on how to use the dashboard.
-
-## Documentation
-
-Include a link to your project's full documentation here.
 
 ## Contributing
 
 If you want to contribute to the development of eit_dash,
 have a look at the [contribution guidelines](CONTRIBUTING.md).
 
-## Credits
-
-This package was created with [Cookiecutter](https://github.com/audreyr/cookiecutter) and the [NLeSC/python-template](https://github.com/NLeSC/python-template).
-
 ## License
 
 This source code is licensed using a standard [Apache 2.0 License](LICENSE)
+
+## Credits
+
+This package was created with [Cookiecutter](https://github.com/audreyr/cookiecutter) and the [NLeSC/python-template](https://github.com/NLeSC/python-template).
