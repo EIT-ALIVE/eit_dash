@@ -9,7 +9,6 @@ from eit_dash.definitions.constants import FILTERED_EIT_LABEL
 from eit_dash.utils.common import (
     create_filter_results_card,
     create_info_card,
-    create_loaded_data_summary,
     create_selected_period_card,
 )
 
@@ -78,7 +77,7 @@ def page_setup(_, summary):
 )
 def apply_eeli(_):
     """Apply EELI and store results."""
-    global eeli
+    global eeli  # noqa: PLW0602
 
     eeli.clear()
 

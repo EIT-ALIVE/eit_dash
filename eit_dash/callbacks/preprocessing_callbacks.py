@@ -19,7 +19,6 @@ from eit_dash.definitions.option_lists import FilterTypes, PeriodsSelectMethods
 from eit_dash.utils.common import (
     create_filter_results_card,
     create_info_card,
-    create_loaded_data_summary,
     create_selected_period_card,
     create_slider_figure,
     get_selections_slidebar,
@@ -698,7 +697,7 @@ def show_filtered_results(_, update, selected):
 
     try:
         filtered_data = tmp_results.get_stable_period(int(selected)).get_data()
-    except Exception:
+    except ValueError:
         return fig, styles.EMPTY_ELEMENT
 
     data = data_object.get_stable_period(int(selected)).get_data()

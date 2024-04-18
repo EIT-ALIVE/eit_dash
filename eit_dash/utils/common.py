@@ -6,7 +6,6 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 from dash import html
 
-from eit_dash.app import data_object
 from eit_dash.definitions import element_ids as ids
 from eit_dash.definitions import layout_styles as styles
 from eit_dash.definitions.constants import RAW_EIT_LABEL
@@ -65,12 +64,6 @@ def create_info_card(dataset: Sequence) -> dbc.Card:
     card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
 
     return dbc.Card(dbc.CardBody(card_list), id="card-1")
-
-
-def create_loaded_data_summary():
-    loaded_data = data_object.get_all_sequences()
-
-    return [dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})]) for dataset in loaded_data]
 
 
 def create_selected_period_card(
@@ -202,7 +195,6 @@ def mark_selected_periods(
         original_figure: figure to update
         periods: list of Sequence object containing the selected dataset.
         These ranges, the signal is plotted in black
-        period_index: index of the selected period
     """
     for period in periods:
         seq = period.get_data()
@@ -210,7 +202,7 @@ def mark_selected_periods(
         for n, cont_signal in enumerate(seq.continuous_data):
             params = {
                 "x": seq.continuous_data[cont_signal].time,
-                "y": seq.continuous_data[cont_signal].values,
+                "y": seq.continuous_data[cont_signal].values,  # noqa: PD011
                 "name": cont_signal,
                 "meta": {"uid": period.get_period_index()},
                 "line": {"color": "black"},

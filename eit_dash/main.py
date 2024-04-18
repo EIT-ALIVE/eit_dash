@@ -6,7 +6,7 @@ from eit_dash.callbacks import (
     analyze_callbacks,
     load_callbacks,
     preprocessing_callbacks,
-)
+)  # noqa: F401
 
 app.layout = html.Div(
     [
