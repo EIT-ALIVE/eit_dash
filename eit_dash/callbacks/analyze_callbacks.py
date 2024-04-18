@@ -46,7 +46,11 @@ def page_setup(_, summary):
 
         for period in data_object.get_all_stable_periods():
             if not filter_params:
-                filter_params = period.get_data().continuous_data.data["global_impedance_filtered"].parameters
+                filter_params = (
+                    period.get_data()
+                    .continuous_data.data[FILTERED_EIT_LABEL]
+                    .parameters
+                )
 
             summary += [
                 create_selected_period_card(
