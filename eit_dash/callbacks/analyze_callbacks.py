@@ -1,3 +1,5 @@
+import contextlib
+
 import plotly.graph_objects as go
 from dash import Input, Output, State, callback, ctx
 from eitprocessing.parameters.eeli import EELI
@@ -5,7 +7,7 @@ from eitprocessing.parameters.eeli import EELI
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 from eit_dash.app import data_object
-from eit_dash.definitions.constants import FILTERED_EIT_LABEL
+from eit_dash.definitions.constants import FILTERED_EIT_LABEL, RAW_EIT_LABEL
 from eit_dash.utils.common import (
     create_filter_results_card,
     create_info_card,
@@ -45,13 +47,6 @@ def page_setup(_, summary):
         filter_params = {}
 
         for period in data_object.get_all_stable_periods():
-            if not filter_params:
-                filter_params = (
-                    period.get_data()
-                    .continuous_data.data[FILTERED_EIT_LABEL]
-                    .parameters
-                )
-
             summary += [
                 create_selected_period_card(
                     period.get_data(),
@@ -69,7 +64,17 @@ def page_setup(_, summary):
                 },
             )
 
-        summary += [create_filter_results_card(filter_params)]
+            if not filter_params:
+                try:
+                    filter_params = (
+                        period.get_data()
+                        .continuous_data.data[FILTERED_EIT_LABEL]
+                        .parameters
+                    )
+                except KeyError:
+                    contextlib.suppress(Exception)
+        if filter_params:
+            summary += [create_filter_results_card(filter_params)]
 
     return summary, options
 
@@ -89,7 +94,12 @@ def apply_eeli(_):
 
     for period in periods:
         sequence = period.get_data()
-        eeli_result_filtered = EELI().compute_parameter(sequence, FILTERED_EIT_LABEL)
+        if sequence.continuous_data.get(FILTERED_EIT_LABEL):
+            eeli_result_filtered = EELI().compute_parameter(
+                sequence, FILTERED_EIT_LABEL
+            )
+        else:
+            eeli_result_filtered = EELI().compute_parameter(sequence, RAW_EIT_LABEL)
 
         # TODO: the results should be stored in the sequence object
         eeli_result_filtered["index"] = period.get_period_index()
@@ -116,11 +126,16 @@ def show_eeli(selected):
         if e["index"] == int(selected):
             result = e
 
+    if sequence.continuous_data.get(FILTERED_EIT_LABEL):
+        data = sequence.continuous_data.get(FILTERED_EIT_LABEL)
+    else:
+        data = sequence.continuous_data.get(RAW_EIT_LABEL)
+
     figure.add_trace(
         go.Scatter(
-            x=sequence.continuous_data[FILTERED_EIT_LABEL].time,
-            y=sequence.continuous_data[FILTERED_EIT_LABEL].values,
-            name=FILTERED_EIT_LABEL,
+            x=data.time,
+            y=data.values,
+            name=data.label,
         ),
     )
 
@@ -128,7 +143,7 @@ def show_eeli(selected):
     figure.add_hline(y=result["median"], line_color="red", name="Median")
 
     figure.add_scatter(
-        x=sequence.continuous_data[FILTERED_EIT_LABEL].time[result["indices"]],
+        x=data.time[result["indices"]],
         y=result["values"],
         line_color="black",
         name="EELIs",
@@ -140,8 +155,8 @@ def show_eeli(selected):
 
     figure.add_trace(
         go.Scatter(
-            x=sequence.continuous_data[FILTERED_EIT_LABEL].time,
-            y=[sd_upper] * len(sequence.continuous_data[FILTERED_EIT_LABEL].time),
+            x=data.time,
+            y=[sd_upper] * len(data.time),
             fill=None,
             mode="lines",
             line_color="rgba(0,0,255,0)",  # Set to transparent blue
@@ -152,8 +167,8 @@ def show_eeli(selected):
     # Add the lower bound line
     figure.add_trace(
         go.Scatter(
-            x=sequence.continuous_data[FILTERED_EIT_LABEL].time,
-            y=[sd_lower] * len(sequence.continuous_data[FILTERED_EIT_LABEL].time),
+            x=data.time,
+            y=[sd_lower] * len(data.time),
             fill="tonexty",  # Fill area below this line
             mode="lines",
             line_color="rgba(0,0,255,0.3)",  # Set to semi-transparent blue
