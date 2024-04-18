@@ -1,0 +1,6 @@
+echo \-\-\-\-Retrieving latest version of dashboard
+git pull
+echo \-\-\-\-Installing lastest version of dashboard
+poetry install
+echo \-\-\-\-Run dashboard
+poetry run python eit_dash/main.py
