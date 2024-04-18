@@ -57,27 +57,22 @@ poetry install
 
 ### 2. Running EIT Dashboard
 
-##### Stay up to date
+##### Latest version
 
-To ensure you are using the newest version, including any updates since you last used it, navigate to the folder where
-the dashboard is installed and run:
+To run the most up top date version of the dashboard (including any updates since you last used it), navigate to the
+folder where the dashboard is installed and run `bash RUN`. Next, open the link shown in a browser (often something like
+`http://127.0.0.1:8050/`).
+Note that while the dashboard should work on any browser, if you are experiencing issues we recommend switching to
+Chrome or Firefox, as these are the browsers where we do most of the testing.
 
-```console
-git pull
-poetry install
-```
+##### Existing version
+
+If you want to run the dashboard without first updating to the lastest, follow instructions above using this command
+instead: `poetry run python eit_dash/main.py`
+
+### 2. Using EIT Dashboard
 
 Please see our [user manual](docs/user_manual.md) for instructions on how to use the dashboard.
-
-##### Run dashboard
-
-Run the command below and and open the resulting link in a browser (often something like `http://127.0.0.1:8050/`).
-Note that while the dashboard should work on any browser, if you are experiencing issues we recommend switching to
-Chrome or Firefox, as these are the browser where we do most of the testing.
-
-```console
-poetry run python eit_dash/main.py
-```
 
 ## Documentation
 
