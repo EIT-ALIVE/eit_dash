@@ -66,11 +66,7 @@ def page_setup(_, summary):
 
             if not filter_params:
                 try:
-                    filter_params = (
-                        period.get_data()
-                        .continuous_data.data[FILTERED_EIT_LABEL]
-                        .parameters
-                    )
+                    filter_params = period.get_data().continuous_data.data[FILTERED_EIT_LABEL].parameters
                 except KeyError:
                     contextlib.suppress(Exception)
         if filter_params:
@@ -96,7 +92,8 @@ def apply_eeli(_):
         sequence = period.get_data()
         if sequence.continuous_data.get(FILTERED_EIT_LABEL):
             eeli_result_filtered = EELI().compute_parameter(
-                sequence, FILTERED_EIT_LABEL
+                sequence,
+                FILTERED_EIT_LABEL,
             )
         else:
             eeli_result_filtered = EELI().compute_parameter(sequence, RAW_EIT_LABEL)
