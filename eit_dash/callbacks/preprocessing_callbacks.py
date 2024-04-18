@@ -14,8 +14,12 @@ from eitprocessing.filters.butterworth_filters import ButterworthFilter
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 from eit_dash.app import data_object
+from eit_dash.definitions.constants import FILTERED_EIT_LABEL, RAW_EIT_LABEL
 from eit_dash.definitions.option_lists import FilterTypes, PeriodsSelectMethods
 from eit_dash.utils.common import (
+    create_filter_results_card,
+    create_info_card,
+    create_selected_period_card,
     create_slider_figure,
     get_selections_slidebar,
     get_signal_options,
@@ -64,60 +68,6 @@ def create_resampling_card(loaded_data):
     options = [{"label": f'{data["Name"]}', "value": str(i)} for i, data in enumerate(loaded_data)]
 
     return row, options
-
-
-def create_loaded_data_summary():
-    loaded_data = data_object.get_all_sequences()
-
-    return [dbc.Row([html.Div(f"Loaded {dataset.label}", style={"textAlign": "left"})]) for dataset in loaded_data]
-
-
-def create_selected_period_card(period: Sequence, dataset: str, index: int) -> dbc.Card:
-    """
-    Create the card with the information on the selected period to be displayed in the Results section.
-
-    Args:
-        period: Sequence object containing the selected period
-        dataset: The original dataset from which the period has been selected
-        index: of the period
-    """
-    info_data = {
-        "n_frames": period.eit_data["raw"].nframes,
-        "start_time": period.time[0],
-        "end_time": period.eit_data["raw"].time[-1],
-        "dataset": dataset,
-    }
-
-    card_list = [
-        html.H4(period.label, className="card-title"),
-    ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
-    card_list += [
-        dbc.Button(
-            "Remove",
-            id={"type": ids.REMOVE_PERIOD_BUTTON, "index": str(index)},
-        ),
-    ]
-
-    return dbc.Card(
-        dbc.CardBody(card_list),
-        id={"type": ids.PERIOD_CARD, "index": str(index)},
-    )
-
-
-def create_filter_results_card(parameters: dict) -> dbc.Card:
-    """
-    Create the card with the information on the parameters used for filtering the data.
-
-    Args:
-        parameters: dictionary containing the filter information
-    """
-    card_list = [
-        html.H4("Data filtered", className="card-title"),
-    ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in parameters.items()]
-
-    return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
 
 
 def get_loaded_data():
@@ -186,7 +136,7 @@ def load_datasets(title):
     [
         Output(ids.OPEN_SYNCH_BUTTON, "disabled"),
         Output(ids.OPEN_SELECT_PERIODS_BUTTON, "disabled"),
-        Output(ids.SUMMARY_COLUMN, "children"),
+        Output(ids.SUMMARY_COLUMN, "children", allow_duplicate=True),
         Output(ids.PREPROCESING_RESULTS_CONTAINER, "children", allow_duplicate=True),
     ],
     [
@@ -210,8 +160,10 @@ def update_summary(start, summary):
     results = []
 
     if trigger is None:
-        data = create_loaded_data_summary()
-        summary += data
+        for d in data_object.get_all_sequences():
+            card = create_info_card(d)
+            summary += [card]
+
         for p in data_object.get_all_stable_periods():
             data = p.get_data()
             results.append(
@@ -345,7 +297,6 @@ def initialize_figure(
 
     current_figure = create_slider_figure(
         data,
-        ["raw"],
         list(data.continuous_data),
     )
 
@@ -616,8 +567,10 @@ def enable_apply_button(
         or (int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0)
         or (
             int(filter_selected) in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
+            and co_low
             and co_low > 0
-            and co_low > 0
+            and co_high
+            and co_high > 0
         )
     ) and order:
         return False
@@ -746,23 +699,23 @@ def show_filtered_results(_, update, selected):
 
     try:
         filtered_data = tmp_results.get_stable_period(int(selected)).get_data()
-    except Exception:
+    except ValueError:
         return fig, styles.EMPTY_ELEMENT
 
     data = data_object.get_stable_period(int(selected)).get_data()
 
     fig.add_trace(
         go.Scatter(
-            x=data.eit_data.data["raw"].time,
-            y=data.eit_data.data["raw"].global_impedance,
+            x=data.continuous_data[RAW_EIT_LABEL].time,
+            y=data.continuous_data[RAW_EIT_LABEL].values,
             name="Original signal",
         ),
     )
 
     fig.add_trace(
         go.Scatter(
-            x=filtered_data.continuous_data.data["global_impedance_filtered"].time,
-            y=filtered_data.continuous_data.data["global_impedance_filtered"].values,
+            x=filtered_data.continuous_data.data[FILTERED_EIT_LABEL].time,
+            y=filtered_data.continuous_data.data[FILTERED_EIT_LABEL].values,
             name="Filtered signal",
         ),
     )
@@ -791,7 +744,7 @@ def save_filtered_signal(confirm, results: list):
         data.update_data(tmp_data)
 
         if not params:
-            params = tmp_data.continuous_data.data["global_impedance_filtered"].parameters
+            params = tmp_data.continuous_data.data[FILTERED_EIT_LABEL].parameters
 
     # show info card
     for element in results:
@@ -840,12 +793,15 @@ def filter_data(data: Sequence, filter_params: dict) -> ContinuousData | None:
 
     filt = ButterworthFilter(**filter_params)
 
+    gi = data.continuous_data[RAW_EIT_LABEL]
+
     return ContinuousData(
-        "global_impedance_filtered",
+        FILTERED_EIT_LABEL,
         f"global_impedance filtered with {filter_params['filter_type']}",
         "a.u.",
         "impedance",
+        derived_from=[*gi.derived_from, gi],
         parameters=filter_params,
-        time=data.eit_data.data["raw"].time,
-        values=filt.apply_filter(data.eit_data.data["raw"].global_impedance),
+        time=data.continuous_data[RAW_EIT_LABEL].time,
+        values=filt.apply_filter(data.continuous_data[RAW_EIT_LABEL].values),
     )

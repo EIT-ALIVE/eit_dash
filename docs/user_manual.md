@@ -9,6 +9,8 @@ dashboard remains local on your machine.
 Note 3: The Dashboard, this manual, and the (back end) software it is built around are works in progress. The images and
 interaction procedures may be slightly off. Please bear with us.
 
+Note 4: If you encounter any issue while using the dashboard, please report it by opening an issue [here](https://github.com/EIT-ALIVE/eit_dash/issues).
+
 ## LOAD page
 
 The dashboard should open on the **LOAD** page, but in case this does not happen, navigate there by clicking **LOAD** at
@@ -41,7 +43,7 @@ they _must_ be selected here already.
 Note that on the following page more precise time selections can be made. This page is just intended to make a rough
 pre-selection. Also, pre-selections cannot be undone at this point, but do not need to be used for further processing.
 
-When all pre-selections are made, Click **`PRE-PROCESSING`** at the top of the page to proceed to the next stage.
+When all pre-selections are made, click **`PRE-PROCESSING`** at the top of the page to proceed to the next stage.
 
 ## PRE-PROCESSING page
 
@@ -71,4 +73,15 @@ the preview will update. When you are happy with a particular setting/selection,
 
 <kbd>
 <img src=images/preprocessing_filter.png width="800px" style="border: 1px solid black">
+</kbd>
+
+When you have selected your period and filters, ensure they are both listed on the right side under "Results", and then click on **`ANALYZE`** at the top of the page.
+
+## ANALYZE page
+
+Click `Apply EELI` to run EELI analysis. When the analysis is completed, it is possible to see 
+the results by selecting the period to visualize using the dropdown menu.
+
+<kbd>
+<img src=images/apply_eeli.png width="800px" style="border: 1px solid black">
 </kbd>

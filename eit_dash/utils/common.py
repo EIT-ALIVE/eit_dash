@@ -2,7 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
+from dash import html
+
+from eit_dash.definitions import element_ids as ids
+from eit_dash.definitions import layout_styles as styles
+from eit_dash.definitions.constants import RAW_EIT_LABEL
 
 if TYPE_CHECKING:
     from eitprocessing.sequence import Sequence
@@ -20,17 +26,95 @@ def blank_fig():
     return fig
 
 
-def create_slider_figure(
-    dataset: Sequence,
-    eit_variants: list[str] | None = None,
-    continuous_data: list[str] | None = None,
-    clickable_legend: bool = False,
-) -> go.Figure:
-    """Create the figure for the selection of range.
+def create_filter_results_card(parameters: dict) -> dbc.Card:
+    """
+    Create the card with the information on the parameters used for filtering the data.
+
+    Args:
+        parameters: dictionary containing the filter information
+    """
+    card_list = [
+        html.H4("Data filtered", className="card-title"),
+    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in parameters.items()]
+
+    return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
+
+
+def create_info_card(dataset: Sequence) -> dbc.Card:
+    """Create the card with the information on the loaded dataset to be displayed in the Results section.
 
     Args:
         dataset: Sequence object containing the selected dataset
-        eit_variants: list of the eit variants to be plotted
+    """
+    info_data = {
+        "Name": dataset.eit_data["raw"].path.name,
+        "n_frames": dataset.eit_data["raw"].nframes,
+        "start_time": dataset.eit_data["raw"].time[0],
+        "end_time": dataset.eit_data["raw"].time[-1],
+        "vendor": dataset.eit_data["raw"].vendor,
+        "continuous signals": str(list(dataset.continuous_data)),
+        "path": str(dataset.eit_data["raw"].path),
+    }
+
+    card_list = [
+        html.H4(dataset.label, className="card-title"),
+        html.H6(dataset.eit_data["raw"].vendor, className="card-subtitle"),
+    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
+
+    return dbc.Card(dbc.CardBody(card_list), id="card-1")
+
+
+def create_selected_period_card(
+    period: Sequence,
+    dataset: str,
+    index: int,
+    remove_button: bool = True,
+) -> dbc.Card:
+    """
+    Create the card with the information on the selected period to be displayed in the Results section.
+
+    Args:
+        period: Sequence object containing the selected period
+        dataset: The original dataset from which the period has been selected
+        index: of the period
+        remove_button: add the remove button if set to True
+    """
+    info_data = {
+        "n_frames": period.eit_data["raw"].nframes,
+        "start_time": period.eit_data["raw"].time[0],
+        "end_time": period.eit_data["raw"].time[-1],
+        "dataset": dataset,
+    }
+
+    card_list = [
+        html.H4(period.label, className="card-title"),
+    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
+    if remove_button:
+        card_list += [
+            dbc.Button(
+                "Remove",
+                id={"type": ids.REMOVE_PERIOD_BUTTON, "index": str(index)},
+            ),
+        ]
+
+    return dbc.Card(
+        dbc.CardBody(card_list),
+        id={"type": ids.PERIOD_CARD, "index": str(index)},
+    )
+
+
+def create_slider_figure(
+    dataset: Sequence,
+    continuous_data: list[str] | None = None,
+    clickable_legend: bool = False,
+) -> go.Figure:
+    """Create the figure for the selection of range. The raw global impedance is plotted by default.
+
+    Args:
+        dataset: Sequence object containing the selected dataset
         continuous_data: list of the continuous data signals to be plotted
         clickable_legend: if True, the user can hide a signal by clicking on the legend
     """
@@ -40,45 +124,43 @@ def create_slider_figure(
 
     if continuous_data is None:
         continuous_data = []
-    if eit_variants is None:
-        eit_variants = ["raw"]
 
-    for eit_variant in eit_variants:
-        figure.add_trace(
-            go.Scatter(
-                x=dataset.eit_data[eit_variant].time,
-                y=dataset.eit_data[eit_variant].global_impedance,
-                name=eit_variant,
-            ),
-        )
+    figure.add_trace(
+        go.Scatter(
+            x=dataset.continuous_data[RAW_EIT_LABEL].time,
+            y=dataset.continuous_data[RAW_EIT_LABEL].values,
+            name=RAW_EIT_LABEL,
+        ),
+    )
 
     for n, cont_signal in enumerate(continuous_data):
-        figure.add_trace(
-            go.Scatter(
-                x=dataset.continuous_data[cont_signal].time,
-                y=dataset.continuous_data[cont_signal].values,
-                name=cont_signal,
-                opacity=0.5,
-                yaxis=f"y{n + 2}",
-            ),
-        )
-        # decide whether to put the axis left or right
-        side = "right" if n % 2 == 0 else "left"
+        if cont_signal != RAW_EIT_LABEL:
+            figure.add_trace(
+                go.Scatter(
+                    x=dataset.continuous_data[cont_signal].time,
+                    y=dataset.continuous_data[cont_signal].values,
+                    name=cont_signal,
+                    opacity=0.5,
+                    yaxis=f"y{n + 2}",
+                ),
+            )
+            # decide whether to put the axis left or right
+            side = "right" if n % 2 == 0 else "left"
 
-        y_position += 0.1
-        new_y = {
-            "title": cont_signal,
-            "anchor": "free",
-            "overlaying": "y",
-            "side": side,
-            "autoshift": True,
-        }
+            y_position += 0.1
+            new_y = {
+                "title": cont_signal,
+                "anchor": "free",
+                "overlaying": "y",
+                "side": side,
+                "autoshift": True,
+            }
 
-        # layout parameters for multiple y axis
-        param_name = f"yaxis{n + 2}"
-        params.update({param_name: new_y})
+            # layout parameters for multiple y axis
+            param_name = f"yaxis{n + 2}"
+            params.update({param_name: new_y})
 
-    for event in dataset.eit_data[eit_variants[0]].events:
+    for event in dataset.eit_data["raw"].events:
         annotation = {"text": f"{event.text}", "textangle": -90}
         figure.add_vline(
             x=event.time,
@@ -113,36 +195,27 @@ def mark_selected_periods(
         original_figure: figure to update
         periods: list of Sequence object containing the selected dataset.
         These ranges, the signal is plotted in black
-        period_index: index of the selected period
     """
     for period in periods:
         seq = period.get_data()
-        for eit_variant in seq.eit_data:
-            selected_impedance = go.Scatter(
-                x=seq.eit_data[eit_variant].time,
-                y=seq.eit_data[eit_variant].global_impedance,
-                name=eit_variant,
-                meta={"uid": period.get_period_index()},
-                line={"color": "black"},
-                showlegend=False,
-            ).to_plotly_json()
-
-            if type(original_figure) == go.Figure:
-                original_figure.add_trace(selected_impedance)
-            else:
-                original_figure["data"].append(selected_impedance)
 
         for n, cont_signal in enumerate(seq.continuous_data):
-            selected_signal = go.Scatter(
-                x=seq.continuous_data[cont_signal].time,
-                y=seq.continuous_data[cont_signal].values,
-                name=cont_signal,
-                meta={"uid": period.get_period_index()},
-                opacity=0.5,
-                yaxis=f"y{n + 2}",
-                line={"color": "black"},
-                showlegend=False,
-            ).to_plotly_json()
+            params = {
+                "x": seq.continuous_data[cont_signal].time,
+                "y": seq.continuous_data[cont_signal].values,  # noqa: PD011
+                "name": cont_signal,
+                "meta": {"uid": period.get_period_index()},
+                "line": {"color": "black"},
+                "showlegend": False,
+            }
+            if cont_signal != RAW_EIT_LABEL:
+                params.update(
+                    {
+                        "opacity": 0.5,
+                        "yaxis": f"y{n + 2}",
+                    },
+                )
+            selected_signal = go.Scatter(**params).to_plotly_json()
 
             if type(original_figure) == go.Figure:
                 original_figure.add_trace(selected_signal)
@@ -165,15 +238,12 @@ def get_signal_options(
         A list of label - value options for populating the options list
     """
     options = []
-    if show_eit:
-        # iterate over eit data
-        for eit in dataset.eit_data:
-            options.append({"label": eit, "value": len(options)})
 
     if dataset.continuous_data:
         # iterate over continuous data
         for cont in dataset.continuous_data:
-            options.append({"label": cont, "value": len(options)})
+            if (cont == RAW_EIT_LABEL and show_eit) or cont != RAW_EIT_LABEL:
+                options.append({"label": cont, "value": len(options)})
 
     return options
 

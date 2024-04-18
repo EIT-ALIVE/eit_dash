@@ -2,7 +2,11 @@ import dash_bootstrap_components as dbc
 from dash import html, page_container
 
 from eit_dash.app import app
-from eit_dash.callbacks import load_callbacks, preprocessing_callbacks  # noqa: F401
+from eit_dash.callbacks import (  # noqa: F401
+    analyze_callbacks,
+    load_callbacks,
+    preprocessing_callbacks,
+)
 from eit_dash.definitions import layout_styles as styles
 
 app.layout = html.Div(
@@ -28,7 +32,11 @@ app.layout = html.Div(
                 ),
                 dbc.Col(
                     html.H2(
-                        dbc.NavLink("ANALYZE", href="/dummy", style=styles.PAGES_LINK),
+                        dbc.NavLink(
+                            "ANALYZE",
+                            href="/analyze",
+                            style=styles.PAGES_LINK,
+                        ),
                     ),
                 ),
             ],

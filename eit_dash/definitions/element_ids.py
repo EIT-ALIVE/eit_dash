@@ -66,3 +66,12 @@ RESAMPLING_CARD = "resampling-card"
 RESAMPLING_CARD_BODY = "resampling-card-body"
 RESAMPLING_FREQUENCY_INPUT = "resampling-frequency-input"
 SUMMARY_COLUMN = "summary-column"
+
+# analyze
+ANALYZE_RESULTS_TITLE = "analyze-results-title"
+ANALYZE_SELECT_PERIOD_VIEW = "analyze-select-period-view"
+ANALYZE_TITLE = "analyze-title"
+EELI_APPLY = "eeli-apply"
+EELI_RESULTS_GRAPH = "eeli-results-graph"
+EELI_RESULTS_GRAPH_DIV = "eeli-results-graph-div"
+SUMMARY_COLUMN_ANALYZE = "summary-column-analyze"
