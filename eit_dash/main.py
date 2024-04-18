@@ -33,7 +33,9 @@ app.layout = html.Div(
                 dbc.Col(
                     html.H2(
                         dbc.NavLink(
-                            "ANALYZE", href="/analyze", style=styles.PAGES_LINK,
+                            "ANALYZE",
+                            href="/analyze",
+                            style=styles.PAGES_LINK,
                         ),
                     ),
                 ),

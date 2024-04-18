@@ -22,10 +22,7 @@ input_type_selector = html.Div(
     [
         dbc.Select(
             id=ids.INPUT_TYPE_SELECTOR,
-            options=[
-                {"label": filetype.name, "value": filetype.value}
-                for filetype in InputFiletypes
-            ],
+            options=[{"label": filetype.name, "value": filetype.value} for filetype in InputFiletypes],
             value=str(InputFiletypes.Sentec.value),
         ),
         html.P(),
@@ -44,7 +41,8 @@ add_data_selector = dcc.Loading(
             html.H5("Signal selections", style=styles.SECTION_TITLE),
             dbc.Row(
                 dcc.Checklist(
-                    id=ids.CHECKBOX_SIGNALS, inputStyle=styles.CHECKBOX_INPUT,
+                    id=ids.CHECKBOX_SIGNALS,
+                    inputStyle=styles.CHECKBOX_INPUT,
                 ),
             ),
             html.H5("Pre selection", style=styles.SECTION_TITLE),
