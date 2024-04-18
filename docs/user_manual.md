@@ -72,3 +72,12 @@ the preview will update. When you are happy with a particular setting/selection,
 <kbd>
 <img src=images/preprocessing_filter.png width="800px" style="border: 1px solid black">
 </kbd>
+
+## ANALYZE page
+
+Click `Apply EELI` to run EELI analysis. When the analysis is completed, it is possible to see 
+the results by selecting the period to visualize using the dropdown menu.
+
+<kbd>
+<img src=images/apply_eeli.png width="800px" style="border: 1px solid black">
+</kbd>
