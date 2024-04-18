@@ -73,6 +73,8 @@ the preview will update. When you are happy with a particular setting/selection,
 <img src=images/preprocessing_filter.png width="800px" style="border: 1px solid black">
 </kbd>
 
+When you have selected your period and filters, ensure they are both listed on the right side under "Results", and then click on **`ANALYZE`** at the top of the page.
+
 ## ANALYZE page
 
 Click `Apply EELI` to run EELI analysis. When the analysis is completed, it is possible to see 
