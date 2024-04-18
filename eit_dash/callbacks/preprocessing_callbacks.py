@@ -65,7 +65,10 @@ def create_resampling_card(loaded_data):
         for data in loaded_data
     ]
 
-    options = [{"label": f'{data["Name"]}', "value": str(i)} for i, data in enumerate(loaded_data)]
+    options = [
+        {"label": f'{data["Name"]}', "value": str(i)}
+        for i, data in enumerate(loaded_data)
+    ]
 
     return row, options
 
@@ -76,7 +79,10 @@ def get_loaded_data():
     for dataset in loaded_data:
         name = dataset.label
         if dataset.continuous_data:
-            data += [{"Name": name, "Data type": channel} for channel in dataset.continuous_data]
+            data += [
+                {"Name": name, "Data type": channel}
+                for channel in dataset.continuous_data
+            ]
         if dataset.eit_data:
             data.append(
                 {
@@ -220,7 +226,10 @@ def populate_periods_selection_modal(method):
 
     if int_value == PeriodsSelectMethods.Manual.value:
         signals = data_object.get_all_sequences()
-        options = [{"label": sequence.label, "value": index} for index, sequence in enumerate(signals)]
+        options = [
+            {"label": sequence.label, "value": index}
+            for index, sequence in enumerate(signals)
+        ]
 
         body = [
             html.H6("Select one dataset"),
@@ -458,7 +467,11 @@ def remove_period(n_clicks, container, figure):
 
     # remove from the figure (if the figure exists)
     try:
-        figure["data"] = [trace for trace in figure["data"] if "meta" not in trace or trace["meta"]["uid"] != input_id]
+        figure["data"] = [
+            trace
+            for trace in figure["data"]
+            if "meta" not in trace or trace["meta"]["uid"] != input_id
+        ]
     except TypeError:
         contextlib.suppress(Exception)
 
@@ -564,11 +577,16 @@ def enable_apply_button(
 
     if (
         (int(filter_selected) == FilterTypes.lowpass.value and co_high and co_high > 0)
-        or (int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0)
         or (
-            int(filter_selected) in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
+            int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0
+        )
+        or (
+            int(filter_selected)
+            in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
+            and co_low
             and co_low > 0
-            and co_low > 0
+            and co_high
+            and co_high > 0
         )
     ) and order:
         return False
