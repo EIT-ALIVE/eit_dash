@@ -9,8 +9,6 @@ class InputFiletypes(Enum):
     Timpel = 0
     Draeger = 1
     Sentec = 2
-    Biopac = 3
-    Poly5 = 4
 
 
 # create the filters enum, according to what has been defined in the filters module
@@ -34,8 +32,6 @@ class PeriodsSelectMethods(Enum):
     """One hot encoding of period selection methods."""
 
     Manual = 0
-    AutomatedStablePeriods = 1
-    AutomatedPEEP = 2
 
 
 class SynchMethods(Enum):

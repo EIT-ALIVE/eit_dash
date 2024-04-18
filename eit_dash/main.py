@@ -2,11 +2,12 @@ import dash_bootstrap_components as dbc
 from dash import html, page_container
 
 from eit_dash.app import app
-from eit_dash.callbacks import (
+from eit_dash.callbacks import (  # noqa: F401
     analyze_callbacks,
     load_callbacks,
     preprocessing_callbacks,
-)  # noqa: F401
+)
+from eit_dash.definitions import layout_styles as styles
 
 app.layout = html.Div(
     [
@@ -17,10 +18,25 @@ app.layout = html.Div(
         ),
         dbc.Row(
             [
-                dbc.Col(dbc.NavLink("Load", href="/load")),
-                dbc.Col(dbc.NavLink("Pre-processing", href="/preprocessing")),
-                dbc.Col(dbc.NavLink("Analyze", href="/analyze")),
-                dbc.Col(dbc.NavLink("Summarize", href="/dummy")),
+                dbc.Col(
+                    html.H2(dbc.NavLink("LOAD", href="/", style=styles.PAGES_LINK)),
+                ),
+                dbc.Col(
+                    html.H2(
+                        dbc.NavLink(
+                            "PRE-PROCESSING",
+                            href="/preprocessing",
+                            style=styles.PAGES_LINK,
+                        ),
+                    ),
+                ),
+                dbc.Col(
+                    html.H2(
+                        dbc.NavLink(
+                            "ANALYZE", href="/analyze", style=styles.PAGES_LINK,
+                        ),
+                    ),
+                ),
             ],
             style={"textAlign": "center"},
         ),
