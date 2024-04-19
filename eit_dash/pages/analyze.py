@@ -33,6 +33,7 @@ actions = dbc.Col(
         html.P(),
         html.Div(
             [
+                dbc.Row(html.H6("Select a period to view the results")),
                 dbc.Row(dbc.Select(id=ids.ANALYZE_SELECT_PERIOD_VIEW)),
                 dbc.Row(
                     dcc.Graph(id=ids.EELI_RESULTS_GRAPH, style=styles.EMPTY_ELEMENT),
