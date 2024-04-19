@@ -91,6 +91,7 @@ def load_selected_data(
 @callback(
     Output(ids.DATA_SELECTOR_OPTIONS, "hidden"),
     Output(ids.CHECKBOX_SIGNALS, "options"),
+    Output(ids.CHECKBOX_SIGNALS, "value"),
     Output(ids.FILE_LENGTH_SLIDER, "figure"),
     Input(ids.NFILES_PLACEHOLDER, "children"),
     Input(ids.LOAD_CANCEL_BUTTON, "n_clicks"),
@@ -109,16 +110,18 @@ def open_data_selector(data, cancel_load, sig, file_type, fig):
     if trigger == ids.LOAD_CANCEL_BUTTON:
         data = None
         file_data = None
+        options = ticked = []
 
     if not data:
         # this is needed, because a figure object must be returned for the graph, even if empty
         figure = go.Figure()
-        return True, [], figure
+        return True, [], [], figure
 
     if trigger in [ids.NFILES_PLACEHOLDER, ids.CHECKBOX_SIGNALS]:
         if trigger == ids.CHECKBOX_SIGNALS:
             options = get_signal_options(file_data)
             figure = fig
+            ticked = sig
         else:
             path = Path(data)
             file_data = load_eit_data(
@@ -134,18 +137,25 @@ def open_data_selector(data, cancel_load, sig, file_type, fig):
                 continuous_data=list(file_data.continuous_data),
                 clickable_legend=True,
             )
+            ticked = [s["value"] for s in options]
 
         ok = [RAW_EIT_LABEL]
-        if sig:
-            ok += [options[s]["label"] for s in sig]
+        if ticked:
+            ok += [options[s]["label"] for s in ticked]
 
         for s in figure["data"]:
             if s["name"] in ok:
-                s["visible"] = True
+                # raw signal visible
+                if s["name"] == RAW_EIT_LABEL:
+                    s["visible"] = True
+                else:
+                    # other selected signals are included but toggled off
+                    # (the legend item has to be clicked to make the trace visible)
+                    s["visible"] = "legendonly"
             else:
                 s["visible"] = False
 
-    return False, options, figure
+    return False, options, ticked, figure
 
 
 @callback(
@@ -254,7 +264,9 @@ def list_cwd_files(cwd):
             full_path = Path(cwd) / filepath
 
             is_dir = Path(full_path).is_dir()
-            extension = filepath.suffix if not filepath.name.startswith(".") else filepath.name
+            extension = (
+                filepath.suffix if not filepath.name.startswith(".") else filepath.name
+            )
 
             if is_dir or extension in [".bin", ".txt", ".zri"]:
                 link = html.A(
