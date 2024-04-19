@@ -1,3 +1,6 @@
+NEXT_PAGE_BUTTON = "next=page-button"
+NEXT_PAGE_LINK = "next=page-link"
+
 # load page
 ADD_DATA_BUTTON = "add-data-button"
 ALERT_LOAD = "alert-load"

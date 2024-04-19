@@ -139,6 +139,16 @@ def load_datasets(title):
 
 
 @callback(
+    Output(ids.NEXT_PAGE_BUTTON, "href"),
+    Input(ids.PREPROCESING_TITLE, "children"),
+)
+def update_next_page_link(_):
+    """Updates the lnk of the next page button."""
+
+    return "/analyze"
+
+
+@callback(
     [
         Output(ids.OPEN_SYNCH_BUTTON, "disabled"),
         Output(ids.OPEN_SELECT_PERIODS_BUTTON, "disabled"),

@@ -7,6 +7,17 @@ FILE_BROWSER = {"height": 500, "overflow": "scroll"}
 GRAPH = {}
 INFO_CARD = {"margin-left": 10}
 LOAD_RESULTS = {"textAlign": "center"}
+NEXT_PAGE_BUTTON = {
+    "position": "fixed",
+    "bottom": "35px",
+    "right": "35px",
+    "display": "flex",
+    "align-items": "center",
+    "background": "transparent",
+    "color": "blue",
+    "border": "none",
+    "font-size": "70px",
+}
 PAGES_LINK = {"fontWeight": "bold", "color": "blue"}
 SUMMARY_ELEMENT = {"textAlign": "center"}
 SECTION_TITLE = {"margin-top": "50px"}
