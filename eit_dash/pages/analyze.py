@@ -33,6 +33,7 @@ actions = dbc.Col(
         html.P(),
         html.Div(
             [
+                dbc.Row(html.H6("Select a period to view the results")),
                 dbc.Row(dbc.Select(id=ids.ANALYZE_SELECT_PERIOD_VIEW)),
                 dbc.Row(
                     dcc.Graph(id=ids.EELI_RESULTS_GRAPH, style=styles.EMPTY_ELEMENT),
@@ -51,5 +52,23 @@ layout = dbc.Row(
         summary,
         actions,
         results,
+        html.Div(
+            [
+                dbc.NavLink(
+                    dbc.Button(
+                        className="fa fa-arrow-circle-left",
+                        id=ids.PREV_PAGE_BUTTON_ANALYZE,
+                        style=styles.PREV_PAGE_BUTTON,
+                        disabled=False,
+                    ),
+                    href="/preprocessing",
+                    id=ids.PREV_PAGE_LINK_ANALYZE,
+                ),
+                html.Div(
+                    "PREVIOUS PAGE",
+                    style=styles.PREV_PAGE_SECTION,
+                ),
+            ],
+        ),
     ],
 )

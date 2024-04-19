@@ -68,7 +68,7 @@ actions = dbc.Col(
         html.P(),
         dbc.Row(
             dbc.Button(
-                "Select stable periods",
+                "Select periods",
                 id=ids.OPEN_SELECT_PERIODS_BUTTON,
                 disabled=False,
             ),
@@ -176,6 +176,7 @@ modal_selection = html.Div(
                         dbc.Select(
                             id=ids.PERIODS_METHOD_SELECTOR,
                             options=[{"label": method.name, "value": method.value} for method in PeriodsSelectMethods],
+                            value=str(PeriodsSelectMethods.Manual.value),
                         ),
                         modal_selection_body,
                     ],
@@ -336,5 +337,44 @@ layout = dbc.Row(
         modal_synchronization,
         modal_selection,
         modal_filtering,
+        html.Div(
+            [
+                dbc.NavLink(
+                    html.Div(
+                        [
+                            dbc.Button(
+                                className="fa fa-arrow-circle-right",
+                                id=ids.NEXT_PAGE_BUTTON_PREP,
+                                style=styles.NEXT_PAGE_BUTTON,
+                            ),
+                        ],
+                    ),
+                    href="/analyze",
+                    id=ids.NEXT_PAGE_LINK_PREP,
+                ),
+                html.Div(
+                    "NEXT PAGE",
+                    style=styles.NEXT_PAGE_SECTION,
+                ),
+            ],
+        ),
+        html.Div(
+            [
+                dbc.NavLink(
+                    dbc.Button(
+                        className="fa fa-arrow-circle-left",
+                        id=ids.PREV_PAGE_BUTTON_PREP,
+                        style=styles.PREV_PAGE_BUTTON,
+                        disabled=False,
+                    ),
+                    href="/",
+                    id=ids.PREV_PAGE_LINK_PREP,
+                ),
+                html.Div(
+                    "PREVIOUS PAGE",
+                    style=styles.PREV_PAGE_SECTION,
+                ),
+            ],
+        ),
     ],
 )
