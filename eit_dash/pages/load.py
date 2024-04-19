@@ -160,6 +160,7 @@ layout = dbc.Row(
         results,
         placeholder_nfiles,
         modal_dialog,
+        # TODO: the following is duplicated in multiple pages. To be refactored
         html.Div(
             [
                 dbc.NavLink(
@@ -170,6 +171,10 @@ layout = dbc.Row(
                     ),
                     href="/preprocessing",
                     id=ids.NEXT_PAGE_LINK_LOAD,
+                ),
+                html.Div(
+                    "NEXT PAGE",
+                    style=styles.NEXT_PAGE_SECTION,
                 ),
             ],
         ),
@@ -184,6 +189,10 @@ layout = dbc.Row(
                     ),
                     href="/",
                     id=ids.PREV_PAGE_LINK_LOAD,
+                ),
+                html.Div(
+                    "PREVIOUS PAGE",
+                    style=styles.PREV_PAGE_SECTION,
                 ),
             ],
         ),

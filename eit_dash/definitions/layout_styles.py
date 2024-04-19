@@ -18,6 +18,12 @@ NEXT_PAGE_BUTTON = {
     "border": "none",
     "font-size": "70px",
 }
+NEXT_PAGE_SECTION = {
+    "position": "fixed",
+    "bottom": "7px",
+    "right": "35px",
+    "display": "flex",
+}
 PREV_PAGE_BUTTON = {
     "position": "fixed",
     "bottom": "35px",
@@ -28,6 +34,12 @@ PREV_PAGE_BUTTON = {
     "color": "blue",
     "border": "none",
     "font-size": "70px",
+}
+PREV_PAGE_SECTION = {
+    "position": "fixed",
+    "bottom": "7px",
+    "left": "35px",
+    "display": "flex",
 }
 PAGES_LINK = {"fontWeight": "bold", "color": "blue"}
 SUMMARY_ELEMENT = {"textAlign": "center"}

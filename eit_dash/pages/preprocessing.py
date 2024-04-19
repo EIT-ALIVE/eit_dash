@@ -352,6 +352,10 @@ layout = dbc.Row(
                     href="/analyze",
                     id=ids.NEXT_PAGE_LINK_PREP,
                 ),
+                html.Div(
+                    "NEXT PAGE",
+                    style=styles.NEXT_PAGE_SECTION,
+                ),
             ],
         ),
         html.Div(
@@ -365,6 +369,10 @@ layout = dbc.Row(
                     ),
                     href="/",
                     id=ids.PREV_PAGE_LINK_PREP,
+                ),
+                html.Div(
+                    "PREVIOUS PAGE",
+                    style=styles.PREV_PAGE_SECTION,
                 ),
             ],
         ),
