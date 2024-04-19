@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import dash_bootstrap_components as dbc
+import plotly.colors
 import plotly.graph_objects as go
 from dash import html
 
@@ -36,7 +37,10 @@ def create_filter_results_card(parameters: dict) -> dbc.Card:
     card_list = [
         html.H4("Data filtered", className="card-title"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in parameters.items()]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in parameters.items()
+    ]
 
     return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
 
@@ -61,7 +65,10 @@ def create_info_card(dataset: Sequence) -> dbc.Card:
         html.H4(dataset.label, className="card-title"),
         html.H6(dataset.eit_data["raw"].vendor, className="card-subtitle"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in info_data.items()
+    ]
 
     return dbc.Card(dbc.CardBody(card_list), id="card-1")
 
@@ -91,7 +98,10 @@ def create_selected_period_card(
     card_list = [
         html.H4(period.label, className="card-title"),
     ]
-    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
+    card_list += [
+        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
+        for data, value in info_data.items()
+    ]
     if remove_button:
         card_list += [
             dbc.Button(
@@ -130,8 +140,10 @@ def create_slider_figure(
             x=dataset.continuous_data[RAW_EIT_LABEL].time,
             y=dataset.continuous_data[RAW_EIT_LABEL].values,
             name=RAW_EIT_LABEL,
+            line=dict(color=plotly.colors.DEFAULT_PLOTLY_COLORS[0]),
         ),
     )
+    figure.update_yaxes(zerolinecolor=plotly.colors.DEFAULT_PLOTLY_COLORS[0])
 
     for n, cont_signal in enumerate(continuous_data):
         if cont_signal != RAW_EIT_LABEL:
@@ -140,6 +152,7 @@ def create_slider_figure(
                     x=dataset.continuous_data[cont_signal].time,
                     y=dataset.continuous_data[cont_signal].values,
                     name=cont_signal,
+                    line=dict(color=plotly.colors.DEFAULT_PLOTLY_COLORS[n + 1]),
                     opacity=0.5,
                     yaxis=f"y{n + 2}",
                 ),
@@ -154,6 +167,7 @@ def create_slider_figure(
                 "overlaying": "y",
                 "side": side,
                 "autoshift": True,
+                "color": plotly.colors.DEFAULT_PLOTLY_COLORS[n + 1],
             }
 
             # layout parameters for multiple y axis
