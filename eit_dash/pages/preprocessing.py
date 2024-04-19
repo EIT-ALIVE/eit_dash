@@ -68,7 +68,7 @@ actions = dbc.Col(
         html.P(),
         dbc.Row(
             dbc.Button(
-                "Select stable periods",
+                "Select periods",
                 id=ids.OPEN_SELECT_PERIODS_BUTTON,
                 disabled=False,
             ),
