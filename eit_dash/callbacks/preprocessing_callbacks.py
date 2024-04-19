@@ -231,14 +231,18 @@ def populate_periods_selection_modal(method):
             for index, sequence in enumerate(signals)
         ]
 
-        body = [
-            html.H6("Select one dataset"),
-            dbc.Select(
-                id=ids.PREPROCESING_DATASET_SELECT,
-                options=options,
-                value=str(options[0]["value"]),
-            ),
-        ]
+        body = (
+            [
+                html.H6("Select one dataset"),
+                dbc.Select(
+                    id=ids.PREPROCESING_DATASET_SELECT,
+                    options=options,
+                    value=str(options[0]["value"]),
+                ),
+            ]
+            if options
+            else []
+        )
     else:
         body = []
 
