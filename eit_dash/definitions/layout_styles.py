@@ -18,6 +18,17 @@ NEXT_PAGE_BUTTON = {
     "border": "none",
     "font-size": "70px",
 }
+PREV_PAGE_BUTTON = {
+    "position": "fixed",
+    "bottom": "35px",
+    "left": "35px",
+    "display": "flex",
+    "align-items": "center",
+    "background": "transparent",
+    "color": "blue",
+    "border": "none",
+    "font-size": "70px",
+}
 PAGES_LINK = {"fontWeight": "bold", "color": "blue"}
 SUMMARY_ELEMENT = {"textAlign": "center"}
 SECTION_TITLE = {"margin-top": "50px"}

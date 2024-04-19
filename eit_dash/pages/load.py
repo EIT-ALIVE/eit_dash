@@ -13,7 +13,7 @@ summary = dbc.Col([html.H2("Summary", style=styles.COLUMN_TITLE)])
 
 results = dbc.Col(
     [
-        html.H2("Results", style=styles.COLUMN_TITLE),
+        html.H2("Results", style=styles.COLUMN_TITLE, id=ids.LOAD_RESULTS_TITLE),
         html.Div(id=ids.DATASET_CONTAINER, style=styles.LOAD_RESULTS),
     ],
 )
@@ -22,7 +22,10 @@ input_type_selector = html.Div(
     [
         dbc.Select(
             id=ids.INPUT_TYPE_SELECTOR,
-            options=[{"label": filetype.name, "value": filetype.value} for filetype in InputFiletypes],
+            options=[
+                {"label": filetype.name, "value": filetype.value}
+                for filetype in InputFiletypes
+            ],
             value=str(InputFiletypes.Sentec.value),
         ),
         html.P(),
@@ -160,5 +163,32 @@ layout = dbc.Row(
         results,
         placeholder_nfiles,
         modal_dialog,
+        html.Div(
+            [
+                dbc.NavLink(
+                    dbc.Button(
+                        className="fa fa-arrow-circle-right",
+                        id=ids.NEXT_PAGE_BUTTON_LOAD,
+                        style=styles.NEXT_PAGE_BUTTON,
+                    ),
+                    href="/preprocessing",
+                    id=ids.NEXT_PAGE_LINK_LOAD,
+                ),
+            ],
+        ),
+        html.Div(
+            [
+                dbc.NavLink(
+                    dbc.Button(
+                        className="fa fa-arrow-circle-left",
+                        id=ids.PREV_PAGE_BUTTON_LOAD,
+                        style=styles.PREV_PAGE_BUTTON,
+                        disabled=True,
+                    ),
+                    href="/",
+                    id=ids.PREV_PAGE_LINK_LOAD,
+                ),
+            ],
+        ),
     ],
 )

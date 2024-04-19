@@ -346,5 +346,36 @@ layout = dbc.Row(
         modal_synchronization,
         modal_selection,
         modal_filtering,
+        html.Div(
+            [
+                dbc.NavLink(
+                    html.Div(
+                        [
+                            dbc.Button(
+                                className="fa fa-arrow-circle-right",
+                                id=ids.NEXT_PAGE_BUTTON_PREP,
+                                style=styles.NEXT_PAGE_BUTTON,
+                            ),
+                        ]
+                    ),
+                    href="/analyze",
+                    id=ids.NEXT_PAGE_LINK_PREP,
+                ),
+            ],
+        ),
+        html.Div(
+            [
+                dbc.NavLink(
+                    dbc.Button(
+                        className="fa fa-arrow-circle-left",
+                        id=ids.PREV_PAGE_BUTTON_PREP,
+                        style=styles.PREV_PAGE_BUTTON,
+                        disabled=False,
+                    ),
+                    href="/",
+                    id=ids.PREV_PAGE_LINK_PREP,
+                ),
+            ],
+        ),
     ],
 )
