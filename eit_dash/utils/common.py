@@ -143,7 +143,10 @@ def create_slider_figure(
             line=dict(color=plotly.colors.DEFAULT_PLOTLY_COLORS[0]),
         ),
     )
-    figure.update_yaxes(zerolinecolor=plotly.colors.DEFAULT_PLOTLY_COLORS[0])
+    figure.update_yaxes(
+        color=plotly.colors.DEFAULT_PLOTLY_COLORS[0],
+        title=f"{RAW_EIT_LABEL} {dataset.continuous_data[RAW_EIT_LABEL].unit}",
+    )
 
     for n, cont_signal in enumerate(continuous_data):
         if cont_signal != RAW_EIT_LABEL:
@@ -162,7 +165,7 @@ def create_slider_figure(
 
             y_position += 0.1
             new_y = {
-                "title": cont_signal,
+                "title": f"{cont_signal} {dataset.continuous_data[cont_signal].unit}",
                 "anchor": "free",
                 "overlaying": "y",
                 "side": side,
