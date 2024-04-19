@@ -178,23 +178,5 @@ layout = dbc.Row(
                 ),
             ],
         ),
-        html.Div(
-            [
-                dbc.NavLink(
-                    dbc.Button(
-                        className="fa fa-arrow-circle-left",
-                        id=ids.PREV_PAGE_BUTTON_LOAD,
-                        style=styles.PREV_PAGE_BUTTON,
-                        disabled=True,
-                    ),
-                    href="/",
-                    id=ids.PREV_PAGE_LINK_LOAD,
-                ),
-                html.Div(
-                    "PREVIOUS PAGE",
-                    style=styles.PREV_PAGE_SECTION,
-                ),
-            ],
-        ),
     ],
 )
