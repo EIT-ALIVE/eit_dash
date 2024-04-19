@@ -22,10 +22,7 @@ input_type_selector = html.Div(
     [
         dbc.Select(
             id=ids.INPUT_TYPE_SELECTOR,
-            options=[
-                {"label": filetype.name, "value": filetype.value}
-                for filetype in InputFiletypes
-            ],
+            options=[{"label": filetype.name, "value": filetype.value} for filetype in InputFiletypes],
             value=str(InputFiletypes.Sentec.value),
         ),
         html.P(),

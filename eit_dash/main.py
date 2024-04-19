@@ -8,7 +8,6 @@ from eit_dash.callbacks import (  # noqa: F401
     preprocessing_callbacks,
 )
 from eit_dash.definitions import layout_styles as styles
-from eit_dash.definitions import element_ids as ids
 
 app.layout = html.Div(
     [
@@ -44,19 +43,6 @@ app.layout = html.Div(
             style={"textAlign": "center"},
         ),
         page_container,
-        html.Div(
-            [
-                dbc.NavLink(
-                    dbc.Button(
-                        className="fa fa-arrow-circle-right",
-                        id=ids.NEXT_PAGE_BUTTON,
-                        style=styles.NEXT_PAGE_BUTTON,
-                    ),
-                    href="/preprocessing",
-                    id=ids.NEXT_PAGE_LINK,
-                ),
-            ],
-        ),
     ],
 )
 

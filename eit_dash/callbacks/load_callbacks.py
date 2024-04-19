@@ -264,9 +264,7 @@ def list_cwd_files(cwd):
             full_path = Path(cwd) / filepath
 
             is_dir = Path(full_path).is_dir()
-            extension = (
-                filepath.suffix if not filepath.name.startswith(".") else filepath.name
-            )
+            extension = filepath.suffix if not filepath.name.startswith(".") else filepath.name
 
             if is_dir or extension in [".bin", ".txt", ".zri"]:
                 link = html.A(
