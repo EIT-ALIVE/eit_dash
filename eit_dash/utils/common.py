@@ -169,6 +169,7 @@ def create_slider_figure(
             param_name = f"yaxis{n + 2}"
             params.update({param_name: new_y})
 
+    # add events
     if hasattr(dataset, "sparse_data"):
         for key in dataset.sparse_data:
             if re.match("events", key):
