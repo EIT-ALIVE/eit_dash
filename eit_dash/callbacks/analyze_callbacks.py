@@ -14,6 +14,7 @@ from eit_dash.utils.common import (
     create_selected_period_card,
 )
 
+# ruff: noqa: ERA001
 eeli = []
 
 
