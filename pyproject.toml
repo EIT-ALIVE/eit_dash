@@ -24,7 +24,7 @@ repository = "git@github.com:EIT-ALIVE/eit_dash"
 python = ">=3.10,<3.13"
 dash = { extras = ["testing"], version = "^2.11.1" }
 dash-bootstrap-components = "^1.4.1"
-eitprocessing = { git = "https://github.com/EIT-ALIVE/eitprocessing", rev = "186_parameter_eeli_psomhorst" }
+eitprocessing = { git = "https://github.com/EIT-ALIVE/eitprocessing"}
 numpy = "^1.25.2"
 pandas = "^2.0.3"
 ruff = "^0.3"
