@@ -15,26 +15,26 @@ from eit_dash.callbacks.load_callbacks import load_selected_data, show_info
 from eit_dash.definitions.option_lists import InputFiletypes
 from tests.conftest import data_path
 
-expected_continuous_data = [
+EXPECTED_CONTINUOUS_DATA = [
     {"label": "airway pressure", "value": 0},
     {"label": "flow", "value": 1},
     {"label": "volume", "value": 2},
     {"label": "CO2", "value": 3},
 ]
 
-first_sample = 100
-last_sample = 1000
+FIRST_SAMPLE = 100
+LAST_SAMPLE = 1000
 
-cut_file_length = last_sample - first_sample
+CUT_FILE_LENGTH = LAST_SAMPLE - FIRST_SAMPLE
 
 
 @pytest.fixture(scope="session")
 def expected_cut_info_data(file_data: Sequence):
     return {
         "Name": "Draeger_Test3.bin",
-        "n_frames": cut_file_length,
-        "start_time": file_data.time[first_sample],
-        "end_time": file_data.time[last_sample - 1],
+        "n_frames": CUT_FILE_LENGTH,
+        "start_time": file_data.time[FIRST_SAMPLE],
+        "end_time": file_data.time[LAST_SAMPLE - 1],
         "vendor": Vendor.DRAEGER,
         "continuous signals": [
             "airway pressure",
@@ -81,7 +81,7 @@ def test_load_selected_data_callback(file_data: Sequence, expected_cut_info_data
 
     # we can check that also the other continuous data has been detected and displayed as options
 
-    assert output[1] == expected_continuous_data
+    assert output[1] == EXPECTED_CONTINUOUS_DATA
 
 
 def test_show_info_callback(file_data: Sequence, expected_cut_info_data: dict):
@@ -94,12 +94,12 @@ def test_show_info_callback(file_data: Sequence, expected_cut_info_data: dict):
             filetype="1",
             slidebar_stat={
                 "xaxis.range": [
-                    file_data.time[first_sample],
-                    file_data.time[last_sample],
+                    file_data.time[FIRST_SAMPLE],
+                    file_data.time[LAST_SAMPLE],
                 ],
             },
             selected_signals=[0, 1, 2, 3],
-            signals_options=expected_continuous_data,
+            signals_options=EXPECTED_CONTINUOUS_DATA,
         )
 
     # the output is a card containing the information about the selected signal.
