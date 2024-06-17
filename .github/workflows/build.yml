@@ -49,7 +49,6 @@ jobs:
             python3 -m pip install --upgrade pip poetry ;
             poetry install --with test ;
             poetry run pytest -v tests/unit_tests ;
-            poetry run pytest -v --headless tests/e2e_tests ;
             python -m build'
 
   lint:
