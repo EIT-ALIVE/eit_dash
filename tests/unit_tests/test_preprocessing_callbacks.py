@@ -17,6 +17,7 @@ from eit_dash.utils.data_singleton import LoadedData
 
 @pytest.fixture()
 def mock_data_object(file_data: Sequence):
+    """Mocked object to save and retrieve the data."""
     data_object = LoadedData()
     data_object.add_sequence(file_data)
     data_object.add_stable_period(file_data, 0, 0)
@@ -26,6 +27,7 @@ def mock_data_object(file_data: Sequence):
 
 @pytest.fixture()
 def mock_tmp_results():
+    """Mocked temporary results object."""
     return LoadedData()
 
 
@@ -33,6 +35,7 @@ def test_apply_filter_callback(
     mock_data_object: LoadedData,
     mock_tmp_results: LoadedData,
 ):
+    """Test the filtering of stable periods."""
     low_cut = 1
     high_cut = 9
     filter_order = 1
@@ -72,6 +75,7 @@ def test_apply_filter_callback(
 
 
 def test_open_synch_modal_callback():
+    """Test opening of synchronization modal."""
     context_value.set(
         AttributeDict(
             triggered_inputs=[{"prop_id": f"{ids.OPEN_SYNCH_BUTTON}.n_clicks"}],
@@ -98,6 +102,7 @@ def test_open_synch_modal_callback():
 
 
 def test_open_periods_modal_callback():
+    """Test opening of the modal for selecting the stable periods."""
     context_value.set(
         AttributeDict(
             triggered_inputs=[

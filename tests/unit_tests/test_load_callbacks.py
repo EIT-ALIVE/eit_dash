@@ -30,6 +30,7 @@ CUT_FILE_LENGTH = LAST_SAMPLE - FIRST_SAMPLE
 
 @pytest.fixture(scope="session")
 def expected_cut_info_data(file_data: Sequence):
+    """This is fixture that returns the expected structure for the information contained in the loaded file."""
     return {
         "Name": "Draeger_Test3.bin",
         "n_frames": CUT_FILE_LENGTH,
@@ -48,6 +49,7 @@ def expected_cut_info_data(file_data: Sequence):
 
 
 def test_load_selected_data_callback(file_data: Sequence, expected_cut_info_data: dict):
+    """Test the loading of data from a selected file."""
     cancel_load = 0
     sig = []
     file_type = InputFiletypes.Draeger.value
@@ -85,6 +87,7 @@ def test_load_selected_data_callback(file_data: Sequence, expected_cut_info_data
 
 
 def test_show_info_callback(file_data: Sequence, expected_cut_info_data: dict):
+    """Test the slicing of the data through the periods selection."""
     # run the callback
     with patch("eit_dash.callbacks.load_callbacks.file_data", new=file_data):
         output = show_info(
