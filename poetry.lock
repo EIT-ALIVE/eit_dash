@@ -510,8 +510,10 @@ version = "1.0.2"
 description = "Processing of lung image data from electrical impedance tomography."
 optional = false
 python-versions = ">=3.10"
-files = []
-develop = false
+files = [
+    {file = "eitprocessing-1.0.2-py3-none-any.whl", hash = "sha256:2fd809318ac216656fee76f261e631b47475e11621685c6f69eda01a12de8812"},
+    {file = "eitprocessing-1.0.2.tar.gz", hash = "sha256:4e534694ef9fa981a17a751467e877f38a15f9183016464a64fe089088b121a6"},
+]
 
 [package.dependencies]
 matplotlib = ">=3.7.1"
@@ -525,12 +527,6 @@ tqdm = ">=4.65.0"
 dev = ["bump2version", "coverage", "coveralls", "myst-parser", "pycodestyle", "pytest (>=7.4.0)", "pytest-cov", "pytest-runner", "sphinx", "sphinx-autoapi", "sphinx-rtd-theme", "tox"]
 notebooks = ["ipykernel (>=6.15.2)", "ipython (>=8.4.0)", "jupyter (>=1.0.0)", "jupytext (>=1.14.5)", "notebook (>=6.4.12)"]
 publishing = ["build", "twine", "wheel"]
-
-[package.source]
-type = "git"
-url = "https://github.com/EIT-ALIVE/eitprocessing"
-reference = "HEAD"
-resolved_reference = "1d6b76d8264e968b72e7493ee913449fa2770bb0"
 
 [[package]]
 name = "exceptiongroup"
@@ -1736,13 +1732,13 @@ test = ["pylint", "pytest", "pytest-black", "pytest-cov", "pytest-pylint"]
 
 [[package]]
 name = "tenacity"
-version = "8.3.0"
+version = "8.4.1"
 description = "Retry code until it succeeds"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "tenacity-8.3.0-py3-none-any.whl", hash = "sha256:3649f6443dbc0d9b01b9d8020a9c4ec7a1ff5f6f3c6c8a036ef371f573fe9185"},
-    {file = "tenacity-8.3.0.tar.gz", hash = "sha256:953d4e6ad24357bceffbc9707bc74349aca9d245f68eb65419cf0c249a1949a2"},
+    {file = "tenacity-8.4.1-py3-none-any.whl", hash = "sha256:28522e692eda3e1b8f5e99c51464efcc0b9fc86933da92415168bc1c4e2308fa"},
+    {file = "tenacity-8.4.1.tar.gz", hash = "sha256:54b1412b878ddf7e1f1577cd49527bad8cdef32421bd599beac0c6c3f10582fd"},
 ]
 
 [package.extras]
@@ -1840,13 +1836,13 @@ files = [
 
 [[package]]
 name = "urllib3"
-version = "1.26.18"
+version = "1.26.19"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,>=2.7"
 files = [
-    {file = "urllib3-1.26.18-py2.py3-none-any.whl", hash = "sha256:34b97092d7e0a3a8cf7cd10e386f401b3737364026c45e622aa02903dffe0f07"},
-    {file = "urllib3-1.26.18.tar.gz", hash = "sha256:f8ecc1bba5667413457c529ab955bf8c67b45db799d159066261719e328580a0"},
+    {file = "urllib3-1.26.19-py2.py3-none-any.whl", hash = "sha256:37a0344459b199fce0e80b0d3569837ec6b6937435c5244e7fd73fa6006830f3"},
+    {file = "urllib3-1.26.19.tar.gz", hash = "sha256:3e3d753a8618b86d7de333b4223005f68720bcd6a7d2bcb9fbd2229ec7c1e429"},
 ]
 
 [package.dependencies]
@@ -1937,4 +1933,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10,<3.13"
-content-hash = "de940f9ffaac9599d4f3d43c489be02b00bb8dd6c621a050f0d6a889e3ff8d3b"
+content-hash = "0b36cd6b577b4c99ee9e60a4ddf156ded9f17e55ae174dbc6e7f5853ae7757d5"
