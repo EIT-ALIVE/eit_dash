@@ -2,8 +2,8 @@ import contextlib
 
 import plotly.graph_objects as go
 from dash import Input, Output, State, callback, ctx
-from eitprocessing.parameters.eeli import EELI
 
+# from eitprocessing.parameters.eeli import EELI
 import eit_dash.definitions.element_ids as ids
 import eit_dash.definitions.layout_styles as styles
 from eit_dash.app import data_object
@@ -14,6 +14,7 @@ from eit_dash.utils.common import (
     create_selected_period_card,
 )
 
+# ruff: noqa: ERA001
 eeli = []
 
 
@@ -82,26 +83,26 @@ def page_setup(_, summary):
 )
 def apply_eeli(_):
     """Apply EELI and store results."""
-    global eeli  # noqa: PLW0602
-
-    eeli.clear()
-
-    periods = data_object.get_all_stable_periods()
-
-    for period in periods:
-        sequence = period.get_data()
-        if sequence.continuous_data.get(FILTERED_EIT_LABEL):
-            eeli_result_filtered = EELI().compute_parameter(
-                sequence,
-                FILTERED_EIT_LABEL,
-            )
-        else:
-            eeli_result_filtered = EELI().compute_parameter(sequence, RAW_EIT_LABEL)
-
-        # TODO: the results should be stored in the sequence object
-        eeli_result_filtered["index"] = period.get_period_index()
-
-        eeli.append(eeli_result_filtered)
+    # global eeli
+    #
+    # eeli.clear()
+    #
+    # periods = data_object.get_all_stable_periods()
+    #
+    # for period in periods:
+    #     sequence = period.get_data()
+    #     if sequence.continuous_data.get(FILTERED_EIT_LABEL):
+    #         eeli_result_filtered = EELI().compute_parameter(
+    #             sequence,
+    #             FILTERED_EIT_LABEL,
+    #         )
+    #     else:
+    #         eeli_result_filtered = EELI().compute_parameter(sequence, RAW_EIT_LABEL)
+    #
+    #     # TODO: the results should be stored in the sequence object
+    #     eeli_result_filtered["index"] = period.get_period_index()
+    #
+    #     eeli.append(eeli_result_filtered)
 
     return False
 

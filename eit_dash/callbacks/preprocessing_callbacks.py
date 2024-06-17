@@ -606,7 +606,7 @@ def disable_results(disabled):
         Output(ids.FILTERING_SELECT_PERIOD_VIEW, "options", allow_duplicate=True),
         Output(ids.ALERT_FILTER, "is_open"),
         Output(ids.ALERT_FILTER, "children"),
-        Output("update-filter-results", "children"),
+        Output(ids.UPDATE_FILTER_RESULTS, "children"),
     ],
     [
         Input(ids.FILTER_APPLY, "n_clicks"),
@@ -682,7 +682,7 @@ def apply_filter(_, co_low, co_high, order, filter_selected, results):
         Output(ids.FILTERING_RESULTS_GRAPH, "style"),
     ],
     Input(ids.FILTERING_SELECT_PERIOD_VIEW, "value"),
-    Input("update-filter-results", "children"),
+    Input(ids.UPDATE_FILTER_RESULTS, "children"),
     State(ids.FILTERING_SELECT_PERIOD_VIEW, "value"),
     prevent_initial_call=True,
 )

@@ -2,15 +2,12 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import plotly.graph_objects as go
 from dash import ALL, Input, Output, State, callback, ctx, html
 from dash.exceptions import PreventUpdate
-from eitprocessing.datahandling.continuousdata import ContinuousData
-from eitprocessing.datahandling.datacollection import DataCollection
-from eitprocessing.datahandling.eitdata import EITData
 from eitprocessing.datahandling.loading import load_eit_data
-from eitprocessing.datahandling.sequence import Sequence
 
 import eit_dash.definitions.element_ids as ids
 from eit_dash.app import data_object
@@ -22,6 +19,9 @@ from eit_dash.utils.common import (
     get_selections_slidebar,
     get_signal_options,
 )
+
+if TYPE_CHECKING:
+    from eitprocessing.datahandling.sequence import Sequence
 
 file_data: Sequence | None = None
 
@@ -37,16 +37,13 @@ file_data: Sequence | None = None
     State(ids.INPUT_TYPE_SELECTOR, "value"),
     prevent_initial_call=True,
 )
-def load_selected_data(
+def select_file(
     select_file,
     confirm_select,
     file_path,
     file_type,
 ):
-    """Load the information selected from the file.
-
-    E.g., signals, time span.
-    """
+    """Check if the selected file is compatible and closes the popup."""
     open_modal = True
     data = None
     show_alert = False
@@ -100,7 +97,7 @@ def load_selected_data(
     State(ids.FILE_LENGTH_SLIDER, "figure"),
     prevent_initial_call=True,
 )
-def open_data_selector(data, cancel_load, sig, file_type, fig):
+def load_selected_data(data_path, cancel_load, sig, file_type, fig):
     """Read the file selected in the file selector."""
     global file_data
 
@@ -108,11 +105,11 @@ def open_data_selector(data, cancel_load, sig, file_type, fig):
 
     # cancelled selection. Reset the data and turn off the data selector
     if trigger == ids.LOAD_CANCEL_BUTTON:
-        data = None
+        data_path = None
         file_data = None
         options = ticked = []
 
-    if not data:
+    if not data_path:
         # this is needed, because a figure object must be returned for the graph, even if empty
         figure = go.Figure()
         return True, [], [], figure
@@ -123,7 +120,7 @@ def open_data_selector(data, cancel_load, sig, file_type, fig):
             figure = fig
             ticked = sig
         else:
-            path = Path(data)
+            path = Path(data_path)
             file_data = load_eit_data(
                 path,
                 vendor=InputFiletypes(int(file_type)).name.lower(),
@@ -198,27 +195,16 @@ def show_info(
         # get the name of the selected continuous signals
         selected = [signals_options[s]["label"] for s in selected_signals]
 
-        # cut the eit data and the continuous data and add them to a new DataCollections
+        # cut the data
+        cut_data = file_data.select_by_time(start_sample, stop_sample)
 
-        eit_data_cut = DataCollection(data_type=EITData)
-        continuous_data_cut = DataCollection(data_type=ContinuousData)
-
-        for data_type in (data := file_data.eit_data):
-            eit_data_cut.add(data[data_type].select_by_time(start_sample, stop_sample))
-
-        for data_type in (data := file_data.continuous_data):
+        for data_type in file_data.continuous_data:
             # add just the selected signals and the raw EIT
-            if data_type in selected or data_type == RAW_EIT_LABEL:
-                continuous_data_cut.add(
-                    data[data_type].select_by_time(start_sample, stop_sample),
-                )
+            if not (data_type in selected or data_type == RAW_EIT_LABEL):
+                cut_data.continuous_data.pop(data_type)
 
-        # add all the cut data to the new sequence
-        cut_data = Sequence(
-            label=dataset_name,
-            eit_data=eit_data_cut,
-            continuous_data=continuous_data_cut,
-        )
+        # reassign the label
+        cut_data.label = dataset_name
 
         # save the selected data in the singleton
         data_object.add_sequence(cut_data)

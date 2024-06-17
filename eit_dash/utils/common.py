@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from typing import TYPE_CHECKING
 
 import dash_bootstrap_components as dbc
@@ -168,15 +169,20 @@ def create_slider_figure(
             param_name = f"yaxis{n + 2}"
             params.update({param_name: new_y})
 
-    for event in dataset.eit_data["raw"].events:
-        annotation = {"text": f"{event.text}", "textangle": -90}
-        figure.add_vline(
-            x=event.time,
-            line_width=3,
-            line_dash="dash",
-            line_color="green",
-            annotation=annotation,
-        )
+    # add events
+    if hasattr(dataset, "sparse_data"):
+        for key in dataset.sparse_data:
+            if re.match("events", key):
+                for k, v in enumerate(dataset.sparse_data[key].values):
+                    annotation = {"text": f"{v.text}", "textangle": -90}
+                    figure.add_vline(
+                        x=dataset.sparse_data[key].time[k],
+                        line_width=3,
+                        line_dash="dash",
+                        line_color="green",
+                        annotation=annotation,
+                    )
+                break
 
     figure.update_layout(
         xaxis={"rangeslider": {"visible": True}},
