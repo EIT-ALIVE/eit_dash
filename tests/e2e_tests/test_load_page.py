@@ -18,7 +18,7 @@ def test_001_load_page_load_data(dash_duo):
     dash_duo.multiple_click(f"#{ids.SELECT_FILES_BUTTON}", clicks=1)
 
     # check if the selection popup is open
-    assert dash_duo.find_element(f"#{ids.CHOOSE_DATA_POPUP}").is_displayed() == True
+    assert dash_duo.find_element(f"#{ids.CHOOSE_DATA_POPUP}").is_displayed()
 
     # navigate to test file
     dash_duo.multiple_click(f"#{ids.PARENT_DIR}", clicks=1)
@@ -26,13 +26,15 @@ def test_001_load_page_load_data(dash_duo):
     time.sleep(1)
     # click on the test data directory
     dash_duo.multiple_click(
-        '[id="\\{\\"index\\"\\:4,\\"type\\"\\:\\"listed_file\\"\\}"]', clicks=1
+        '[id="\\{\\"index\\"\\:4,\\"type\\"\\:\\"listed_file\\"\\}"]',
+        clicks=1,
     )
     # Wait for 10 seconds
     time.sleep(1)
     # click on the test file
     dash_duo.multiple_click(
-        '[id="\\{\\"index\\"\\:0,\\"type\\"\\:\\"listed_file\\"\\}"]', clicks=1
+        '[id="\\{\\"index\\"\\:0,\\"type\\"\\:\\"listed_file\\"\\}"]',
+        clicks=1,
     )
     # click confirm button to load the file
     dash_duo.multiple_click(f"#{ids.SELECT_CONFIRM_BUTTON}", clicks=1)
@@ -41,7 +43,7 @@ def test_001_load_page_load_data(dash_duo):
     time.sleep(10)
 
     # assert that the periods selector is open
-    assert dash_duo.find_element(f"#{ids.DATA_SELECTOR_OPTIONS}").is_displayed() == True
+    assert dash_duo.find_element(f"#{ids.DATA_SELECTOR_OPTIONS}").is_displayed()
 
     # confirm period selection
     dash_duo.multiple_click(f"#{ids.LOAD_CONFIRM_BUTTON}", clicks=1)
