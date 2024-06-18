@@ -1,0 +1,61 @@
+# This file exists just for troubleshooting purposes
+name: Remote Build Trigger
+
+on:
+  workflow_call:
+    inputs:
+      caller_branch:
+        required: true
+        type: string
+      remote:
+        required: true
+        type: boolean
+
+jobs:
+  build:
+    name: Remote build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest"]
+        python-version: ["3.10"]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          repository: EIT-ALIVE/eit_dash # needs to be made explicit to avoid the remote repo being used
+      - name: Verify Repository Structure # echo debugging info in case things go haywire
+        run: |
+          echo "action triggered by: ${{github.event_name}}";
+          echo "Current directory: $(pwd)"
+          ls -al
+          echo "Contents of $GITHUB_WORKSPACE:"
+          ls -al $GITHUB_WORKSPACE
+          if [ -f $GITHUB_WORKSPACE/pyproject.toml ]; then
+            echo "Contents of pyproject.toml:"
+            cat $GITHUB_WORKSPACE/pyproject.toml
+          else
+            echo "pyproject.toml not found."
+            exit 1
+          fi
+      - name: Connect to Container Registry
+        uses: docker/login-action@v2.1.0
+        with:
+          registry: ghcr.io
+          username: wbaccinelli
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Tests in Container
+        run: >
+          docker run
+          --rm
+          -v $GITHUB_WORKSPACE:/ci
+          -e TEST_DATA=/eitprocessing
+          ghcr.io/eit-alive/eittestdata:latest
+          sh -c 'set -xe ;
+            cd /ci ;
+            python${{ matrix.python-version }} -m pip install --upgrade pip poetry ;
+            poetry add git+https://github.com/EIT-ALIVE/eitprocessing.git#${{ inputs.caller_branch }} 
+            poetry install --with test ;
+            poetry run pytest -v tests/unit_tests ;
+            python${{ matrix.python-version }} -m build'
