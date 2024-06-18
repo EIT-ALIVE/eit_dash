@@ -47,6 +47,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Run Tests in Container
         run: >
+          echo "action triggered by: ${{github.event_name}}";
           docker run
           --rm
           -v $GITHUB_WORKSPACE:/ci
@@ -55,6 +56,10 @@ jobs:
           sh -c 'set -xe ;
             cd /ci ;
             python${{ matrix.python-version }} -m pip install --upgrade pip poetry ;
+            echo "--- conditionally install remote branch of eitprocessing"
+            if [ -n "${{ inputs.caller_branch }}" ]; then
+              poetry add git+https://github.com/EIT-ALIVE/eitprocessing.git#${{ inputs.caller_branch }} ;
+            fi
             poetry install --with test ;
             poetry run pytest -v tests/unit_tests ;
             python${{ matrix.python-version }} -m build'
