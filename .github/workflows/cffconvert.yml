@@ -1,4 +1,4 @@
-name: cffconvert
+name: Citation file
 
 on:
   push:
@@ -14,7 +14,6 @@ on:
       - main
 
 jobs:
-
   verify:
     if: github.event.pull_request.draft == false
     name: "cffconvert"
@@ -22,6 +21,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         name: Check out a copy of the repository
-
       - uses: citation-file-format/cffconvert-github-action@main
         name: Check whether the citation metadata from CITATION.cff is equivalent to that in .zenodo.json
