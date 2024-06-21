@@ -127,7 +127,7 @@ class LoadedData:
                 self._data.remove(sequence)
                 return
 
-        msg = f"Sequence with label {index} not found"
+        msg = f"Sequence with label {label} not found"
         raise ValueError(msg)
 
     def remove_stable_period(self, index: int):

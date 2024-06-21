@@ -312,8 +312,7 @@ def remove_dataset(n_clicks, container):
     # remove from the singleton
     data_object.remove_data(input_id)
 
-    results = [card for card in container if f"'index': '{input_id}'" not in str(card)]
-    return results
+    return [card for card in container if f"'index': '{input_id}'" not in str(card)]
 
 
 # Repopulate data after reload
