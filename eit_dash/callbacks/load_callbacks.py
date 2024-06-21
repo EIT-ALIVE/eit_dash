@@ -156,7 +156,7 @@ def load_selected_data(data_path, cancel_load, sig, file_type, fig):
 
 
 @callback(
-    Output(ids.DATASET_CONTAINER, "children"),
+    Output(ids.DATASET_CONTAINER, "children", allow_duplicate=True),
     Input(ids.LOAD_CONFIRM_BUTTON, "n_clicks"),
     State(ids.NFILES_PLACEHOLDER, "children"),
     State(ids.DATASET_CONTAINER, "children"),
@@ -286,3 +286,16 @@ def store_clicked_file(n_clicks, title):
             return state["value"]
 
     return None
+
+
+# Repopulate data after reload
+@callback(
+    Output(ids.DATASET_CONTAINER, "children", allow_duplicate=True),
+    Input(ids.POPULATE_DATA, "children"),
+    prevent_initial_call="initial_duplicate",
+)
+def repopulate_data(reload):
+    """Repopulate data after reloading page."""
+    # create the info summary card
+    reloaded_data = data_object.get_all_sequences()
+    return [create_info_card(element) for element in reloaded_data]

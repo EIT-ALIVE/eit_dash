@@ -152,6 +152,9 @@ modal_dialog = html.Div(
     ],
 )
 
+# This is a placeholder for triggering repopulating of data when page is reloaded
+populate_loaded_data = html.Div(id=ids.POPULATE_DATA)
+
 layout = dbc.Row(
     [
         html.H1("LOAD DATA", style=styles.COLUMN_TITLE),
@@ -160,6 +163,7 @@ layout = dbc.Row(
         results,
         placeholder_nfiles,
         modal_dialog,
+        populate_loaded_data,
         # TODO: the following is duplicated in multiple pages. To be refactored
         html.Div(
             [
