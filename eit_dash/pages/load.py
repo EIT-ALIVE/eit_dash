@@ -53,10 +53,10 @@ add_data_selector = dcc.Loading(
                     dbc.Col(
                         [
                             dbc.Button(
-                                "Confirm",
-                                id=ids.LOAD_CONFIRM_BUTTON,
+                                "Cancel",
+                                id=ids.LOAD_CANCEL_BUTTON,
                                 className="ms-auto",
-                                color="success",
+                                color="danger",
                                 n_clicks=0,
                             ),
                         ],
@@ -64,10 +64,10 @@ add_data_selector = dcc.Loading(
                     dbc.Col(
                         [
                             dbc.Button(
-                                "Cancel",
-                                id=ids.LOAD_CANCEL_BUTTON,
+                                "Confirm",
+                                id=ids.LOAD_CONFIRM_BUTTON,
                                 className="ms-auto",
-                                color="danger",
+                                color="success",
                                 n_clicks=0,
                             ),
                         ],
