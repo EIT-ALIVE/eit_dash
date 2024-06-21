@@ -113,7 +113,13 @@ def test_show_info_callback(file_data: Sequence, expected_cut_info_data: dict):
         html.H6(Vendor.DRAEGER, className="card-subtitle"),
     ]
     card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in expected_cut_info_data.items()]
-    mock_data_card = [dbc.Card(dbc.CardBody(card_list), id="card-1")]
+    card_list += [
+        dbc.Button(
+            "Remove",
+            id={"type": ids.REMOVE_DATA_BUTTON, "index": "Dataset 0"},
+        ),
+    ]
+    mock_data_card = [dbc.Card(dbc.CardBody(card_list), id="Dataset 0")]
 
     # Assessing the string converted objects, to check that the properties are the same.
     # Assessing for the equivalence of the objects directly will fail
