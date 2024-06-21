@@ -189,7 +189,7 @@ def show_info(
             start_sample = file_data.continuous_data[RAW_EIT_LABEL].time[0]
             stop_sample = file_data.continuous_data[RAW_EIT_LABEL].time[-1]
 
-        dataset_name = f"Dataset {data_object.get_sequence_list_length()}"
+        dataset_name = data_object.get_next_dataset_label()
 
         selected_signals = selected_signals or []
         # get the name of the selected continuous signals
@@ -210,7 +210,7 @@ def show_info(
         data_object.add_sequence(cut_data)
 
         # create the info summary card
-        card = create_info_card(cut_data)
+        card = create_info_card(cut_data, remove_button=True)
 
         # add the card to the current results
         if container_state:
@@ -288,6 +288,33 @@ def store_clicked_file(n_clicks, title):
     return None
 
 
+@callback(
+    Output(ids.DATASET_CONTAINER, "children", allow_duplicate=True),
+    [
+        Input({"type": ids.REMOVE_DATA_BUTTON, "index": ALL}, "n_clicks"),
+    ],
+    [
+        State(ids.DATASET_CONTAINER, "children"),
+    ],
+    prevent_initial_call=True,
+)
+def remove_dataset(n_clicks, container):
+    """React to clicking the remove button of a dataset.
+
+    Removes the card from the results and the dataset from the loaded selections.
+    """
+    # at the element creation time, the update should be avoided
+    if all(element is None for element in n_clicks):
+        raise PreventUpdate
+
+    input_id = ctx.triggered_id["index"]
+
+    # remove from the singleton
+    data_object.remove_data(input_id)
+
+    return [card for card in container if f"'index': '{input_id}'" not in str(card)]
+
+
 # Repopulate data after reload
 @callback(
     Output(ids.DATASET_CONTAINER, "children", allow_duplicate=True),
@@ -298,4 +325,4 @@ def repopulate_data(reload):
     """Repopulate data after reloading page."""
     # create the info summary card
     reloaded_data = data_object.get_all_sequences()
-    return [create_info_card(element) for element in reloaded_data]
+    return [create_info_card(element, remove_button=True) for element in reloaded_data]

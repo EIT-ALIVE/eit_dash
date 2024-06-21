@@ -30,6 +30,7 @@ LOAD_CANCEL_BUTTON = "load-cancel-button"
 LOAD_RESULTS_TITLE = "load-results-title"
 PARENT_DIR = "parent-dir"
 POPULATE_DATA = "populate-data"
+REMOVE_DATA_BUTTON = "remove-data-button"
 STORED_CWD = "stored-cwd"
 SELECT_CONFIRM_BUTTON = "select-confirm-button"
 
