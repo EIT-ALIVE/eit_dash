@@ -326,4 +326,4 @@ def repopulate_data(reload):
     """Repopulate data after reloading page."""
     # create the info summary card
     reloaded_data = data_object.get_all_sequences()
-    return [create_info_card(element) for element in reloaded_data]
+    return [create_info_card(element, remove_button=True) for element in reloaded_data]
