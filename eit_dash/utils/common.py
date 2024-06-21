@@ -43,7 +43,7 @@ def create_filter_results_card(parameters: dict) -> dbc.Card:
     return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
 
 
-def create_info_card(dataset: Sequence, remove_button: bool=False) -> dbc.Card:
+def create_info_card(dataset: Sequence, remove_button: bool = False) -> dbc.Card:
     """Create the card with the information on the loaded dataset to be displayed in the Results section.
 
     Args:
