@@ -43,11 +43,12 @@ def create_filter_results_card(parameters: dict) -> dbc.Card:
     return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
 
 
-def create_info_card(dataset: Sequence) -> dbc.Card:
+def create_info_card(dataset: Sequence, remove_button: bool=False) -> dbc.Card:
     """Create the card with the information on the loaded dataset to be displayed in the Results section.
 
     Args:
         dataset: Sequence object containing the selected dataset
+        remove_button: add the remove button if set to True
     """
     info_data = {
         "Name": dataset.eit_data["raw"].path.name,
@@ -64,8 +65,14 @@ def create_info_card(dataset: Sequence) -> dbc.Card:
         html.H6(dataset.eit_data["raw"].vendor, className="card-subtitle"),
     ]
     card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
-
-    return dbc.Card(dbc.CardBody(card_list), id="card-1")
+    if remove_button:
+        card_list += [
+            dbc.Button(
+                "Remove",
+                id={"type": ids.REMOVE_DATA_BUTTON, "index": dataset.label},
+            ),
+        ]
+    return dbc.Card(dbc.CardBody(card_list), id=dataset.label)
 
 
 def create_selected_period_card(

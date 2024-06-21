@@ -210,7 +210,7 @@ def show_info(
         data_object.add_sequence(cut_data)
 
         # create the info summary card
-        card = create_info_card(cut_data)
+        card = create_info_card(cut_data, remove_button=True)
 
         # add the card to the current results
         if container_state:
@@ -286,3 +286,31 @@ def store_clicked_file(n_clicks, title):
             return state["value"]
 
     return None
+
+
+@callback(
+    Output(ids.DATASET_CONTAINER, "children", allow_duplicate=True),
+    [
+        Input({"type": ids.REMOVE_DATA_BUTTON, "index": ALL}, "n_clicks"),
+    ],
+    [
+        State(ids.DATASET_CONTAINER, "children"),
+    ],
+    prevent_initial_call=True,
+)
+def remove_dataset(n_clicks, container):
+    """React to clicking the remove button of a dataset.
+
+    Removes the card from the results and the dataset from the loaded selections.
+    """
+    # at the element creation time, the update should be avoided
+    if all(element is None for element in n_clicks):
+        raise PreventUpdate
+
+    input_id = ctx.triggered_id["index"]
+
+    # remove from the singleton
+    data_object.remove_data(input_id)
+
+    results = [card for card in container if f"'index': '{input_id}'" not in str(card)]
+    return results

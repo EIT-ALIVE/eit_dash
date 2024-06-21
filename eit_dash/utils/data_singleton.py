@@ -100,6 +100,20 @@ class LoadedData:
 
         self._stable_periods.append(Period(data, dataset_index, period_index))
 
+    def remove_data(self, label: str):
+        """Remove a sequence from data from the singleton.
+
+        Args:
+            label: label of the sequence to be removed.
+        """
+        for sequence in self._data:
+            if sequence.label == label:
+                self._data.remove(sequence)
+                return
+
+        msg = f"Sequence with label {index} not found"
+        raise ValueError(msg)
+
     def remove_stable_period(self, index: int):
         """Remove a stable period from the singleton.
 
