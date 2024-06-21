@@ -189,7 +189,7 @@ def show_info(
             start_sample = file_data.continuous_data[RAW_EIT_LABEL].time[0]
             stop_sample = file_data.continuous_data[RAW_EIT_LABEL].time[-1]
 
-        dataset_name = f"Dataset {data_object.get_sequence_list_length()}"
+        dataset_name = data_object.get_next_dataset_label()
 
         selected_signals = selected_signals or []
         # get the name of the selected continuous signals

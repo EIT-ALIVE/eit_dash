@@ -63,6 +63,22 @@ class LoadedData:
 
         return self._data[index]
 
+    def get_dataset_labels(self) -> list[int]:
+        """Get a list of the labels of the datasets currently available."""
+        return [dataset.label for dataset in self._data]
+
+    def get_next_dataset_label(self):
+        """Determines the label to be assigned to the next dataset."""
+        available_labels = self.get_dataset_labels()
+        label = f"Dataset {self.get_sequence_list_length()}"
+
+        if label in available_labels:
+            for i in range(self.get_sequence_list_length()):
+                label = f"Dataset {i}"
+                if label not in available_labels:
+                    break
+        return label
+
     def dataset_exists(self, index: int) -> bool:
         """Verify that a sequence with the provided index exists.
 
