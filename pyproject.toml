@@ -14,7 +14,13 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
 ]
 keywords = ["EIT - Electrical Impedance Tomography", "GUI"]
-packages = [{ include = "eit_dash" }]
+packages = [
+    { include = "eit_dash"},
+    { include = "cli"},
+]
+
+[tool.poetry.scripts]
+eit-dash = "cli.cli:cli"
 
 [tool.poetry.urls]
 repository = "git@github.com:EIT-ALIVE/eit_dash"
@@ -28,6 +34,7 @@ eitprocessing = "^1.0.2"
 numpy = "^1.25.2"
 pandas = "^2.0.3"
 ruff = "^0.4.9"
+click = "^8.1.7"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.4.0"

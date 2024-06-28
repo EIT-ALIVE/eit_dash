@@ -17,6 +17,32 @@ this software.
 
 ## Getting started
 
+##### Install EIT Dashboard
+
+The first time that the dashboard is used, the repository needs to be cloned and the package has to be
+installed:
+
+```console
+git clone git@github.com:EIT-ALIVE/eit_dash.git
+cd eit_dash
+pip install .
+```
+
+### 2. Running EIT Dashboard
+
+To run the installed dashboard the following command can be used:
+
+```console
+eit-dash run
+```
+Open the resulting link in a browser (often something like `http://127.0.0.1:8050/`).
+Note that while the dashboard should work on any browser, if you are experiencing issues we recommend switching to
+Chrome or Firefox, as these are the browser where we do most of the testing.
+
+Please see our [user manual](docs/user_manual.md) for instructions on how to use the dashboard.
+
+## For developers
+
 ### 1. Installation
 
 ##### Install Poetry
@@ -67,13 +93,10 @@ git pull
 poetry install
 ```
 
-Please see our [user manual](docs/user_manual.md) for instructions on how to use the dashboard.
-
 ##### Run dashboard
 
-Run the command below and and open the resulting link in a browser (often something like `http://127.0.0.1:8050/`).
-Note that while the dashboard should work on any browser, if you are experiencing issues we recommend switching to
-Chrome or Firefox, as these are the browser where we do most of the testing.
+Run the command below to run the dashboard with the latest change made in the code, 
+and follow the link displayed.
 
 ```console
 poetry run python eit_dash/main.py

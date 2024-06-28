@@ -185,10 +185,7 @@ def open_synch_modal(open_click, confirm_click) -> bool:
     """open/close modal dialog for data synchronization."""
     trigger = ctx.triggered_id
 
-    if trigger == ids.OPEN_SYNCH_BUTTON:
-        return True
-
-    return False
+    return trigger == ids.OPEN_SYNCH_BUTTON
 
 
 @callback(
@@ -203,10 +200,7 @@ def open_periods_modal(open_click, confirm_click) -> bool:
     """open/close modal dialog for periods selection."""
     trigger = ctx.triggered_id
 
-    if trigger == ids.OPEN_SELECT_PERIODS_BUTTON:
-        return True
-
-    return False
+    return trigger == ids.OPEN_SELECT_PERIODS_BUTTON
 
 
 @callback(
@@ -247,10 +241,7 @@ def populate_periods_selection_modal(method):
 )
 def show_selection_div(signals):
     """Make visible the div containing the graphs and the buttons."""
-    if signals:
-        return False
-
-    return True
+    return not signals
 
 
 @callback(
@@ -471,9 +462,7 @@ def remove_period(n_clicks, container, figure):
 )
 def enable_filter_button(results):
     """Enable the button for opening the filter modal."""
-    if results:
-        return False
-    return True
+    return not results
 
 
 @callback(
@@ -558,20 +547,20 @@ def enable_apply_button(
     if not filter_selected:
         return True
 
-    if (
-        (int(filter_selected) == FilterTypes.lowpass.value and co_high and co_high > 0)
-        or (int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0)
-        or (
-            int(filter_selected) in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
-            and co_low
-            and co_low > 0
-            and co_high
-            and co_high > 0
+    return (
+        not (
+            (int(filter_selected) == FilterTypes.lowpass.value and co_high and co_high > 0)
+            or (int(filter_selected) == FilterTypes.highpass.value and co_low and co_low > 0)
+            or (
+                int(filter_selected) in [FilterTypes.bandpass.value, FilterTypes.bandstop.value]
+                and co_low
+                and co_low > 0
+                and co_high
+                and co_high > 0
+            )
         )
-    ) and order:
-        return False
-
-    return True
+        and order
+    )
 
 
 @callback(
