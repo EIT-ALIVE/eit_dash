@@ -1,6 +1,6 @@
 import click
 
-from eit_dash.app import app
+from eit_dash.main import app
 
 
 @click.group(invoke_without_command=True)
@@ -14,7 +14,7 @@ def cli(ctx):
 @cli.command(name="run", help="Start the dashboard.")
 def run():
     """Start the dashboard."""
-    app.run_server(debug=False)
+    app.run_server(debug=True)
 
 
 if __name__ == "__main__":
