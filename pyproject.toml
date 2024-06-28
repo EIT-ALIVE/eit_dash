@@ -23,8 +23,8 @@ packages = [
 eit-dash = "cli.cli:cli"
 
 [tool.poetry.urls]
-repository = "git@github.com:EIT-ALIVE/eit_dash"
-"Bug Tracker" = "git@github.com:EIT-ALIVE/eit_dash/issues"
+repository = "https://github.com/EIT-ALIVE/eit_dash"
+"Bug Tracker" = "https://github.com/EIT-ALIVE/eit_dash/issues"
 
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
