@@ -20,13 +20,16 @@ this software.
 ##### Install EIT Dashboard
 
 The first time that the dashboard is used, the repository needs to be cloned and the package has to be
-installed:
+installed as follows:
 
-```console
-git clone git@github.com:EIT-ALIVE/eit_dash.git
-cd eit_dash
-pip install .
-```
+- Create fresh environment
+  - Make sure you are in your base environment: `conda activate`
+  - Create a new environment: `conda create -n <envname> python=3.10`
+  - Activate new environment: `conda activate <envname>`
+- Clone and install
+  - Clone the repository: `git clone git@github.com:EIT-ALIVE/eit_dash.git`
+  - Install:
+    - Run `pip install -e .`
 
 ### 2. Running EIT Dashboard
 
