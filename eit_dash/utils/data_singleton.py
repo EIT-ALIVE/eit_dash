@@ -5,7 +5,7 @@ from threading import Lock
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from eitprocessing.sequence import Sequence
+    from eitprocessing.datahandling.sequence import Sequence
 
 
 _singleton = None

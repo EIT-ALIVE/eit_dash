@@ -13,7 +13,7 @@ from eit_dash.definitions import layout_styles as styles
 from eit_dash.definitions.constants import RAW_EIT_LABEL
 
 if TYPE_CHECKING:
-    from eitprocessing.sequence import Sequence
+    from eitprocessing.datahandling.sequence import Sequence
 
     from eit_dash.utils.data_singleton import Period
 
