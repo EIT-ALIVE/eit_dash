@@ -38,10 +38,7 @@ def create_filter_results_card(parameters: dict) -> dbc.Card:
     card_list = [
         html.H4("Data filtered", className="card-title"),
     ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
-        for data, value in parameters.items()
-    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in parameters.items()]
 
     return dbc.Card(dbc.CardBody(card_list), id=ids.FILTERING_SAVED_CARD)
 
@@ -67,10 +64,7 @@ def create_info_card(dataset: Sequence, remove_button: bool = False) -> dbc.Card
         html.H4(dataset.label, className="card-title"),
         html.H6(dataset.eit_data["raw"].vendor, className="card-subtitle"),
     ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
-        for data, value in info_data.items()
-    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
     if remove_button:
         card_list += [
             dbc.Button(
@@ -106,10 +100,7 @@ def create_selected_period_card(
     card_list = [
         html.H4(period.label, className="card-title"),
     ]
-    card_list += [
-        dbc.Row(f"{data}: {value}", style=styles.INFO_CARD)
-        for data, value in info_data.items()
-    ]
+    card_list += [dbc.Row(f"{data}: {value}", style=styles.INFO_CARD) for data, value in info_data.items()]
     if remove_button:
         card_list += [
             dbc.Button(
