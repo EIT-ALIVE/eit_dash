@@ -24,7 +24,7 @@ authors:
 
 date-released: 30/06/2023
 doi: <insert your DOI here>
-version: "0.1.0"
+version: "0.0.0"
 repository-code: "git@github.com:EIT-ALIVE/eit_dash"
 keywords:
   - EIT - Electrical Impedance Tomography
