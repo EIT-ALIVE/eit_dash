@@ -238,7 +238,7 @@ def mark_selected_periods(
                 )
             selected_signal = go.Scatter(**params).to_plotly_json()
 
-            if type(original_figure) == go.Figure:
+            if isinstance(original_figure, go.Figure):
                 original_figure.add_trace(selected_signal)
             else:
                 original_figure["data"].append(selected_signal)
