@@ -71,10 +71,7 @@ def test_apply_filter_callback(
         # the filtered results are saved in a temporary object before saving them
         # through a different call. We need to verify if the presence of the data
         # in the mocked temporary object.
-        assert (
-            "global_impedance_(filtered)"
-            in mock_tmp_results.get_stable_period(0).get_data().continuous_data
-        )
+        assert "global_impedance_(filtered)" in mock_tmp_results.get_stable_period(0).get_data().continuous_data
 
 
 def test_open_synch_modal_callback():
