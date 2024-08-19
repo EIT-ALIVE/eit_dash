@@ -15,7 +15,7 @@ from eit_dash.definitions.option_lists import FilterTypes
 from eit_dash.utils.data_singleton import LoadedData
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_data_object(file_data: Sequence):
     """Mocked object to save and retrieve the data."""
     data_object = LoadedData()
@@ -25,7 +25,7 @@ def mock_data_object(file_data: Sequence):
     return data_object
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_tmp_results():
     """Mocked temporary results object."""
     return LoadedData()
@@ -71,7 +71,10 @@ def test_apply_filter_callback(
         # the filtered results are saved in a temporary object before saving them
         # through a different call. We need to verify if the presence of the data
         # in the mocked temporary object.
-        assert "global_impedance_(filtered)" in mock_tmp_results.get_stable_period(0).get_data().continuous_data
+        assert (
+            "global_impedance_(filtered)"
+            in mock_tmp_results.get_stable_period(0).get_data().continuous_data
+        )
 
 
 def test_open_synch_modal_callback():
